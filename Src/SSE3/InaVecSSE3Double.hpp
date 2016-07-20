@@ -247,32 +247,28 @@ public:
 #ifdef __INTEL_COMPILER
         return _mm_exp_pd(vec);
 #else
-        static const __m128d COEFF_LOG2E = _mm_set1_pd(double(InaFastExp::CoeffLog2E()));
-        static const __m128d COEFF_A     = _mm_set1_pd(double(InaFastExp::CoeffA64()));
-        static const __m128d COEFF_B     = _mm_set1_pd(double(InaFastExp::CoeffB64()));
-        static const __m128d COEFF_P5_X  = _mm_set1_pd(double(InaFastExp::GetCoefficient9()[8]));
-        static const __m128d COEFF_P5_Y  = _mm_set1_pd(double(InaFastExp::GetCoefficient9()[7]));
-        static const __m128d COEFF_P5_Z  = _mm_set1_pd(double(InaFastExp::GetCoefficient9()[6]));
-        static const __m128d COEFF_P5_A  = _mm_set1_pd(double(InaFastExp::GetCoefficient9()[5]));
-        static const __m128d COEFF_P5_B  = _mm_set1_pd(double(InaFastExp::GetCoefficient9()[4]));
-        static const __m128d COEFF_P5_C  = _mm_set1_pd(double(InaFastExp::GetCoefficient9()[3]));
-        static const __m128d COEFF_P5_D  = _mm_set1_pd(double(InaFastExp::GetCoefficient9()[2]));
-        static const __m128d COEFF_P5_E  = _mm_set1_pd(double(InaFastExp::GetCoefficient9()[1]));
-        static const __m128d COEFF_P5_F  = _mm_set1_pd(double(InaFastExp::GetCoefficient9()[0]));
+        const __m128d COEFF_LOG2E = _mm_set1_pd(double(InaFastExp::CoeffLog2E()));
+        const __m128d COEFF_A     = _mm_set1_pd(double(InaFastExp::CoeffA64()));
+        const __m128d COEFF_B     = _mm_set1_pd(double(InaFastExp::CoeffB64()));
+        const __m128d COEFF_P5_X  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_8()));
+        const __m128d COEFF_P5_Y  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_7()));
+        const __m128d COEFF_P5_Z  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_6()));
+        const __m128d COEFF_P5_A  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_5()));
+        const __m128d COEFF_P5_B  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_4()));
+        const __m128d COEFF_P5_C  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_3()));
+        const __m128d COEFF_P5_D  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_2()));
+        const __m128d COEFF_P5_E  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_1()));
+        const __m128d COEFF_P5_F  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_0()));
 
         __m128d x = vec * COEFF_LOG2E;
 
         const __m128d fractional_part = x - InaVecSSE3(x).floor().vec;
 
-        __m128d factor = COEFF_P5_X;
-        factor         = (factor * fractional_part + COEFF_P5_Y);
-        factor         = (factor * fractional_part + COEFF_P5_Z);
-        factor         = (factor * fractional_part + COEFF_P5_A);
-        factor         = (factor * fractional_part + COEFF_P5_B);
-        factor         = (factor * fractional_part + COEFF_P5_C);
-        factor         = (factor * fractional_part + COEFF_P5_D);
-        factor         = (factor * fractional_part + COEFF_P5_E);
-        factor         = (factor * fractional_part + COEFF_P5_F);
+        __m128d factor = ((((((((COEFF_P5_X * fractional_part + COEFF_P5_Y)
+                                * fractional_part + COEFF_P5_Z) * fractional_part + COEFF_P5_A)
+                                * fractional_part + COEFF_P5_B) * fractional_part + COEFF_P5_C)
+                                * fractional_part + COEFF_P5_D) * fractional_part + COEFF_P5_E)
+                                * fractional_part + COEFF_P5_F);
 
         x -= factor;
 
@@ -286,22 +282,21 @@ public:
     }
 
     inline InaVecSSE3 expLowAcc() const {
-        static const __m128d COEFF_LOG2E = _mm_set1_pd(double(InaFastExp::CoeffLog2E()));
-        static const __m128d COEFF_A     = _mm_set1_pd(double(InaFastExp::CoeffA64()));
-        static const __m128d COEFF_B     = _mm_set1_pd(double(InaFastExp::CoeffB64()));
-        static const __m128d COEFF_P5_C  = _mm_set1_pd(double(InaFastExp::GetCoefficient4()[3]));
-        static const __m128d COEFF_P5_D  = _mm_set1_pd(double(InaFastExp::GetCoefficient4()[2]));
-        static const __m128d COEFF_P5_E  = _mm_set1_pd(double(InaFastExp::GetCoefficient4()[1]));
-        static const __m128d COEFF_P5_F  = _mm_set1_pd(double(InaFastExp::GetCoefficient4()[0]));
+        const __m128d COEFF_LOG2E = _mm_set1_pd(double(InaFastExp::CoeffLog2E()));
+        const __m128d COEFF_A     = _mm_set1_pd(double(InaFastExp::CoeffA64()));
+        const __m128d COEFF_B     = _mm_set1_pd(double(InaFastExp::CoeffB64()));
+        const __m128d COEFF_P5_C  = _mm_set1_pd(double(InaFastExp::GetCoefficient4_3()));
+        const __m128d COEFF_P5_D  = _mm_set1_pd(double(InaFastExp::GetCoefficient4_2()));
+        const __m128d COEFF_P5_E  = _mm_set1_pd(double(InaFastExp::GetCoefficient4_1()));
+        const __m128d COEFF_P5_F  = _mm_set1_pd(double(InaFastExp::GetCoefficient4_0()));
 
         __m128d x = vec * COEFF_LOG2E;
 
         const __m128d fractional_part = x - InaVecSSE3(x).floor().vec;
 
-        __m128d factor = COEFF_P5_C;
-        factor         = (factor * fractional_part + COEFF_P5_D);
-        factor         = (factor * fractional_part + COEFF_P5_E);
-        factor         = (factor * fractional_part + COEFF_P5_F);
+        __m128d factor = (((COEFF_P5_C * fractional_part + COEFF_P5_D)
+                           * fractional_part + COEFF_P5_E)
+                           * fractional_part + COEFF_P5_F);
 
         x -= factor;
 

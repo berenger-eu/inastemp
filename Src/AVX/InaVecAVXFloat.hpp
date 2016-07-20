@@ -270,26 +270,25 @@ public:
 #ifdef __INTEL_COMPILER
         return _mm256_exp_ps(vec);
 #else
-        static const __m256 COEFF_LOG2E = _mm256_set1_ps(float(InaFastExp::CoeffLog2E()));
-        static const __m256 COEFF_A     = _mm256_set1_ps(float(InaFastExp::CoeffA32()));
-        static const __m256 COEFF_B     = _mm256_set1_ps(float(InaFastExp::CoeffB32()));
-        static const __m256 COEFF_P5_A  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6()[5]));
-        static const __m256 COEFF_P5_B  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6()[4]));
-        static const __m256 COEFF_P5_C  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6()[3]));
-        static const __m256 COEFF_P5_D  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6()[2]));
-        static const __m256 COEFF_P5_E  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6()[1]));
-        static const __m256 COEFF_P5_F  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6()[0]));
+        const __m256 COEFF_LOG2E = _mm256_set1_ps(float(InaFastExp::CoeffLog2E()));
+        const __m256 COEFF_A     = _mm256_set1_ps(float(InaFastExp::CoeffA32()));
+        const __m256 COEFF_B     = _mm256_set1_ps(float(InaFastExp::CoeffB32()));
+        const __m256 COEFF_P5_A  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_5()));
+        const __m256 COEFF_P5_B  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_4()));
+        const __m256 COEFF_P5_C  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_3()));
+        const __m256 COEFF_P5_D  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_2()));
+        const __m256 COEFF_P5_E  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_1()));
+        const __m256 COEFF_P5_F  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_0()));
 
         __m256 x = vec * COEFF_LOG2E;
 
         const __m256 fractional_part = x - InaVecAVX(x).floor().vec;
 
-        __m256 factor = COEFF_P5_A;
-        factor        = (factor * fractional_part + COEFF_P5_B);
-        factor        = (factor * fractional_part + COEFF_P5_C);
-        factor        = (factor * fractional_part + COEFF_P5_D);
-        factor        = (factor * fractional_part + COEFF_P5_E);
-        factor        = (factor * fractional_part + COEFF_P5_F);
+        __m256 factor = (((((COEFF_P5_A * fractional_part + COEFF_P5_B)
+                           * fractional_part + COEFF_P5_C)
+                           * fractional_part + COEFF_P5_D)
+                           * fractional_part + COEFF_P5_E)
+                           * fractional_part + COEFF_P5_F);
 
         x -= factor;
 
@@ -300,20 +299,18 @@ public:
     }
 
     inline InaVecAVX expLowAcc() const {
-        static const __m256 COEFF_LOG2E = _mm256_set1_ps(float(InaFastExp::CoeffLog2E()));
-        static const __m256 COEFF_A     = _mm256_set1_ps(float(InaFastExp::CoeffA32()));
-        static const __m256 COEFF_B     = _mm256_set1_ps(float(InaFastExp::CoeffB32()));
-        static const __m256 COEFF_P5_D  = _mm256_set1_ps(float(InaFastExp::GetCoefficient3()[2]));
-        static const __m256 COEFF_P5_E  = _mm256_set1_ps(float(InaFastExp::GetCoefficient3()[1]));
-        static const __m256 COEFF_P5_F  = _mm256_set1_ps(float(InaFastExp::GetCoefficient3()[0]));
+        const __m256 COEFF_LOG2E = _mm256_set1_ps(float(InaFastExp::CoeffLog2E()));
+        const __m256 COEFF_A     = _mm256_set1_ps(float(InaFastExp::CoeffA32()));
+        const __m256 COEFF_B     = _mm256_set1_ps(float(InaFastExp::CoeffB32()));
+        const __m256 COEFF_P5_D  = _mm256_set1_ps(float(InaFastExp::GetCoefficient3_2()));
+        const __m256 COEFF_P5_E  = _mm256_set1_ps(float(InaFastExp::GetCoefficient3_1()));
+        const __m256 COEFF_P5_F  = _mm256_set1_ps(float(InaFastExp::GetCoefficient3_0()));
 
         __m256 x = vec * COEFF_LOG2E;
 
         const __m256 fractional_part = x - InaVecAVX(x).floor().vec;
 
-        __m256 factor = COEFF_P5_D;
-        factor        = (factor * fractional_part + COEFF_P5_E);
-        factor        = (factor * fractional_part + COEFF_P5_F);
+        __m256 factor = ((COEFF_P5_D * fractional_part + COEFF_P5_E) * fractional_part + COEFF_P5_F);
 
         x -= factor;
 

@@ -15,9 +15,8 @@
 #include <iostream>
 
 
-int main(int /*argc*/, char* /*argv*/ []) {
-    using RealType = double;
-
+template <class RealType>
+void compareExpTime(){
     const size_t NbOverLoop = 5;
     const size_t NbExp      = 1000000;
 
@@ -89,6 +88,14 @@ int main(int /*argc*/, char* /*argv*/ []) {
         std::cout << "Vector low acc " << InaVecBestType<RealType>::GetName() << " for " << NbExp * NbOverLoop 
                   << " exp took " << timer.getElapsed() << "s (" << timer.getElapsed()/double(NbExp * NbOverLoop) << "s per exp)\n";
     }
+}
+
+int main(int /*argc*/, char* /*argv*/ []) {
+    std::cout << "In Float:" << std::endl;
+    compareExpTime<float>();
+
+    std::cout << "In Double:" << std::endl;
+    compareExpTime<double>();
 
     return 0;
 }

@@ -54,16 +54,11 @@ for n = 2:10
         disp(x0)
     end
     
-    printf("constexpr static std::array<double,%d> GetCoefficient%d() {\n", n+1, n+1);
-    printf("    return {{\n");
-    for i = 1:(n+1)
-        sep=","
-        if i == n+1 then
-            sep=""
-        end
-        printf("             %.20e%s\n", -x0(i), sep);
+    for i = 1:(n+1)        
+        printf("inline constexpr static double GetCoefficient%d_%d() {\n", n+1, i-1);
+        printf("    return %.20e;\n", -x0(i));
+        printf("}\n");
     end
-    printf("           }};\n");
-    printf("}\n\n");
+    printf("\n");
 
 end

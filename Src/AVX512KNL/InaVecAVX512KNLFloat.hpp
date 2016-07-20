@@ -305,26 +305,25 @@ public:
     }
 
     inline InaVecAVX512KNL exp() const {
-         static const __m512 COEFF_LOG2E = _mm512_set1_ps(float(InaFastExp::CoeffLog2E()));
-         static const __m512 COEFF_A     = _mm512_set1_ps(float(InaFastExp::CoeffA32()));
-         static const __m512 COEFF_B     = _mm512_set1_ps(float(InaFastExp::CoeffB32()));
-         static const __m512 COEFF_P5_A  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6()[5]));
-         static const __m512 COEFF_P5_B  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6()[4]));
-         static const __m512 COEFF_P5_C  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6()[3]));
-         static const __m512 COEFF_P5_D  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6()[2]));
-         static const __m512 COEFF_P5_E  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6()[1]));
-         static const __m512 COEFF_P5_F  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6()[0]));
+         const __m512 COEFF_LOG2E = _mm512_set1_ps(float(InaFastExp::CoeffLog2E()));
+         const __m512 COEFF_A     = _mm512_set1_ps(float(InaFastExp::CoeffA32()));
+         const __m512 COEFF_B     = _mm512_set1_ps(float(InaFastExp::CoeffB32()));
+         const __m512 COEFF_P5_A  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6_5()));
+         const __m512 COEFF_P5_B  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6_4()));
+         const __m512 COEFF_P5_C  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6_3()));
+         const __m512 COEFF_P5_D  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6_2()));
+         const __m512 COEFF_P5_E  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6_1()));
+         const __m512 COEFF_P5_F  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6_0()));
 
          __m512 x = vec * COEFF_LOG2E;
 
          const __m512 fractional_part = x - InaVecAVX512KNL(x).floor().vec;
 
-         __m512 factor = COEFF_P5_A;
-         factor        = (factor * fractional_part + COEFF_P5_B);
-         factor        = (factor * fractional_part + COEFF_P5_C);
-         factor        = (factor * fractional_part + COEFF_P5_D);
-         factor        = (factor * fractional_part + COEFF_P5_E);
-         factor        = (factor * fractional_part + COEFF_P5_F);
+         __m512 factor = (((((COEFF_P5_A * fractional_part + COEFF_P5_B)
+                             * fractional_part + COEFF_P5_C)
+                             * fractional_part + COEFF_P5_D)
+                             * fractional_part + COEFF_P5_E)
+                             * fractional_part + COEFF_P5_F);
 
          x -= factor;
 
@@ -334,20 +333,18 @@ public:
     }
 
     inline InaVecAVX512KNL expLowAcc() const {
-        static const __m512 COEFF_LOG2E = _mm512_set1_ps(float(InaFastExp::CoeffLog2E()));
-        static const __m512 COEFF_A     = _mm512_set1_ps(float(InaFastExp::CoeffA32()));
-        static const __m512 COEFF_B     = _mm512_set1_ps(float(InaFastExp::CoeffB32()));
-        static const __m512 COEFF_P5_D  = _mm512_set1_ps(float(InaFastExp::GetCoefficient3()[2]));
-        static const __m512 COEFF_P5_E  = _mm512_set1_ps(float(InaFastExp::GetCoefficient3()[1]));
-        static const __m512 COEFF_P5_F  = _mm512_set1_ps(float(InaFastExp::GetCoefficient3()[0]));
+        const __m512 COEFF_LOG2E = _mm512_set1_ps(float(InaFastExp::CoeffLog2E()));
+        const __m512 COEFF_A     = _mm512_set1_ps(float(InaFastExp::CoeffA32()));
+        const __m512 COEFF_B     = _mm512_set1_ps(float(InaFastExp::CoeffB32()));
+        const __m512 COEFF_P5_D  = _mm512_set1_ps(float(InaFastExp::GetCoefficient3_2()));
+        const __m512 COEFF_P5_E  = _mm512_set1_ps(float(InaFastExp::GetCoefficient3_1()));
+        const __m512 COEFF_P5_F  = _mm512_set1_ps(float(InaFastExp::GetCoefficient3_0()));
 
         __m512 x = vec * COEFF_LOG2E;
 
         const __m512 fractional_part = x - InaVecAVX512KNL(x).floor().vec;
 
-        __m512 factor = COEFF_P5_D;
-        factor        = (factor * fractional_part + COEFF_P5_E);
-        factor        = (factor * fractional_part + COEFF_P5_F);
+        __m512 factor = ((COEFF_P5_D * fractional_part + COEFF_P5_E) * fractional_part + COEFF_P5_F);
 
         x -= factor;
 
