@@ -115,7 +115,13 @@ SET( INASTEMP_EXTRA_CXX_FLAGS_DEBUG "-O0" CACHE STRING "These flags are added to
 set(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_RELEASE} ${INASTEMP_EXTRA_CXX_FLAGS_DEBUG}")
 
 # Options
-set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -std=c++11 -fpic -Wextra -Wnon-virtual-dtor -Wshadow -Wpointer-arith -Wcast-qual -Wconversion  -Wall -Wno-sign-conversion -pedantic -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wcast-qual -Wconversion -Wno-error")
+set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -std=c++11 -fpic -Wextra -Wnon-virtual-dtor -Wshadow -Wpointer-arith -Wcast-qual -Wconversion  -Wall -Wno-sign-conversion -pedantic -Woverloaded-virtual -Wpointer-arith -Wcast-qual -Wconversion -Wno-error")
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel" OR ${CMAKE_CXX_COMPILER} MATCHES "icpc.*$")
+    set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -diag-disable 2304 -diag-disable 10120  -diag-disable 10121")
+else()
+    set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -Wold-style-cast")
+endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} -m64")

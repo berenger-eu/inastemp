@@ -14,9 +14,7 @@
 #error InaVecSSE3<float> is included but SSE3 is not enable in the configuration
 #endif
 
-#ifndef __INTEL_COMPILER
 #include "Common/InaFastExp.hpp"
-#endif
 
 #include <emmintrin.h>
 #include <cmath>

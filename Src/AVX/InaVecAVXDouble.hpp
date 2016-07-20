@@ -14,9 +14,7 @@
 #error InaVecAVX<double> is included but AVX is not enable in the configuration
 #endif
 
-#ifndef __INTEL_COMPILER
 #include "Common/InaFastExp.hpp"
-#endif
 
 #include <immintrin.h>
 #include <cmath>

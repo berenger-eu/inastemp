@@ -117,8 +117,8 @@ public:
     using VecRawType           = float;
     using MaskType             = InaVecMaskSCALAR<float>;
     using RealType             = float;
-    static const int VecLength = 1;
-    static const int Alignement= 1;
+    static const int VecLength = 1.f;
+    static const int Alignement= 1.f;
 
     inline InaVecSCALAR(){}
     inline InaVecSCALAR(const InaVecSCALAR&) = default;
@@ -223,64 +223,64 @@ public:
     }
 
     inline InaVecSCALAR signOf() const {
-        return vec < 0 ? -1 : vec > 0 ? 1 : 0;
+        return vec < 0.f ? -1 : vec > 0.f ? 1.f : 0.f;
     }
 
     inline InaVecSCALAR isPositive() const {
-        return vec >= 0 ? 1 : 0;
+        return vec >= 0.f ? 1.f : 0.f;
     }
 
     inline InaVecSCALAR isNegative() const {
-        return vec <= 0 ? 1 : 0;
+        return vec <= 0.f ? 1.f : 0.f;
     }
 
     inline InaVecSCALAR isPositiveStrict() const {
-        return vec > 0 ? 1 : 0;
+        return vec > 0.f ? 1.f : 0.f;
     }
 
     inline InaVecSCALAR isNegativeStrict() const {
-        return vec < 0 ? 1 : 0;
+        return vec < 0.f ? 1.f : 0.f;
     }
 
     inline InaVecSCALAR isZero() const {
-        return vec == 0 ? 1 : 0;
+        return vec == 0.f ? 1.f : 0.f;
     }
 
     inline InaVecSCALAR isNotZero() const {
-        return vec == 0 ? 0 : 1;
+        return vec == 0.f ? 0.f : 1.f;
     }
 
     inline InaVecMaskSCALAR<float> isPositiveMask() const {
-        return vec >= 0 ? true : false;
+        return vec >= 0.f ? true : false;
     }
 
     inline InaVecMaskSCALAR<float> isNegativeMask() const {
-        return vec <= 0 ? true : false;
+        return vec <= 0.f ? true : false;
     }
 
     inline InaVecMaskSCALAR<float> isPositiveStrictMask() const {
-        return vec > 0 ? true : false;
+        return vec > 0.f ? true : false;
     }
 
     inline InaVecMaskSCALAR<float> isNegativeStrictMask() const {
-        return vec < 0 ? true : false;
+        return vec < 0.f ? true : false;
     }
 
     inline InaVecMaskSCALAR<float> isZeroMask() const {
-        return vec == 0 ? true : false;
+        return vec == 0.f ? true : false;
     }
 
     inline InaVecMaskSCALAR<float> isNotZeroMask() const {
-        return vec == 0 ? false : true;
+        return vec == 0.f ? false : true;
     }
 
     // Static basic methods
     inline static InaVecSCALAR GetZero() {
-        return 0;
+        return 0.f;
     }
 
     inline static InaVecSCALAR GetOne() {
-        return 1;
+        return 1.f;
     }
 
     inline static InaVecSCALAR Min(const InaVecSCALAR& inVec1, const InaVecSCALAR& inVec2) {
@@ -292,27 +292,27 @@ public:
     }
 
     inline static InaVecSCALAR IsLowerOrEqual(const InaVecSCALAR& inVec1, const InaVecSCALAR& inVec2) {
-        return inVec1.vec <= inVec2.vec ? 1 : 0;
+        return inVec1.vec <= inVec2.vec ? 1.f : 0.f;
     }
 
     inline static InaVecSCALAR IsLower(const InaVecSCALAR& inVec1, const InaVecSCALAR& inVec2) {
-        return inVec1.vec < inVec2.vec ? 1 : 0;
+        return inVec1.vec < inVec2.vec ? 1.f : 0.f;
     }
 
     inline static InaVecSCALAR IsGreaterOrEqual(const InaVecSCALAR& inVec1, const InaVecSCALAR& inVec2) {
-        return inVec1.vec >= inVec2.vec ? 1 : 0;
+        return inVec1.vec >= inVec2.vec ? 1.f : 0.f;
     }
 
     inline static InaVecSCALAR IsGreater(const InaVecSCALAR& inVec1, const InaVecSCALAR& inVec2) {
-        return inVec1.vec > inVec2.vec ? 1 : 0;
+        return inVec1.vec > inVec2.vec ? 1.f : 0.f;
     }
 
     inline static InaVecSCALAR IsEqual(const InaVecSCALAR& inVec1, const InaVecSCALAR& inVec2) {
-        return inVec1.vec == inVec2.vec ? 1 : 0;
+        return inVec1.vec == inVec2.vec ? 1.f : 0.f;
     }
 
     inline static InaVecSCALAR IsNotEqual(const InaVecSCALAR& inVec1, const InaVecSCALAR& inVec2) {
-        return inVec1.vec != inVec2.vec ? 1 : 0;
+        return inVec1.vec != inVec2.vec ? 1.f : 0.f;
     }
 
     inline static InaVecMaskSCALAR<float> IsLowerOrEqualMask(const InaVecSCALAR& inVec1, const InaVecSCALAR& inVec2) {
@@ -368,7 +368,7 @@ public:
     }
 
     inline static InaVecSCALAR IfTrue(const InaVecMaskSCALAR<float>& inMask, const InaVecSCALAR& inIfTrue) {
-        return inMask?inIfTrue:0;
+        return inMask?inIfTrue:0.f;
     }
 
     inline static InaVecSCALAR IfFalse(const InaVecMaskSCALAR<float>& inMask, const InaVecSCALAR& inIfFalse) {
