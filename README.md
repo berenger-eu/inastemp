@@ -63,6 +63,8 @@ Template C++ source-code                           Compiled Template C++ code
 
 ## Compilation
 
+### Basic compilation
+
 ```bash
 # Create a Build directory
 mkdir Build
@@ -70,33 +72,77 @@ mkdir Build
 cd Build
 # Run cmake - considering Inastemp is the upper directory
 cmake ..
-# OR with more output
+# OR with more output messages
 VERBOSE=1 cmake ..
 # Then make will build the unit test and examples
 make
 ```
+
+### CMake variables - Hardware detection
+
+There are two hardware detections:
+- the instructions supported by the compiler
+- the instructions supported by the current CPU
+
+For each existing vector type in Inastemp, the cmake stage runs both tests.
+The results are print out if `VERBOSE=1`.
+If a vector type can be compiled, it creates the cmake variable `INASTEMP_USE_X` where `X` could be `SSE3`, `AVX2`, etc.
+Then, all the vector types that are supported by the CPU are turned to `ON` by default.
+So it is possible to turn on specific options even if the CPU does not support them (to execute over intel SDE for example).
+But if an options does not exist (even if the hardware seems appropriate) it means that the compiler does not support it.
+
+For example, here is a part of the output of the `ccmake ..` command on a AVX2 CPU and using GCC 6.1:
+```
+ INASTEMP_USE_AVX                 ON
+ INASTEMP_USE_AVX2                ON
+ INASTEMP_USE_AVX512KNL           OFF
+ INASTEMP_USE_SSE3                ON
+ INASTEMP_USE_SSE41               ON
+ INASTEMP_USE_SSE42               ON
+ INASTEMP_USE_SSSE3               ON
+```
+
+`AVX512KNL` is supported by the compiler but not by the hardware, so it is turned `OFF` but could be turn to `ON` if needed.
+
+By turning the cmake variable `INASTEMP_ISDE_CPU` to `ON` the hardware detection is done over intel SDE.
+In this case, one can ask Inastemp to check any hardware (passing the appropriate options to isde).
+
+### Using Inastemp as a sub-project with CMake
+
+Considering that the folder `inastemp exist in the root directory of the project, one could use:
+```
+## inastemp inclusion in CMakeLists.txt of the other project
+# tell inastemp we do not want examples/tests
+# (will be detected automatically otherwise because it is included as a subproject)
+set(INASTEMP_JUST_LIB TRUE)
+# add the cmakelist directory
+add_subdirectory(inastemp)
+# use the filled variables from inastemp
+INCLUDE_DIRECTORIES(
+         ${INASTEMP_BINARY_DIR}/Src    
+         ${INASTEMP_SOURCE_DIR}/Src 
+         ${INASTEMP_INCLUDE_DIR}   
+    )
+# propagate the flags to be able to compile 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${INASTEMP_CXX_FLAGS}")
+```
+
+The statement `set(INASTEMP_JUST_LIB TRUE)` asks inastemp not to compile tests/examples and to limit inclusion of extra warning flags in `INASTEMP_CXX_FLAGS`.
+The inclusion of Inastemp as a subproject does not modify the variables of the upper project.
+This is why we use the variables `${INASTEMP_CXX_FLAGS}` explicitly to transfer the hardware specific flags.
+
+### Compilers support
+
 Inastemp was developed and tested using the following compilers on the x86_64 architecture.
 - Gcc 6.1 (earlier versions if AVX512/KNL is not used)
 - Clang 3.5
 - Intel 16.0
 Earlier versions may work as well.
 
-### Using Inastemp as a sub-project with CMake
+### Multiple hardwares compilation
 
-Considering that the folder `inastemp exist in the root directory of the project, one could use:
-```
-# inastemp
-set(INASTEMP_JUST_LIB TRUE)
-add_subdirectory(ext/inastemp)
-INCLUDE_DIRECTORIES(
-         ${INASTEMP_BINARY_DIR}/Src    
-         ${INASTEMP_SOURCE_DIR}/Src 
-         ${INASTEMP_INCLUDE_DIR}   
-    )
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${INASTEMP_CXX_FLAGS}")
-```
-
-The statement `set(INASTEMP_JUST_LIB TRUE)` ask inastemp not to compile tests/examples.
+Inastemp is not designed to compile a binary targeting multiple hardwares (like having an execution path for the different possibilities).
+If such need appears, let us know and we might enable it in a next release.
 
 ## Best practices
 

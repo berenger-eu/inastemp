@@ -27,10 +27,31 @@ INCLUDE(CMakeDependentOption)
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING
       "Choose the type of build, options are: Debug Release RelWithDebInfo" FORCE)
-endif(NOT CMAKE_BUILD_TYPE)
+endif()
 
 if($ENV{VERBOSE})
     MESSAGE(STATUS "Main -- CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}")
+endif()
+
+# Test if inastemp is included as a subproject
+if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
+    set(INASTEMP_AS_SUBPROJECT FALSE)
+else()
+    set(INASTEMP_AS_SUBPROJECT TRUE)
+endif()
+
+if($ENV{VERBOSE})
+    MESSAGE(STATUS "Main -- INASTEMP_AS_SUBPROJECT ${INASTEMP_AS_SUBPROJECT}")
+endif()
+
+# Build only the lib if subproject
+if(NOT DEFINED INASTEMP_JUST_LIB)
+    set(INASTEMP_JUST_LIB ${INASTEMP_AS_SUBPROJECT} CACHE BOOL
+        "Set to on to build the lib for external use (without test and extra flags)" FORCE)
+endif()
+
+if($ENV{VERBOSE})
+    MESSAGE(STATUS "Main -- INASTEMP_JUST_LIB ${INASTEMP_JUST_LIB}")
 endif()
 
 #===========================================================================
@@ -108,29 +129,25 @@ list(GET ALL_USED_TYPES -1 INASTEMP_BESTTYPE )
 SET( INASTEMP_EXTRA_CXX_FLAGS "-funroll-loops" CACHE STRING "These flags are used for all configurations"  )
 set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} ${INASTEMP_EXTRA_CXX_FLAGS}")
 
-SET( INASTEMP_EXTRA_CXX_FLAGS_RELEASE "-O3" CACHE STRING "These flags are added to the usual ones for RELEASE"  )
-set(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} ${INASTEMP_EXTRA_CXX_FLAGS_RELEASE}")
-
-SET( INASTEMP_EXTRA_CXX_FLAGS_DEBUG "-O0" CACHE STRING "These flags are added to the usual ones for DEBUG"  )
-set(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_RELEASE} ${INASTEMP_EXTRA_CXX_FLAGS_DEBUG}")
-
 # Options
-set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -std=c++11 -fpic -Wextra -Wnon-virtual-dtor -Wshadow -Wpointer-arith -Wcast-qual -Wconversion  -Wall -Wno-sign-conversion -pedantic -Woverloaded-virtual -Wpointer-arith -Wcast-qual -Wconversion -Wno-error")
+if(NOT INASTEMP_AS_SUBPROJECT)
+    SET( INASTEMP_EXTRA_CXX_FLAGS_RELEASE "-O3" CACHE STRING "These flags are added to the usual ones for RELEASE"  )
+    set(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} ${INASTEMP_EXTRA_CXX_FLAGS_RELEASE}")
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel" OR ${CMAKE_CXX_COMPILER} MATCHES "icpc.*$")
-    set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -diag-disable 2304 -diag-disable 10120  -diag-disable 10121")
-else()
-    set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -Wold-style-cast")
+    SET( INASTEMP_EXTRA_CXX_FLAGS_DEBUG "-O0" CACHE STRING "These flags are added to the usual ones for DEBUG"  )
+    set(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} ${INASTEMP_EXTRA_CXX_FLAGS_DEBUG}")
+
+    set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -fpic -Wextra -Wnon-virtual-dtor -Wshadow -Wpointer-arith -Wcast-qual -Wconversion  -Wall -Wno-sign-conversion -pedantic -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wcast-qual -Wconversion -Wno-error")
+
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} -m64")
+    endif()
+
+    OPTION( INASTEMP_ATTACHE_SOURCE "Set to on to add -g flag" OFF )
+    if( INASTEMP_ATTACHE_SOURCE )
+        set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} -g")
+    endif(INASTEMP_ATTACHE_SOURCE)
 endif()
-
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} -m64")
-endif()
-
-OPTION( INASTEMP_ATTACHE_SOURCE "Set to on to add -g flag" OFF )
-if( INASTEMP_ATTACHE_SOURCE )
-    set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} -g")
-endif(INASTEMP_ATTACHE_SOURCE)
 
 #===========================================================================
 # Generate config
@@ -160,10 +177,6 @@ if(NOT INASTEMP_JUST_LIB)
     # Build examples
     #===========================================================================
     add_subdirectory(Examples)
-else()
-    if($ENV{VERBOSE})
-        MESSAGE(STATUS "Main -- INASTEMP_JUST_LIB ${INASTEMP_JUST_LIB}")
-    endif()
 endif()
 
 #===========================================================================
@@ -175,13 +188,13 @@ configure_file(${INASTEMP_SOURCE_DIR}/CMakeModules/InastempInfo.cmake.in
 )
 install(FILES  ${INASTEMP_BINARY_DIR}/InastempInfo.cmake  DESTINATION lib/  )
 
-if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
-    # nothing - we are not used by another lib here
-else()
+if(INASTEMP_AS_SUBPROJECT)
     set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS}" PARENT_SCOPE)
     set(INASTEMP_BINARY_DIR  "${INASTEMP_BINARY_DIR}" PARENT_SCOPE)
     set(INASTEMP_SOURCE_DIR  "${INASTEMP_SOURCE_DIR}" PARENT_SCOPE)
     set(INASTEMP_INCLUDE_DIR  "${INASTEMP_INCLUDE_DIR}" PARENT_SCOPE)
+else()
+    # nothing - we are not used by another lib here
 endif()
 
 
