@@ -127,9 +127,13 @@ INCLUDE_DIRECTORIES(
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${INASTEMP_CXX_FLAGS}")
 ```
 
-The statement `set(INASTEMP_JUST_LIB TRUE)` asks inastemp not to compile tests/examples and to limit inclusion of extra warning flags in `INASTEMP_CXX_FLAGS`.
+The statement `set(INASTEMP_JUST_LIB TRUE)` asks Inastemp not to compile tests/examples and to limit inclusion of extra warning flags in `INASTEMP_CXX_FLAGS`.
 The inclusion of Inastemp as a subproject does not modify the variables of the upper project.
 This is why we use the variables `${INASTEMP_CXX_FLAGS}` explicitly to transfer the hardware specific flags.
+
+When Inastemp detects it is included as a subproject, it turns the variable `INASTEMP_AS_SUBPROJECT` to `ON` and minimizes the additional flags.
+As a result, the variable `INASTEMP_CXX_FLAGS` will contain a flag for `C++11` and `-funroll-loops` (from `INASTEMP_EXTRA_CXX_FLAGS`), plus the flags needed for the target instructions.
+Such that, if one wants to compile only some files with these specific flags, it must use `INASTEMP_CXX_FLAGS` carefully.
 
 ### Compilers support
 
