@@ -242,9 +242,10 @@ public:
     // Horizontal operation
     inline float horizontalSum() const {
         const __m128 valupper = _mm256_extractf128_ps(vec, 1);
-        _mm256_zeroupper(); // Could be moved after the _mm256_extractf128_ps
+        const __m128 rest = _mm256_extractf128_ps(vec, 0);
+        _mm256_zeroupper();
         const __m128 valval = _mm_add_ps(valupper,
-                                         _mm256_extractf128_ps(vec, 0));
+                                         rest);
         __m128 valsum = _mm_add_ps(_mm_permute_ps(valval, 0x1B), valval);
         __m128 res    = _mm_add_ps(_mm_permute_ps(valsum, 0xB1), valsum);
         return _mm_cvtss_f32(res);
@@ -252,9 +253,10 @@ public:
 
     inline float horizontalMul() const {
         const __m128 valupper = _mm256_extractf128_ps(vec, 1);
-        _mm256_zeroupper(); // Could be moved after the _mm256_extractf128_ps
+        const __m128 rest = _mm256_extractf128_ps(vec, 0);
+        _mm256_zeroupper();
         const __m128 valval = _mm_mul_ps(valupper,
-                                         _mm256_extractf128_ps(vec, 0));
+                                         rest);
         __m128 valsum = _mm_mul_ps(_mm_permute_ps(valval, 0x1B), valval);
         __m128 res    = _mm_mul_ps(_mm_permute_ps(valsum, 0xB1), valsum);
         return _mm_cvtss_f32(res);

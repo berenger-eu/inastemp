@@ -252,8 +252,9 @@ public:
         __m256d val  = low + high;
 
         const __m128d valupper = _mm256_extractf128_pd(val, 1);
-        _mm256_zeroupper(); // Could be moved after the _mm256_castpd256_pd128
-        const __m128d valval = _mm_add_pd(valupper, _mm256_castpd256_pd128(val));
+        const __m128d rest = _mm256_castpd256_pd128(val);
+        // Not in 512 _mm256_zeroupper();
+        const __m128d valval = _mm_add_pd(valupper, rest);
         const __m128d res    = _mm_add_pd(_mm_permute_pd(valval, 1), valval);
         return _mm_cvtsd_f64(res);
 #endif
@@ -268,8 +269,9 @@ public:
         __m256d val  = low * high;
 
         const __m128d valupper = _mm256_extractf128_pd(val, 1);
-        _mm256_zeroupper(); // Could be moved after the _mm256_castpd256_pd128
-        const __m128d valval = _mm_mul_pd(valupper, _mm256_castpd256_pd128(val));
+        const __m128d rest = _mm256_castpd256_pd128(val);
+        // Not in 512 _mm256_zeroupper();
+        const __m128d valval = _mm_mul_pd(valupper, rest);
         const __m128d res    = _mm_mul_pd(_mm_permute_pd(valval, 1), valval);
         return _mm_cvtsd_f64(res);
 #endif
