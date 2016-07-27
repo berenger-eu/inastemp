@@ -75,7 +75,7 @@ class TestAll : public UTester< TestAll< VecType > > {
     }
 
     bool approxEqual(const double v1, const double v2) {
-        return (std::abs(v1 - v2) / v2) <= 9.999999999999999E-13;
+        return (std::abs(v1 - v2) / v2) <= 9.999999999999999E-12;
     }
 
     bool approxEqualLowAcc(const float v1, const float v2) {
@@ -253,6 +253,8 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxLowAccEqualToArray(VecType(reals).expLowAcc(), expreslowacc);
             approxEqualToArray(VecType(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType(reals).rsqrt(), rsqrtres);
+
+            approxEqualToScalar(VecType(RealType(0)).exp(), std::exp(RealType(0)));
         }
 
         {
