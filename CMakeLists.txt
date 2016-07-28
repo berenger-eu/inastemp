@@ -137,7 +137,7 @@ if(NOT INASTEMP_AS_SUBPROJECT)
     SET( INASTEMP_EXTRA_CXX_FLAGS_DEBUG "-O0" CACHE STRING "These flags are added to the usual ones for DEBUG"  )
     set(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} ${INASTEMP_EXTRA_CXX_FLAGS_DEBUG}")
 
-    set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -fpic -Wextra -Wnon-virtual-dtor -Wshadow -Wpointer-arith -Wcast-qual -Wconversion  -Wall -Wno-sign-conversion -pedantic -Wold-style-cast -Woverloaded-virtual -Wpointer-arith -Wcast-qual -Wconversion -Wno-error")
+    set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -fpic -Wextra -Wnon-virtual-dtor -Wshadow -Wpointer-arith -Wcast-qual -Wconversion  -Wall -Wno-sign-conversion -pedantic -Woverloaded-virtual -Wpointer-arith -Wcast-qual -Wconversion -Wno-error")
 
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} -m64")
@@ -147,6 +147,12 @@ if(NOT INASTEMP_AS_SUBPROJECT)
     if( INASTEMP_ATTACHE_SOURCE )
         set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} -g")
     endif(INASTEMP_ATTACHE_SOURCE)
+endif()
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "icpc.*$")
+  set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -diag-disable 2304 -diag-disable 10121 -diag-disable 10120")
+else()
+  set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -Wold-style-cast")
 endif()
 
 #===========================================================================

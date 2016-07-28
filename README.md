@@ -138,10 +138,17 @@ Such that, if one wants to compile only some files with these specific flags, it
 ### Compilers support
 
 Inastemp was developed and tested using the following compilers on the x86_64 architecture.
-- Gcc 6.1 (earlier versions if AVX512/KNL is not used)
+- Gcc 6.1 (earlier versions if AVX512/KNL is not used, like 4.9)
 - Clang 3.5
 - Intel 16.0
 Earlier versions may work as well.
+
+- Intel special flags
+We pass `-diag-disable 2304 -diag-disable 10121 -diag-disable 10120` to intel compiler to remove the implicit conversion warnings between Inastemp classes.
+In fact, we voluntarily want implicit conversion because it helps us to factorize and reduce the number of lines drastically.
+
+User can add the following flags to push for more inlining `-inline-forceinline -no-inline-max-total-size` for intel compiler.
+However, it looks like such options do not work for several compiler versions, and thus we do not want to add them by default.
 
 ### Multiple hardwares compilation
 
