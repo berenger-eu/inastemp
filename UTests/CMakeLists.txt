@@ -6,9 +6,9 @@ project(UTESTS_INASTEMP C CXX)
 
 ADD_DEFINITIONS(${INASTEMP_CXX_FLAGS})
 
-OPTION( INASTEMP_BILD_UTESTS  "Set to ON to build the unit tests" ON )
+OPTION( INASTEMP_BUILD_UTESTS  "Set to ON to build the unit tests" ON )
 
-if(INASTEMP_BILD_UTESTS)
+if(INASTEMP_BUILD_UTESTS)
     OPTION( INASTEMP_ISDE_UTESTS  "Set to ON to run the unit test over sde64" OFF )
 
     if($ENV{VERBOSE})
