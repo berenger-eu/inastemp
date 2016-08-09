@@ -25,8 +25,11 @@ OPTION( INASTEMP_ISDE_CPU  "Set to ON to run the CPU detection over sde64" OFF )
 
 # Compile and execute the file
 if(INASTEMP_ISDE_CPU)
+    SET( INASTEMP_ISDE_CPU_ARGS "-knl" CACHE STRING "Arguments for sde64"  )
+
     if($ENV{VERBOSE})
     	message(STATUS "GetCpuInfosFile -- use intel SDE")
+    	message(STATUS "GetCpuInfosFile -- INASTEMP_ISDE_CPU_ARGS = ${INASTEMP_ISDE_CPU_ARGS}")
     endif()
     
     get_filename_component(
@@ -47,7 +50,7 @@ if(INASTEMP_ISDE_CPU)
 	        message(FATAL_ERROR "The GetCpuInfosFile compiled file does not exist (${GetCpuInfosFileExec})")
         endif()
 
-        exec_program("sde64 -- ${GetCpuInfosFileExec}" ${CMAKE_CURRENT_BINARY_DIR}
+        exec_program("sde64 ${INASTEMP_ISDE_CPU_ARGS} -- ${GetCpuInfosFileExec}" ${CMAKE_CURRENT_BINARY_DIR}
                 OUTPUT_VARIABLE run
                 RETURN_VALUE RUN_RESULT_VAR)
     endif() 
