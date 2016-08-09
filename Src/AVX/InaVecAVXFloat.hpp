@@ -81,28 +81,38 @@ public:
 
     // Double args methods
     inline static InaVecMaskAVX And(const InaVecMaskAVX& inMask1, const InaVecMaskAVX& inMask2){
-        return InaVecMaskAVX(_mm256_and_si256(inMask1.mask, inMask2.mask));
+        // AVX2 return InaVecMaskAVX(_mm256_and_si256(inMask1.mask, inMask2.mask));
+        return InaVecMaskAVX(_mm256_castps_si256(_mm256_and_ps(_mm256_castsi256_ps(inMask1.mask),
+                             _mm256_castsi256_ps(inMask2.mask))));
     }
 
     inline static InaVecMaskAVX NotAnd(const InaVecMaskAVX& inMask1, const InaVecMaskAVX& inMask2){
-        return InaVecMaskAVX(_mm256_andnot_si256(inMask1.mask, inMask2.mask));
+        // AVX2 return InaVecMaskAVX(_mm256_andnot_si256(inMask1.mask, inMask2.mask));
+        return InaVecMaskAVX(_mm256_castps_si256(_mm256_andnot_ps(_mm256_castsi256_ps(inMask1.mask),
+                             _mm256_castsi256_ps(inMask2.mask))));
     }
 
     inline static InaVecMaskAVX Or(const InaVecMaskAVX& inMask1, const InaVecMaskAVX& inMask2){
-        return InaVecMaskAVX(_mm256_or_si256(inMask1.mask, inMask2.mask));
+        // AVX2 return InaVecMaskAVX(_mm256_or_si256(inMask1.mask, inMask2.mask));
+        return InaVecMaskAVX(_mm256_castps_si256(_mm256_or_ps(_mm256_castsi256_ps(inMask1.mask),
+                             _mm256_castsi256_ps(inMask2.mask))));
     }
 
     inline static InaVecMaskAVX Xor(const InaVecMaskAVX& inMask1, const InaVecMaskAVX& inMask2){
-        return InaVecMaskAVX(_mm256_xor_si256(inMask1.mask, inMask2.mask));
+        // AVX2 return InaVecMaskAVX(_mm256_xor_si256(inMask1.mask, inMask2.mask));
+        return InaVecMaskAVX(_mm256_castps_si256(_mm256_xor_ps(_mm256_castsi256_ps(inMask1.mask),
+                             _mm256_castsi256_ps(inMask2.mask))));
     }
 
     inline static bool IsEqual(const InaVecMaskAVX& inMask1, const InaVecMaskAVX& inMask2){
-        return _mm256_testz_si256(_mm256_xor_si256(inMask1.mask, inMask2.mask),
+        return _mm256_testz_si256(_mm256_castps_si256(_mm256_xor_ps(_mm256_castsi256_ps(inMask1.mask),
+                                                                    _mm256_castsi256_ps(inMask2.mask))),
                                    _mm256_set1_epi32(static_cast<int>(0xFFFFFFFF))); // return CF
     }
 
     inline static bool IsNotEqual(const InaVecMaskAVX& inMask1, const InaVecMaskAVX& inMask2){
-        return !_mm256_testz_si256(_mm256_xor_si256(inMask1.mask, inMask2.mask),
+        return !_mm256_testz_si256(_mm256_castps_si256(_mm256_xor_ps(_mm256_castsi256_ps(inMask1.mask),
+                                                                     _mm256_castsi256_ps(inMask2.mask))),
                                    _mm256_set1_epi32(static_cast<int>(0xFFFFFFFF))); // return CF
     }
 };
