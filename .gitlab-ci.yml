@@ -48,7 +48,6 @@ inastempsdep4:
     - make test
   tags:
     - sde
-    - p4
 
 inastempsdep4p:
   script:
@@ -59,7 +58,26 @@ inastempsdep4p:
     - make test
   tags:
     - sde
-    - p4p
+
+inastempsdemrm:
+  script:
+    - mkdir build
+    - cd build
+    - VERBOSE=1 cmake -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_ISDE_CPU_ARGS="-mrm" -DINASTEMP_ISDE_UTESTS_ARGS="-mrm" -DARCH_NATIVE_FLAG="" ..
+    - make
+    - make test
+  tags:
+    - sde
+
+inastempsdepnr:
+  script:
+    - mkdir build
+    - cd build
+    - VERBOSE=1 cmake -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_ISDE_CPU_ARGS="-pnr" -DINASTEMP_ISDE_UTESTS_ARGS="-pnr" -DARCH_NATIVE_FLAG="" ..
+    - make
+    - make test
+  tags:
+    - sde
 
 inastempsdenhm:
   script:
@@ -70,7 +88,6 @@ inastempsdenhm:
     - make test
   tags:
     - sde
-    - nhm
 
 inastempsdewsm:
   script:
@@ -81,7 +98,6 @@ inastempsdewsm:
     - make test
   tags:
     - sde
-    - wsm
 
 inastempsdesnb:
   script:
@@ -92,7 +108,6 @@ inastempsdesnb:
     - make test
   tags:
     - sde
-    - snb
 
 inastempsdewsm:
   script:
@@ -103,7 +118,6 @@ inastempsdewsm:
     - make test
   tags:
     - sde
-    - ivb
 
 inastempsdehsw:
   script:
@@ -114,4 +128,3 @@ inastempsdehsw:
     - make test
   tags:
     - sde
-    - hsw
