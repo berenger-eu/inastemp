@@ -39,16 +39,6 @@ inastempgcc49:
   tags:
     - gcc49
 
-inastempsdep4:
-  script:
-    - mkdir build
-    - cd build
-    - VERBOSE=1 cmake -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_ISDE_CPU_ARGS="-p4" -DINASTEMP_ISDE_UTESTS_ARGS="-p4" -DARCH_NATIVE_FLAG="" ..
-    - make
-    - make test
-  tags:
-    - sde
-
 inastempsdep4p:
   script:
     - mkdir build
