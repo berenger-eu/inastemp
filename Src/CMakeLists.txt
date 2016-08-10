@@ -19,12 +19,16 @@ file(
 )
 FOREACH(hpp_file ${hpp_in_dir})	
     file(RELATIVE_PATH relative_hpp_file ${CMAKE_CURRENT_SOURCE_DIR} ${hpp_file})
-    INSTALL( FILES ${hpp_file} DESTINATION include/${relative_hpp_file} )
+    if(INASTEMP_DO_INSTALL)
+        INSTALL( FILES ${hpp_file} DESTINATION include/${relative_hpp_file} )
+    endif()
 
     if($ENV{VERBOSE})
         MESSAGE(STATUS "Src -- Add ${relative_hpp_file}")
     endif()
 ENDFOREACH()
 
-INSTALL( FILES "${INASTEMP_BINARY_DIR}/Src/InastempConfig.h" DESTINATION include/Src )
+if(INASTEMP_DO_INSTALL)
+    INSTALL( FILES "${INASTEMP_BINARY_DIR}/Src/InastempConfig.h" DESTINATION include/Src )
+endif()
 

@@ -50,8 +50,14 @@ if(NOT DEFINED INASTEMP_JUST_LIB)
         "Set to on to build the lib for external use (without test and extra flags)" FORCE)
 endif()
 
+if(NOT DEFINED INASTEMP_DO_INSTALL)
+    set(INASTEMP_DO_INSTALL OFF CACHE BOOL
+        "Set to on to install the headers file of inastemp" FORCE)
+endif()
+
 if($ENV{VERBOSE})
     MESSAGE(STATUS "Main -- INASTEMP_JUST_LIB ${INASTEMP_JUST_LIB}")
+    MESSAGE(STATUS "Main -- INASTEMP_DO_INSTALL ${INASTEMP_DO_INSTALL}")
 endif()
 
 #===========================================================================
@@ -192,7 +198,9 @@ configure_file(${INASTEMP_SOURCE_DIR}/CMakeModules/InastempInfo.cmake.in
     ${INASTEMP_BINARY_DIR}/InastempInfo.cmake
     @ONLY IMMEDIATE
 )
-install(FILES  ${INASTEMP_BINARY_DIR}/InastempInfo.cmake  DESTINATION lib/  )
+if(INASTEMP_DO_INSTALL)
+    install(FILES  ${INASTEMP_BINARY_DIR}/InastempInfo.cmake  DESTINATION lib/  )
+endif()
 
 if(INASTEMP_AS_SUBPROJECT)
     set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS}" PARENT_SCOPE)
