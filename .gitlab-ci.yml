@@ -5,6 +5,8 @@ inastemp:
     - VERBOSE=1 cmake ..
     - make
     - make test
+  tags:
+    - default
 
 inastempsde:
   script:
@@ -13,6 +15,8 @@ inastempsde:
     - VERBOSE=1 cmake -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_USE_AVX512KNL=ON ..
     - make
     - make test
+  tags:
+    - sde
 
 inastempclang:
   script:
@@ -21,6 +25,8 @@ inastempclang:
     - VERBOSE=1 CC=clang-3.5 CXX=clang++-3.5 cmake ..
     - make
     - make test
+  tags:
+    - clang
 
 inastempclangsde:
   script:
@@ -29,6 +35,9 @@ inastempclangsde:
     - VERBOSE=1 CC=clang-3.5 CXX=clang++-3.5 cmake  -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_USE_AVX512KNL=ON ..
     - make
     - make test
+  tags:
+    - clang
+    - sde
 
 inastempgcc49:
   script:
@@ -37,3 +46,5 @@ inastempgcc49:
     - VERBOSE=1 CC=gcc-4.9 CXX=g++-4.9 cmake ..
     - make
     - make test
+  tags:
+    - gcc49
