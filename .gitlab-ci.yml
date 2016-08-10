@@ -8,16 +8,6 @@ inastemp:
   tags:
     - default
 
-inastempsde:
-  script:
-    - mkdir build
-    - cd build
-    - VERBOSE=1 cmake -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_USE_AVX512KNL=ON ..
-    - make
-    - make test
-  tags:
-    - sde
-
 inastempclang:
   script:
     - mkdir build
@@ -48,3 +38,80 @@ inastempgcc49:
     - make test
   tags:
     - gcc49
+
+inastempsdep4:
+  script:
+    - mkdir build
+    - cd build
+    - VERBOSE=1 cmake -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_ISDE_CPU_ARGS="-p4" -DINASTEMP_ISDE_UTESTS_ARGS="-p4" -DARCH_NATIVE_FLAG="" ..
+    - make
+    - make test
+  tags:
+    - sde
+    - p4
+
+inastempsdep4p:
+  script:
+    - mkdir build
+    - cd build
+    - VERBOSE=1 cmake -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_ISDE_CPU_ARGS="-p4p" -DINASTEMP_ISDE_UTESTS_ARGS="-p4p" -DARCH_NATIVE_FLAG="" ..
+    - make
+    - make test
+  tags:
+    - sde
+    - p4p
+
+inastempsdenhm:
+  script:
+    - mkdir build
+    - cd build
+    - VERBOSE=1 cmake -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_ISDE_CPU_ARGS="-nhm" -DINASTEMP_ISDE_UTESTS_ARGS="-nhm" -DARCH_NATIVE_FLAG="" ..
+    - make
+    - make test
+  tags:
+    - sde
+    - nhm
+
+inastempsdewsm:
+  script:
+    - mkdir build
+    - cd build
+    - VERBOSE=1 cmake -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_ISDE_CPU_ARGS="-wsm" -DINASTEMP_ISDE_UTESTS_ARGS="-wsm" -DARCH_NATIVE_FLAG="" ..
+    - make
+    - make test
+  tags:
+    - sde
+    - wsm
+
+inastempsdesnb:
+  script:
+    - mkdir build
+    - cd build
+    - VERBOSE=1 cmake -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_ISDE_CPU_ARGS="-snb" -DINASTEMP_ISDE_UTESTS_ARGS="-snb" -DARCH_NATIVE_FLAG="" ..
+    - make
+    - make test
+  tags:
+    - sde
+    - snb
+
+inastempsdewsm:
+  script:
+    - mkdir build
+    - cd build
+    - VERBOSE=1 cmake -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_ISDE_CPU_ARGS="-ivb" -DINASTEMP_ISDE_UTESTS_ARGS="-ivb" -DARCH_NATIVE_FLAG="" ..
+    - make
+    - make test
+  tags:
+    - sde
+    - ivb
+
+inastempsdehsw:
+  script:
+    - mkdir build
+    - cd build
+    - VERBOSE=1 cmake -DINASTEMP_ISDE_CPU=ON -DINASTEMP_ISDE_UTESTS=ON -DINASTEMP_ISDE_CPU_ARGS="-hsw" -DINASTEMP_ISDE_UTESTS_ARGS="-hsw" -DARCH_NATIVE_FLAG="" ..
+    - make
+    - make test
+  tags:
+    - sde
+    - hsw
