@@ -274,7 +274,7 @@ void HandVectorizedFunctionSSE3(const size_t nbParticles, const double* __restri
             const __m128d distance = _mm_sqrt_pd(dx*dx + dy*dy + dz*dz);
             const __m128d inv_distance = VecOne/distance;
 
-            const __m128d testRes = _mm_cmp_pd(distance, VecCutDistance, _CMP_LT_OQ);
+            const __m128d testRes = _mm_cmplt_pd(distance, VecCutDistance);
 
             const __m128d sourcesPhysicalValue = _mm_loadu_pd(&physicalValues[idxSource]);
 
@@ -340,7 +340,7 @@ void HandVectorizedFunctionSSE3(const size_t nbParticles, const float* __restric
             const __m128 distance = _mm_sqrt_ps(dx*dx + dy*dy + dz*dz);
             const __m128 inv_distance = VecOne/distance;
 
-            const __m128 testRes = _mm_cmp_ps(distance, VecCutDistance, _CMP_LT_OQ);
+            const __m128 testRes = _mm_cmplt_ps(distance, VecCutDistance);
 
             const __m128 sourcesPhysicalValue = _mm_loadu_ps(&physicalValues[idxSource]);
 
