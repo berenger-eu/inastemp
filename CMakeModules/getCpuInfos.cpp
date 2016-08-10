@@ -63,7 +63,7 @@ enum RegistersNum {
 
 
 //  GCC Inline Assembly but with the same prototype as windows
-void cpuid(unsigned int CPUInfo[4],int InfoTypeEax, int InfoTypeEcx){
+void cpuid(unsigned int CPUInfo[4],unsigned int InfoTypeEax, unsigned int InfoTypeEcx){
     __asm__ __volatile__ (
         "cpuid":            // Execute this instruction
         "=a" (CPUInfo[EaxRegister]),  // Store eax in 0
@@ -128,15 +128,15 @@ std::list<CpuProperty> getProperties(){
     // Basic CPUID Information
     cpuid(info, 0, 0);
     // The largest CPUID standard-function input value supported by the processor implementation.
-    const int limitStandardFunction = info[EaxRegister];
+    const unsigned int limitStandardFunction = info[EaxRegister];
 
     // Extended Function CPUID Information
     cpuid(info, 0x80000000U, 0);
     // The largest CPUID extended-function input value supported by the processor implementation
-    unsigned int limitExtendedFunction = info[EaxRegister];
+    const unsigned int limitExtendedFunction = info[EaxRegister];
 
 	//  Detect Instruction Set
-    if (limitStandardFunction >= 1){
+    if (limitStandardFunction >= 0x1U){
         cpuid(info,0x00000001U, 0); // Basic CPUID Information
         /*
         0x00000001 - EDX :
@@ -244,7 +244,7 @@ std::list<CpuProperty> getProperties(){
         properties.push_back(CpuProperty("FMA3", CPUInfoGetECX(info, 12)));
 	}
 
-    if (limitExtendedFunction >= 0x80000001U){
+    if (limitExtendedFunction >= 0x80000004U){
         cpuid(info,0x80000001U, 0); // Extended Function CPUID Information
         /*
         0x80000001 - EDX :
@@ -309,7 +309,7 @@ std::list<CpuProperty> getProperties(){
         properties.push_back(CpuProperty("XOP", CPUInfoGetECX(info, 11)));
 	}
 
-    if (limitExtendedFunction >= 0x00000007U){
+    if (/*limitExtendedFunction >= 0x80000008U*/ limitStandardFunction > 0x6U){
         cpuid(info,0x00000007U, 0); // Extended Function CPUID Information
         /*
         0x00000007 - EBX
