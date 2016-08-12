@@ -354,7 +354,7 @@ public:
 
     inline InaVecAVX512KNL rsqrt() const {
         // _mm512_rsqrt28_pd(vec) => 1E-10 error
-        return 1 / _mm512_sqrt_pd(vec);
+        return _mm512_set1_pd(1) / _mm512_sqrt_pd(vec);
     }
 
     inline InaVecAVX512KNL abs() const {
