@@ -49,7 +49,7 @@ Template C++ source-code                           Compiled Template C++ code
 ## Features of Inastemp
 
 - The following x86 SIMD types are currently supported:
-    - SSE3, SSSE3, SSE4.1, SSE4.2, AVX, AVX2, AVX512-KNL
+    - SSE3, SSSE3, SSE4.1, SSE4.2, AVX, AVX2, AVX512-KNL, AVX512-SKL
 - arithmetic operators `*/+-` are provided
 - CPU capacities are detected automatically during the CMake stage
 - The compiler capacities are detected automatically during the CMake stage
@@ -96,13 +96,14 @@ For example, here is a part of the output of the `ccmake ..` command on a AVX2 C
  INASTEMP_USE_AVX                 ON
  INASTEMP_USE_AVX2                ON
  INASTEMP_USE_AVX512KNL           OFF
+ INASTEMP_USE_AVX512SKL           OFF
  INASTEMP_USE_SSE3                ON
  INASTEMP_USE_SSE41               ON
  INASTEMP_USE_SSE42               ON
  INASTEMP_USE_SSSE3               ON
 ```
 
-`AVX512KNL` is supported by the compiler but not by the hardware, so it is turned `OFF` but could be turn to `ON` if needed.
+`AVX512KNL` and `AVX512SKL` are supported by the compiler but not by the hardware, so they are turned `OFF` but could be turn to `ON` if needed.
 
 By turning the cmake variable `INASTEMP_ISDE_CPU` to `ON` the hardware detection is done over intel SDE.
 In this case, one can ask Inastemp to check any hardware (passing the appropriate options to isde).
@@ -138,7 +139,7 @@ Such that, if one wants to compile only some files with these specific flags, it
 ### Compilers support
 
 Inastemp was developed and tested using the following compilers on the x86_64 architecture.
-- Gcc 6.1 (earlier versions if AVX512/KNL is not used, like 4.9)
+- Gcc 6.1 (earlier versions if AVX512/KNL/SKL are not used, like 4.9)
 - Clang 3.5
 - Intel 16.0
 Earlier versions may work as well.

@@ -2,17 +2,17 @@
 // Inastemp - Berenger Bramas MPCDF - 2016
 // Under MIT Licence, please you must read the LICENCE file.
 ///////////////////////////////////////////////////////////////////////////
-#ifndef INAVECAVX512KNLFLOAT_HPP
-#define INAVECAVX512KNLFLOAT_HPP
+#ifndef INAVECAVX512SKLDOUBLE_HPP
+#define INAVECAVX512SKLDOUBLE_HPP
 
 #include "InastempConfig.h"
-#include "InaAVX512KNLOperators.hpp"
+#include "InaAVX512SKLOperators.hpp"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
-#include "AVX512COMMON/InaVecAVX512COMMONFloat.hpp"
+#include "AVX512COMMON/InaVecAVX512COMMONDouble.hpp"
 
-#ifndef INASTEMP_USE_AVX512KNL
-#error InaVecAVX512KNL512KNL<float> is included but AVX512KNL is not enable in the configuration
+#ifndef INASTEMP_USE_AVX512SKL
+#error InaVecAVX512SKL<double> is included but AVX512SKL is not enable in the configuration
 #endif
 
 #include "Common/InaFastExp.hpp"
@@ -23,10 +23,10 @@
 
 // Forward declarations
 template <class RealType>
-using InaVecMaskAVX512KNL = InaVecMaskAVX512COMMON<RealType>;
+using InaVecMaskAVX512SKL = InaVecMaskAVX512COMMON<RealType>;
 
 template <class RealType>
-using InaVecAVX512KNL = InaVecAVX512COMMON<RealType>;
+using InaVecAVX512SKL = InaVecAVX512COMMON<RealType>;
 
 
 
