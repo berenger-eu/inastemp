@@ -15,13 +15,7 @@ int main(){
         __m512 res0, res1;
         res0 = _mm512_add_ps(res0, res1);
 
-        // For knl only
-        // pf
-        {
-            int base_addr;
-            __m512i vindex;
-            _mm512_prefetch_i64scatter_ps (&base_addr, vindex, 1, _MM_HINT_T0);
-        }
+        // For skl only
         // er
         {
             __m512d src;
@@ -33,6 +27,22 @@ int main(){
         {
             __mmask8 k;
             __m512i tmp = _mm512_broadcastmb_epi64 (k);
+        }
+        // vl
+        {
+            __m128i a;
+            __m128i tmp = _mm_abs_epi64 (a);
+        }
+        // bw
+        {
+            __m512i a;
+            __m512i b;
+            __m512i tmp = _mm512_add_epi8 ( a, b);
+        }
+        // vq
+        {            
+            __m128d a;
+            __m512d tmp = _mm512_broadcast_f64x2 (a);
         }
 	return 0;
 }
