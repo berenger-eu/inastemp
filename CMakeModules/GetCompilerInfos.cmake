@@ -47,14 +47,21 @@ macro(GetCompilerInfos)
 # (ADD-NEW-HERE for each compilers)
 if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
     # POWERPC
-    SET( ARCH_NATIVE_FLAG "-mcpu=native" CACHE STRING "Additional flag for the compiler capacities detection such as -mcpu=power8 for example"  )
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        SET( ARCH_NATIVE_FLAG "-mcpu=pwr8" CACHE STRING "Additional flag for the compiler capacities detection such as -mcpu=power8 for example"  )
+        set(ALTIVEC_FLAGS "-faltivec ${ARCH_NATIVE_FLAG}")
 
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "XL" OR CMAKE_CXX_COMPILER_ID STREQUAL "VisualAge" OR CMAKE_CXX_COMPILER_ID STREQUAL "zOS")
-        set(ALTIVEC_FLAGS "-mcpu=pwr8 -qaltivec ${ARCH_NATIVE_FLAG}")
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "XL" OR CMAKE_CXX_COMPILER_ID STREQUAL "VisualAge" OR CMAKE_CXX_COMPILER_ID STREQUAL "zOS")
+        SET( ARCH_NATIVE_FLAG "-qarch=pwr8" CACHE STRING "Additional flag for the compiler capacities detection such as -mcpu=power8 for example"  )
+        set(ALTIVEC_FLAGS "-qaltivec ${ARCH_NATIVE_FLAG}")
+
     else()
+        SET( ARCH_NATIVE_FLAG "-mcpu=native" CACHE STRING "Additional flag for the compiler capacities detection such as -mcpu=power8 for example"  )
         set(ALTIVEC_FLAGS "-maltivec -mabi=altivec -mvsx ${ARCH_NATIVE_FLAG}")
     endif()
+
     set(ALL_TYPES "ALTIVEC")
+
 else()
     # X86
     SET( ARCH_NATIVE_FLAG "-march=native" CACHE STRING "Additional flag for the compiler capacities detection"  )
