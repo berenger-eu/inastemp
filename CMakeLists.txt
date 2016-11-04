@@ -72,32 +72,53 @@ set(INASTEMP_VERSION  "${INASTEMP_MAJOR_VERSION}.${INASTEMP_MINOR_VERSION}.${INA
 #===========================================================================
 # Options
 #===========================================================================
-#  Ask CPU capacities
-include(GetCpuInfos)
-GetCpuInfos()
+if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
+    if($ENV{VERBOSE})
+        MESSAGE(STATUS "Main -- compile for ppc64le architecture")
+    endif()
 
-#  Ask compiler capacities
-include(GetCompilerInfos)
-GetCompilerInfos()
+    #  Ask compiler capacities
+    include(GetCompilerInfos)
+    GetCompilerInfos()
 
-# All types from worse to best (ADD-NEW-HERE)
-set(ALL_TYPES "SSE3;SSSE3;SSE41;SSE42;AVX;AVX2;AVX512COMMON;AVX512KNL;AVX512SKL")
-set(INASTEMP_USE_SCALAR ON)
-set(INASTEMP_CXX_FLAGS "-std=c++11")
+    # All types from worse to best (ADD-NEW-HERE)
+    set(ALL_TYPES "ALTIVEC")
+    set(ALTIVEC_CPU_RULES "")
 
-# Set custom cpu <=> vec rules (maybe ADD-NEW-HERE if needed)
-set(AVX512COMMON_CPU_RULES "AVX512F;AVX512ER")
-set(AVX512KNL_CPU_RULES "AVX512F;AVX512ER;AVX512PF")
-set(AVX512SKL_CPU_RULES "AVX512F;AVX512ER;AVX512VL;AVX512BW;AVX512DQ")
+    set(ALL_USED_TYPES "SCALAR")
+    set(INASTEMP_USE_SCALAR ON)
+    set(INASTEMP_CXX_FLAGS "-std=c++11")
+else()
+    if($ENV{VERBOSE})
+        MESSAGE(STATUS "Main -- compile for x86 architecture")
+    endif()
+    #  Ask CPU capacities
+    include(GetCpuInfos)
+    GetCpuInfos()
+
+    #  Ask compiler capacities
+    include(GetCompilerInfos)
+    GetCompilerInfos()
+
+    # All types from worse to best (ADD-NEW-HERE)
+    set(ALL_TYPES "SSE3;SSSE3;SSE41;SSE42;AVX;AVX2;AVX512COMMON;AVX512KNL;AVX512SKL")
+    set(INASTEMP_USE_SCALAR ON)
+    set(INASTEMP_CXX_FLAGS "-std=c++11")
+
+    # Set custom cpu <=> vec rules (maybe ADD-NEW-HERE if needed)
+    set(AVX512COMMON_CPU_RULES "AVX512F;AVX512ER")
+    set(AVX512KNL_CPU_RULES "AVX512F;AVX512ER;AVX512PF")
+    set(AVX512SKL_CPU_RULES "AVX512F;AVX512ER;AVX512VL;AVX512BW;AVX512DQ")
 
 
-# Dependencies between types (maybe ADD-NEW-HERE if needed)
-set(SSSE3_DEP "SSE3")
-set(SSE41_DEP "SSSE3")
-set(SSE42_DEP "SSE41")
-set(AVX2_DEP "AVX")
-set(AVX512KNL_DEP "AVX512COMMON")
-set(AVX512SKL_DEP "AVX512COMMON")
+    # Dependencies between types (maybe ADD-NEW-HERE if needed)
+    set(SSSE3_DEP "SSE3")
+    set(SSE41_DEP "SSSE3")
+    set(SSE42_DEP "SSE41")
+    set(AVX2_DEP "AVX")
+    set(AVX512KNL_DEP "AVX512COMMON")
+    set(AVX512SKL_DEP "AVX512COMMON")
+endif()
 
 # Enforce rules
 set(ALL_TYPES_REVERSE ${ALL_TYPES})
