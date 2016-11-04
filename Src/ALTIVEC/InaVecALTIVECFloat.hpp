@@ -95,7 +95,7 @@ public:
     }
 
     inline static InaVecMaskALTIVEC NotAnd(const InaVecMaskALTIVEC& inMask1, const InaVecMaskALTIVEC& inMask2){
-        return InaVecMaskALTIVEC(vec_nand(inMask1.mask, inMask2.mask));
+        return InaVecMaskALTIVEC(vec_and(vec_nand(inMask1.mask,inMask1.mask), inMask2.mask));
     }
 
     inline static InaVecMaskALTIVEC Or(const InaVecMaskALTIVEC& inMask1, const InaVecMaskALTIVEC& inMask2){
@@ -521,7 +521,7 @@ public:
     }
 
     inline static InaVecALTIVEC IfFalse(const InaVecMaskALTIVEC<float>& inMask, const InaVecALTIVEC& inIfFalse) {
-        return vec_nand(reinterpret_cast<__vector float>(inMask.getMask()), inIfFalse.vec);
+        return vec_and(vec_nand(inMask.getMask(),inMask.getMask()), inIfFalse.vec);
     }
 
     // Inner operators
