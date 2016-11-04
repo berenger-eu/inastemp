@@ -62,12 +62,12 @@ public:
     // Bool data type compatibility
     inline explicit InaVecMaskALTIVEC(const bool inBool){
         const __vector __bool long long tmpMaskFF = reinterpret_cast<__vector __bool long long>(vec_splats(0xFFFFFFFFFFFFFFFFUL));
-        mask = (inBool? tmpMaskFF : vec_xor(mask, mask));
+        mask = (inBool? tmpMaskFF : vec_xor(tmpMaskFF, tmpMaskFF));
     }
 
     inline InaVecMaskALTIVEC& operator=(const bool inBool){
         const __vector __bool long long tmpMaskFF = reinterpret_cast<__vector __bool long long>(vec_splats(0xFFFFFFFFFFFFFFFFUL));
-        mask = (inBool? tmpMaskFF : vec_xor(mask, mask));
+        mask = (inBool? tmpMaskFF : vec_xor(tmpMaskFF, tmpMaskFF));
         return (*this);
     }
 
@@ -196,23 +196,52 @@ public:
 
     // Constructor from vec
     inline explicit InaVecALTIVEC(const double ptr[]){
+        // TODO use vec_xld2
         vec = vec_xl(0, ptr); 
+        // TODO if little indian
+        __vector unsigned char perm2301 = {0x8U, 0x9U, 0xAU, 0xBU, 0xCU, 0xDU, 0xEU, 0xFU,
+                                                0x0U, 0x1U, 0x2U, 0x3U, 0x4U, 0x5U, 0x6U, 0x7U};
+        vec = vec_perm( vec, vec, perm2301);
     }
 
     inline InaVecALTIVEC& setFromArray(const double ptr[]){
+        // TODO use vec_xld2
         vec = vec_xl(0, ptr); 
+        // TODO if little indian
+        __vector unsigned char perm2301 = {0x8U, 0x9U, 0xAU, 0xBU, 0xCU, 0xDU, 0xEU, 0xFU,
+                                                0x0U, 0x1U, 0x2U, 0x3U, 0x4U, 0x5U, 0x6U, 0x7U};
+        vec = vec_perm( vec, vec, perm2301);
         return *this;
     }
 
     inline InaVecALTIVEC& setFromAlignedArray(const double ptr[]){
-        vec = reinterpret_cast<__vector double>(vec_ld(0, reinterpret_cast<const unsigned long*>(ptr)));
+        // TODO use vec_ld
+        vec = vec_xl(0, ptr); 
+        // TODO if little indian
+        __vector unsigned char perm2301 = {0x8U, 0x9U, 0xAU, 0xBU, 0xCU, 0xDU, 0xEU, 0xFU,
+                                                0x0U, 0x1U, 0x2U, 0x3U, 0x4U, 0x5U, 0x6U, 0x7U};
+        vec = vec_perm( vec, vec, perm2301);
         return *this;
+    }
+
+    static void print(__vector double val){ // TODO remove
+        for(int idx = 0 ; idx < 2 ; idx++){
+            printf("[%d] %lf\n", idx, vec_extract(val, idx));
+        }
+        printf("\n");
+    }
+
+    static void print(__vector unsigned char val){ // TODO remove
+        for(int idx = 0 ; idx < 16 ; idx++){
+            printf("[%d] %i\n", idx, (int)vec_extract(val, idx));
+        }
+        printf("\n");
     }
 
     inline InaVecALTIVEC& setFromIndirectArray(const double values[], const int inIndirection[]) {
         alignas(16) const std::array<double, 2> tmp = {{ 
-                            values[inIndirection[1]],
-                            values[inIndirection[0]]}};
+                            values[inIndirection[0]],
+                            values[inIndirection[1]]}};
         vec = reinterpret_cast<__vector double>(vec_ld(0, reinterpret_cast<const unsigned long*>(&tmp[0])));
         return *this;
     }
@@ -220,8 +249,8 @@ public:
     inline InaVecALTIVEC& setFromIndirect2DArray(const double inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
         alignas(16) const std::array<double, 2> tmp = {{ 
-                            inArray[inIndirection1[1] * inLeadingDimension + inIndirection2[1]],
-                            inArray[inIndirection1[0] * inLeadingDimension + inIndirection2[0]]}};
+                            inArray[inIndirection1[0] * inLeadingDimension + inIndirection2[0]],
+                            inArray[inIndirection1[1] * inLeadingDimension + inIndirection2[1]]}};
         vec = reinterpret_cast<__vector double>(vec_ld(0, reinterpret_cast<const unsigned long*>(&tmp[0])));
         return *this;
     }
@@ -229,8 +258,11 @@ public:
     // Move back to array
     inline void storeInArray(double ptr[]) const {
         // TODO it will fail (indian problem)
-        // We consider that ptr is aligned on sizeof(double)
-        vec_ste( reinterpret_cast<__vector unsigned int>(vec), 0, reinterpret_cast<unsigned int*>(ptr));
+        // TODO use vec_ste
+        alignas(16) double tmpptr[2];
+        vec_st( reinterpret_cast<__vector unsigned int>(vec), 0, reinterpret_cast<unsigned int*>(tmpptr));
+        ptr[0] = tmpptr[0];
+        ptr[1] = tmpptr[1];
     }
 
     inline void storeInAlignedArray(double ptr[]) const {
@@ -245,15 +277,17 @@ public:
 
     // Horizontal operation
     inline double horizontalSum() const {
-        __vector unsigned long perm2301 = {0x08090A0B0C0D0E0FU, 0x0001020304050607U};
-        __vector double res = vec_add(vec, vec_perm( vec, vec,  reinterpret_cast<__vector unsigned char>(perm2301)));
+        __vector unsigned char perm2301 = {0x8U, 0x9U, 0xAU, 0xBU, 0xCU, 0xDU, 0xEU, 0xFU,
+                                                0x0U, 0x1U, 0x2U, 0x3U, 0x4U, 0x5U, 0x6U, 0x7U};
+        __vector double res = vec_add(vec, vec_perm( vec, vec,  perm2301));
         return vec_extract(res, 0);
     }
 
     inline double horizontalMul() const {
         // Does vec_xxmadd could be faster
-        __vector unsigned long perm2301 = {0x08090A0B0C0D0E0FU, 0x0001020304050607U};
-        __vector double res = vec_mul(vec, vec_perm( vec, vec,  reinterpret_cast<__vector unsigned char>(perm2301)));
+        __vector unsigned char perm2301 = {0x8U, 0x9U, 0xAU, 0xBU, 0xCU, 0xDU, 0xEU, 0xFU,
+                                                0x0U, 0x1U, 0x2U, 0x3U, 0x4U, 0x5U, 0x6U, 0x7U};
+        __vector double res = vec_mul(vec, vec_perm( vec, vec, perm2301));
         return vec_extract(res, 0);
     }
 
@@ -331,30 +365,30 @@ public:
     inline InaVecALTIVEC signOf() const {
         const __vector double minus0 = reinterpret_cast<__vector double>(vec_splats(0x8000000000000000UL));
         const __vector double signs  = vec_and(vec, minus0);
-        return vec_nand(reinterpret_cast<__vector double>(vec_cmpeq(vec_splats(0.), vec)),
-                             vec_or(signs, vec_splats(1.)));
+        const __vector double ge0  = reinterpret_cast<__vector double>(vec_cmpeq(vec_splats(0.), vec));
+        return vec_and(vec_nand(ge0,ge0), vec_or(signs, vec_splats(1.)));
     }
 
     inline InaVecALTIVEC isPositive() const {
-        const __vector double testResult = reinterpret_cast<__vector double>(vec_cmpgt(vec, vec_splats(0.)));
-        const __vector double ones       = vec_splats(1.);
-        return vec_and(testResult, ones);
-    }
-
-    inline InaVecALTIVEC isNegative() const {
         const __vector double testResult = reinterpret_cast<__vector double>(vec_cmpge(vec, vec_splats(0.)));
         const __vector double ones       = vec_splats(1.);
         return vec_and(testResult, ones);
     }
 
+    inline InaVecALTIVEC isNegative() const {
+        const __vector double testResult = reinterpret_cast<__vector double>(vec_cmpge(vec_splats(0.), vec));
+        const __vector double ones       = vec_splats(1.);
+        return vec_and(testResult, ones);
+    }
+
     inline InaVecALTIVEC isPositiveStrict() const {
-        const __vector double testResult = reinterpret_cast<__vector double>(vec_cmpgt(vec_splats(0.), vec));
+        const __vector double testResult = reinterpret_cast<__vector double>(vec_cmpgt(vec, vec_splats(0.)));
         const __vector double ones       = vec_splats(1.);
         return vec_and(testResult, ones);
     }
 
     inline InaVecALTIVEC isNegativeStrict() const {
-        const __vector double testResult = reinterpret_cast<__vector double>(vec_cmpge(vec_splats(0.), vec));
+        const __vector double testResult = reinterpret_cast<__vector double>(vec_cmpgt(vec_splats(0.), vec));
         const __vector double ones       = vec_splats(1.);
         return vec_and(testResult, ones);
     }
@@ -368,19 +402,19 @@ public:
     inline InaVecALTIVEC isNotZero() const {
         const __vector double testResult = reinterpret_cast<__vector double>(vec_cmpeq(vec_splats(0.), vec));
         const __vector double ones       = vec_splats(1.);
-        return vec_nand(testResult, ones);
+        return vec_and(vec_nand(testResult,testResult), ones);
     }
 
     inline InaVecMaskALTIVEC<double> isPositiveMask() const {
-        return vec_cmpgt(vec, vec_splats(0.));
-    }
-
-    inline InaVecMaskALTIVEC<double> isNegativeMask() const {
         return vec_cmpge(vec, vec_splats(0.));
     }
 
-    inline InaVecMaskALTIVEC<double> isPositiveStrictMask() const {
+    inline InaVecMaskALTIVEC<double> isNegativeMask() const {
         return vec_cmpge(vec_splats(0.), vec);
+    }
+
+    inline InaVecMaskALTIVEC<double> isPositiveStrictMask() const {
+        return vec_cmpgt(vec, vec_splats(0.));
     }
 
     inline InaVecMaskALTIVEC<double> isNegativeStrictMask() const {
@@ -413,13 +447,13 @@ public:
     }
 
     inline static InaVecALTIVEC IsLowerOrEqual(const InaVecALTIVEC& inVec1, const InaVecALTIVEC& inVec2) {
-        const __vector double testResult = reinterpret_cast<__vector double>(vec_cmpgt(inVec2.vec, inVec1.vec));
+        const __vector double testResult = reinterpret_cast<__vector double>(vec_cmpge(inVec2.vec, inVec1.vec));
         const __vector double ones       = vec_splats(1.);
         return vec_and(testResult, ones);
     }
 
     inline static InaVecALTIVEC IsLower(const InaVecALTIVEC& inVec1, const InaVecALTIVEC& inVec2) {
-        const __vector double testResult = reinterpret_cast<__vector double>(vec_cmpge(inVec2.vec, inVec1.vec));
+        const __vector double testResult = reinterpret_cast<__vector double>(vec_cmpgt(inVec2.vec, inVec1.vec));
         const __vector double ones       = vec_splats(1.);
         return vec_and(testResult, ones);
     }
@@ -449,11 +483,11 @@ public:
     }
 
     inline static InaVecMaskALTIVEC<double> IsLowerOrEqualMask(const InaVecALTIVEC& inVec1, const InaVecALTIVEC& inVec2) {
-        return vec_cmpgt(inVec2.vec, inVec1.vec);
+        return vec_cmpge(inVec2.vec, inVec1.vec);
     }
 
     inline static InaVecMaskALTIVEC<double> IsLowerMask(const InaVecALTIVEC& inVec1, const InaVecALTIVEC& inVec2) {
-        return vec_cmpge(inVec2.vec, inVec1.vec);
+        return vec_cmpgt(inVec2.vec, inVec1.vec);
     }
 
     inline static InaVecMaskALTIVEC<double> IsGreaterOrEqualMask(const InaVecALTIVEC& inVec1, const InaVecALTIVEC& inVec2) {
@@ -477,7 +511,7 @@ public:
     }
 
     inline static InaVecALTIVEC BitsNotAnd(const InaVecALTIVEC& inVec1, const InaVecALTIVEC& inVec2) {
-        return vec_nand(inVec1.vec, inVec2.vec);
+        return vec_and(vec_nand(inVec1.vec,inVec1.vec), inVec2.vec);
     }
 
     inline static InaVecALTIVEC BitsOr(const InaVecALTIVEC& inVec1, const InaVecALTIVEC& inVec2) {
