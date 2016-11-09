@@ -6,7 +6,6 @@
 #define INAVECAVXDOUBLE_HPP
 
 #include "InastempConfig.h"
-#include "InaAVXOperators.hpp"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 
@@ -281,19 +280,23 @@ public:
         const __m256d COEFF_P5_E  = _mm256_set1_pd(double(InaFastExp::GetCoefficient9_1()));
         const __m256d COEFF_P5_F  = _mm256_set1_pd(double(InaFastExp::GetCoefficient9_0()));
 
-        __m256d x = vec * COEFF_LOG2E;
+        __m256d x = _mm256_mul_pd(vec, COEFF_LOG2E);
 
-        const __m256d fractional_part = x - InaVecAVX(x).floor().vec;
+        const __m256d fractional_part = _mm256_sub_pd(x, InaVecAVX(x).floor().vec);
 
-        __m256d factor = ((((((((COEFF_P5_X * fractional_part + COEFF_P5_Y)
-                                * fractional_part + COEFF_P5_Z) * fractional_part + COEFF_P5_A)
-                                * fractional_part + COEFF_P5_B) * fractional_part + COEFF_P5_C)
-                                * fractional_part + COEFF_P5_D) * fractional_part + COEFF_P5_E)
-                                * fractional_part + COEFF_P5_F);
+        __m256d factor = _mm256_add_pd(_mm256_mul_pd(_mm256_add_pd(
+                         _mm256_mul_pd(_mm256_add_pd( _mm256_mul_pd(_mm256_add_pd(
+                         _mm256_mul_pd(_mm256_add_pd( _mm256_mul_pd(_mm256_add_pd(
+                         _mm256_mul_pd(_mm256_add_pd( _mm256_mul_pd(_mm256_add_pd(_mm256_mul_pd(
+                         COEFF_P5_X, fractional_part), COEFF_P5_Y), fractional_part),
+                         COEFF_P5_Z),fractional_part), COEFF_P5_A), fractional_part),
+                         COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                         COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part),
+                         COEFF_P5_F);
 
-        x -= factor;
+        x = _mm256_sub_pd(x,factor);
 
-        x = (COEFF_A * x + COEFF_B);
+        x = _mm256_add_pd(_mm256_mul_pd(COEFF_A, x), COEFF_B);
 
         __m128d valupper = _mm256_extractf128_pd(x, 1);
         __m128d vallower = _mm256_castpd256_pd128(x);
@@ -317,17 +320,20 @@ public:
         const __m256d COEFF_P5_E  = _mm256_set1_pd(double(InaFastExp::GetCoefficient4_1()));
         const __m256d COEFF_P5_F  = _mm256_set1_pd(double(InaFastExp::GetCoefficient4_0()));
 
-        __m256d x = vec * COEFF_LOG2E;
+        __m256d x = _mm256_mul_pd(vec, COEFF_LOG2E);
 
-        const __m256d fractional_part = x - InaVecAVX(x).floor().vec;
+        const __m256d fractional_part = _mm256_sub_pd(x, InaVecAVX(x).floor().vec);
 
-        __m256d factor = (((COEFF_P5_C * fractional_part + COEFF_P5_D)
-                           * fractional_part + COEFF_P5_E)
-                           * fractional_part + COEFF_P5_F);
+        __m256d factor = _mm256_add_pd(_mm256_mul_pd(_mm256_add_pd(
+                         _mm256_mul_pd(_mm256_add_pd(_mm256_mul_pd(
+                                         COEFF_P5_C, fractional_part),
+                                         COEFF_P5_D), fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
 
-        x -= factor;
+        x = _mm256_sub_pd(x,factor);
 
-        x = (COEFF_A * x + COEFF_B);
+        x = _mm256_add_pd(_mm256_mul_pd(COEFF_A, x), COEFF_B);
 
         __m128d valupper = _mm256_extractf128_pd(x, 1);
         __m128d vallower = _mm256_castpd256_pd128(x);
@@ -562,7 +568,7 @@ public:
     }
 
     inline InaVecAVX<double> pow(size_t power) const{
-        return InaUtils::FastPow<InaVecAVX<double>>(vec, power);
+        return InaUtils::FastPow<InaVecAVX<double>>(*this, power);
     }
 };
 

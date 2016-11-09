@@ -7,7 +7,6 @@
 
 #include "InastempConfig.h"
 #include "AVX/InaVecAVXDouble.hpp"
-#include "InaAVX2Operators.hpp"
 
 #ifndef INASTEMP_USE_AVX2
 #error InaVecAVX2<double> is included but AVX2 is not enable in the configuration

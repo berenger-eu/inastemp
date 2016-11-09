@@ -7,7 +7,6 @@
 
 #include "InastempConfig.h"
 #include "SSE3/InaVecSSE3Float.hpp"
-#include "InaSSSE3Operators.hpp"
 
 #ifndef INASTEMP_USE_SSSE3
 #error InaVecSSSE3<float> is included but SSSE3 is not enable in the configuration

@@ -13,14 +13,10 @@ string(TOUPPER ${TYPE} UTYPE)
 
 # The original CPP file
 set(checkTypeFile "${PROJECT_SOURCE_DIR}/CMakeModules/${UTYPE}/compileTest${UTYPE}.cpp")
-set(checkPeFile "${PROJECT_SOURCE_DIR}/CMakeModules/${UTYPE}/check${UTYPE}pe.cpp")
 
 # Fatal error if the file does not exist
 if(NOT EXISTS ${checkTypeFile})
 	message(FATAL_ERROR "The GetCompilerInfosFile does not exist (${checkTypeFile})")
-endif()
-if(NOT EXISTS ${checkPeFile})
-	message(FATAL_ERROR "The GetCompilerInfosFile does not exist (${checkPeFile})")
 endif()
 
 
@@ -34,25 +30,6 @@ if(${COMPILE_RESULT})
 
     if($ENV{VERBOSE})
         message(STATUS "GetCompilerInfos -- The compiler can compile ${TYPE}")
-    endif()
-
-    try_compile(COMPILE_RESULT_PE  ${CMAKE_CURRENT_BINARY_DIR}
-          ${checkPeFile}
-          COMPILE_DEFINITIONS "-Wno-error ${${UTYPE}_FLAGS}"
-          OUTPUT_VARIABLE COMPILE_OUTPUT_PE)
-
-    if(${COMPILE_RESULT_PE})
-        set(COMPILER_INFO_${UTYPE}_NOOP OFF)
-
-        if($ENV{VERBOSE})
-            message(STATUS "GetCompilerInfos -- The compiler has operators for ${TYPE}")
-        endif()
-    else()
-        set(COMPILER_INFO_${UTYPE}_NOOP ON)
-
-        if($ENV{VERBOSE})
-            message(STATUS "GetCompilerInfos -- The compiler needs operators for ${TYPE} : ${COMPILE_OUTPUT_PE}")
-        endif()
     endif()
 else()
     set(COMPILER_INFO_${UTYPE} OFF)

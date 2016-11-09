@@ -6,7 +6,6 @@
 #define INAVECAVXFLOAT_HPP
 
 #include "InastempConfig.h"
-#include "InaAVXOperators.hpp"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 
@@ -290,19 +289,18 @@ public:
         const __m256 COEFF_P5_E  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_1()));
         const __m256 COEFF_P5_F  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_0()));
 
-        __m256 x = vec * COEFF_LOG2E;
+        __m256 x = _mm256_mul_ps(vec, COEFF_LOG2E);
 
-        const __m256 fractional_part = x - InaVecAVX(x).floor().vec;
+        const __m256 fractional_part = _mm256_sub_ps(x, InaVecAVX(x).floor().vec);
 
-        __m256 factor = (((((COEFF_P5_A * fractional_part + COEFF_P5_B)
-                           * fractional_part + COEFF_P5_C)
-                           * fractional_part + COEFF_P5_D)
-                           * fractional_part + COEFF_P5_E)
-                           * fractional_part + COEFF_P5_F);
+        __m256 factor = _mm256_add_ps(_mm256_mul_ps(_mm256_add_ps( _mm256_mul_ps(_mm256_add_ps(
+                         _mm256_mul_ps(_mm256_add_ps( _mm256_mul_ps(_mm256_add_ps(_mm256_mul_ps(
+                         COEFF_P5_A, fractional_part), COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                         COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part), COEFF_P5_F);
 
-        x -= factor;
+        x = _mm256_sub_ps(x,factor);
 
-        __m256i castedInteger = _mm256_cvtps_epi32(COEFF_A * x + COEFF_B);
+        __m256i castedInteger = _mm256_cvtps_epi32(_mm256_add_ps(_mm256_mul_ps(COEFF_A, x), COEFF_B));
 
         return _mm256_castsi256_ps(castedInteger);
 #endif
@@ -316,15 +314,19 @@ public:
         const __m256 COEFF_P5_E  = _mm256_set1_ps(float(InaFastExp::GetCoefficient3_1()));
         const __m256 COEFF_P5_F  = _mm256_set1_ps(float(InaFastExp::GetCoefficient3_0()));
 
-        __m256 x = vec * COEFF_LOG2E;
+        __m256 x = _mm256_mul_ps(vec, COEFF_LOG2E);
 
-        const __m256 fractional_part = x - InaVecAVX(x).floor().vec;
+        const __m256 fractional_part = _mm256_sub_ps(x, InaVecAVX(x).floor().vec);
 
-        __m256 factor = ((COEFF_P5_D * fractional_part + COEFF_P5_E) * fractional_part + COEFF_P5_F);
+        __m256 factor = _mm256_add_ps(_mm256_mul_ps(
+                         _mm256_add_ps(_mm256_mul_ps(
+                                         COEFF_P5_D, fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
 
-        x -= factor;
+        x = _mm256_sub_ps(x,factor);
 
-        __m256i castedInteger = _mm256_cvtps_epi32(COEFF_A * x + COEFF_B);
+        __m256i castedInteger = _mm256_cvtps_epi32(_mm256_add_ps(_mm256_mul_ps(COEFF_A, x), COEFF_B));
 
         return _mm256_castsi256_ps(castedInteger);
     }
@@ -550,7 +552,7 @@ public:
     }
 
     inline InaVecAVX<float> pow(size_t power) const{
-        return InaUtils::FastPow<InaVecAVX<float>>(vec, power);
+        return InaUtils::FastPow<InaVecAVX<float>>(*this, power);
     }
 };
 

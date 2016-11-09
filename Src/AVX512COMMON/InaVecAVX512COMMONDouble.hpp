@@ -6,7 +6,6 @@
 #define INAVECAVX512COMMONDOUBLE_HPP
 
 #include "InastempConfig.h"
-#include "InaAVX512COMMONOperators.hpp"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 
@@ -295,19 +294,23 @@ public:
          const __m512d COEFF_P5_E  = _mm512_set1_pd(double(InaFastExp::GetCoefficient9_1()));
          const __m512d COEFF_P5_F  = _mm512_set1_pd(double(InaFastExp::GetCoefficient9_0()));
 
-         __m512d x = vec * COEFF_LOG2E;
+         __m512d x = _mm512_mul_pd(vec, COEFF_LOG2E);
 
-         const __m512d fractional_part = x - InaVecAVX512COMMON(x).floor().vec;
+         const __m512d fractional_part = _mm512_sub_pd(x, InaVecAVX512COMMON(x).floor().vec);
 
-         __m512d factor = ((((((((COEFF_P5_X * fractional_part + COEFF_P5_Y)
-                                 * fractional_part + COEFF_P5_Z) * fractional_part + COEFF_P5_A)
-                                 * fractional_part + COEFF_P5_B) * fractional_part + COEFF_P5_C)
-                                 * fractional_part + COEFF_P5_D) * fractional_part + COEFF_P5_E)
-                                 * fractional_part + COEFF_P5_F);
+         __m512d factor = _mm512_add_pd(_mm512_mul_pd(_mm512_add_pd(
+                          _mm512_mul_pd(_mm512_add_pd( _mm512_mul_pd(_mm512_add_pd(
+                          _mm512_mul_pd(_mm512_add_pd( _mm512_mul_pd(_mm512_add_pd(
+                          _mm512_mul_pd(_mm512_add_pd( _mm512_mul_pd(_mm512_add_pd(_mm512_mul_pd(
+                          COEFF_P5_X, fractional_part), COEFF_P5_Y), fractional_part),
+                          COEFF_P5_Z),fractional_part), COEFF_P5_A), fractional_part),
+                          COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                          COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part),
+                          COEFF_P5_F);
 
-         x -= factor;
+         x = _mm512_sub_pd(x,factor);
 
-         x = (COEFF_A * x + COEFF_B);
+         x = _mm512_add_pd(_mm512_mul_pd(COEFF_A, x), COEFF_B);
 
          alignas(64) double allvalreal[VecLength];
          _mm512_store_pd(allvalreal, x);
@@ -329,17 +332,20 @@ public:
         const __m512d COEFF_P5_E  = _mm512_set1_pd(double(InaFastExp::GetCoefficient4_1()));
         const __m512d COEFF_P5_F  = _mm512_set1_pd(double(InaFastExp::GetCoefficient4_0()));
 
-        __m512d x = vec * COEFF_LOG2E;
+        __m512d x = _mm512_mul_pd(vec, COEFF_LOG2E);
 
-        const __m512d fractional_part = x - InaVecAVX512COMMON(x).floor().vec;
+        const __m512d fractional_part = _mm512_sub_pd(x, InaVecAVX512COMMON(x).floor().vec);
 
-        __m512d factor = (((COEFF_P5_C * fractional_part + COEFF_P5_D)
-                           * fractional_part + COEFF_P5_E)
-                           * fractional_part + COEFF_P5_F);
+        __m512d factor = _mm512_add_pd(_mm512_mul_pd(_mm512_add_pd(
+                         _mm512_mul_pd(_mm512_add_pd(_mm512_mul_pd(
+                                         COEFF_P5_C, fractional_part),
+                                         COEFF_P5_D), fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
 
-        x -= factor;
+        x = _mm512_sub_pd(x,factor);
 
-        x = (COEFF_A * x + COEFF_B);
+        x = _mm512_add_pd(_mm512_mul_pd(COEFF_A, x), COEFF_B);
 
         alignas(64) double allvalreal[VecLength];
         _mm512_store_pd(allvalreal, x);
@@ -354,7 +360,7 @@ public:
 
     inline InaVecAVX512COMMON rsqrt() const {
         // _mm512_rsqrt28_pd(vec) => 1E-10 error
-        return _mm512_set1_pd(1) / _mm512_sqrt_pd(vec);
+        return _mm512_div_pd(_mm512_set1_pd(1), _mm512_sqrt_pd(vec));
     }
 
     inline InaVecAVX512COMMON abs() const {
@@ -591,7 +597,7 @@ public:
     }
 
     inline InaVecAVX512COMMON<double> pow(size_t power) const{
-        return InaUtils::FastPow<InaVecAVX512COMMON<double>>(vec, power);
+        return InaUtils::FastPow<InaVecAVX512COMMON<double>>(*this, power);
     }
 };
 

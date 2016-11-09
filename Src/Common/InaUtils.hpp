@@ -19,8 +19,8 @@ inline TypeDest ConvertBits(TypeSrc src) {
 }
 
 template <class VecType>
-inline typename VecType::VecRawType FastPow(typename VecType::VecRawType base, size_t power){
-    typename VecType::VecRawType res = VecType(1.).getVec();
+inline VecType FastPow(VecType base, size_t power){
+    VecType res = VecType(1.);
 
     while(power){
         if(1 & power){

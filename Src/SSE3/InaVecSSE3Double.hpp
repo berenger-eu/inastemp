@@ -6,7 +6,6 @@
 #define INAVECSSE3DOUBLE_HPP
 
 #include "InastempConfig.h"
-#include "InaSSE3Operators.hpp"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 
@@ -258,19 +257,23 @@ public:
         const __m128d COEFF_P5_E  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_1()));
         const __m128d COEFF_P5_F  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_0()));
 
-        __m128d x = vec * COEFF_LOG2E;
+        __m128d x = _mm_mul_pd(vec, COEFF_LOG2E);
 
-        const __m128d fractional_part = x - InaVecSSE3(x).floor().vec;
+        const __m128d fractional_part = _mm_sub_pd(x, InaVecSSE3(x).floor().vec);
 
-        __m128d factor = ((((((((COEFF_P5_X * fractional_part + COEFF_P5_Y)
-                                * fractional_part + COEFF_P5_Z) * fractional_part + COEFF_P5_A)
-                                * fractional_part + COEFF_P5_B) * fractional_part + COEFF_P5_C)
-                                * fractional_part + COEFF_P5_D) * fractional_part + COEFF_P5_E)
-                                * fractional_part + COEFF_P5_F);
+        __m128d factor = _mm_add_pd(_mm_mul_pd(_mm_add_pd(
+                         _mm_mul_pd(_mm_add_pd( _mm_mul_pd(_mm_add_pd(
+                         _mm_mul_pd(_mm_add_pd( _mm_mul_pd(_mm_add_pd(
+                         _mm_mul_pd(_mm_add_pd( _mm_mul_pd(_mm_add_pd(_mm_mul_pd(
+                         COEFF_P5_X, fractional_part), COEFF_P5_Y), fractional_part),
+                         COEFF_P5_Z),fractional_part), COEFF_P5_A), fractional_part),
+                         COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                         COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part),
+                         COEFF_P5_F);
 
-        x -= factor;
+        x = _mm_sub_pd(x,factor);
 
-        x = (COEFF_A * x + COEFF_B);
+        x = _mm_add_pd(_mm_mul_pd(COEFF_A, x), COEFF_B);
 
         alignas(64) long int allvalint[VecLength] = { _mm_cvtsd_si64(x),
                                                       _mm_cvtsd_si64(_mm_shuffle_pd(x, x, 1)) };
@@ -288,17 +291,20 @@ public:
         const __m128d COEFF_P5_E  = _mm_set1_pd(double(InaFastExp::GetCoefficient4_1()));
         const __m128d COEFF_P5_F  = _mm_set1_pd(double(InaFastExp::GetCoefficient4_0()));
 
-        __m128d x = vec * COEFF_LOG2E;
+        __m128d x = _mm_mul_pd(vec, COEFF_LOG2E);
 
-        const __m128d fractional_part = x - InaVecSSE3(x).floor().vec;
+        const __m128d fractional_part = _mm_sub_pd(x, InaVecSSE3(x).floor().vec);
 
-        __m128d factor = (((COEFF_P5_C * fractional_part + COEFF_P5_D)
-                           * fractional_part + COEFF_P5_E)
-                           * fractional_part + COEFF_P5_F);
+        __m128d factor = _mm_add_pd(_mm_mul_pd(_mm_add_pd(
+                         _mm_mul_pd(_mm_add_pd(_mm_mul_pd(
+                                         COEFF_P5_C, fractional_part),
+                                         COEFF_P5_D), fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
 
-        x -= factor;
+        x = _mm_sub_pd(x,factor);
 
-        x = (COEFF_A * x + COEFF_B);
+        x = _mm_add_pd(_mm_mul_pd(COEFF_A, x), COEFF_B);
 
         alignas(64) long int allvalint[VecLength] = { _mm_cvtsd_si64(x),
                                                       _mm_cvtsd_si64(_mm_shuffle_pd(x, x, 1)) };
@@ -531,7 +537,7 @@ public:
     }
 
     inline InaVecSSE3<double> pow(size_t power) const{
-        return InaUtils::FastPow<InaVecSSE3<double>>(vec, power);
+        return InaUtils::FastPow<InaVecSSE3<double>>(*this, power);
     }
 };
 

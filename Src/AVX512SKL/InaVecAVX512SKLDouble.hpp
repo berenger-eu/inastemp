@@ -6,7 +6,6 @@
 #define INAVECAVX512SKLDOUBLE_HPP
 
 #include "InastempConfig.h"
-#include "InaAVX512SKLOperators.hpp"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 #include "AVX512COMMON/InaVecAVX512COMMONDouble.hpp"
