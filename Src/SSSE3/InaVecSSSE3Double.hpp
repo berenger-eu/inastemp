@@ -6,7 +6,6 @@
 #define INAVECSSSE3DOUBLE_HPP
 
 #include "SSE3/InaVecSSE3Double.hpp"
-#include "InaSSSE3Operators.hpp"
 
 #ifndef INASTEMP_USE_SSSE3
 #error InaVecSSSE3<double> is included but SSSE3 is not enable in the configuration

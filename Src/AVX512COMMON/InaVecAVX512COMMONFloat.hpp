@@ -6,7 +6,6 @@
 #define INAVECAVX512COMMONFLOAT_HPP
 
 #include "InastempConfig.h"
-#include "InaAVX512COMMONOperators.hpp"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 
@@ -317,19 +316,18 @@ public:
          const __m512 COEFF_P5_E  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6_1()));
          const __m512 COEFF_P5_F  = _mm512_set1_ps(float(InaFastExp::GetCoefficient6_0()));
 
-         __m512 x = vec * COEFF_LOG2E;
+         __m512 x = _mm512_mul_ps(vec, COEFF_LOG2E);
 
-         const __m512 fractional_part = x - InaVecAVX512COMMON(x).floor().vec;
+         const __m512 fractional_part = _mm512_sub_ps(x, InaVecAVX512COMMON(x).floor().vec);
 
-         __m512 factor = (((((COEFF_P5_A * fractional_part + COEFF_P5_B)
-                             * fractional_part + COEFF_P5_C)
-                             * fractional_part + COEFF_P5_D)
-                             * fractional_part + COEFF_P5_E)
-                             * fractional_part + COEFF_P5_F);
+         __m512 factor = _mm512_add_ps(_mm512_mul_ps(_mm512_add_ps( _mm512_mul_ps(_mm512_add_ps(
+                          _mm512_mul_ps(_mm512_add_ps( _mm512_mul_ps(_mm512_add_ps(_mm512_mul_ps(
+                          COEFF_P5_A, fractional_part), COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                          COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part), COEFF_P5_F);
 
-         x -= factor;
+         x = _mm512_sub_ps(x,factor);
 
-         __m512i castedInteger = _mm512_cvtps_epi32(COEFF_A * x + COEFF_B);
+         __m512i castedInteger = _mm512_cvtps_epi32(_mm512_add_ps(_mm512_mul_ps(COEFF_A, x), COEFF_B));
 
          return _mm512_castsi512_ps(castedInteger);
     }
@@ -342,15 +340,19 @@ public:
         const __m512 COEFF_P5_E  = _mm512_set1_ps(float(InaFastExp::GetCoefficient3_1()));
         const __m512 COEFF_P5_F  = _mm512_set1_ps(float(InaFastExp::GetCoefficient3_0()));
 
-        __m512 x = vec * COEFF_LOG2E;
+        __m512 x = _mm512_mul_ps(vec, COEFF_LOG2E);
 
-        const __m512 fractional_part = x - InaVecAVX512COMMON(x).floor().vec;
+        const __m512 fractional_part = _mm512_sub_ps(x, InaVecAVX512COMMON(x).floor().vec);
 
-        __m512 factor = ((COEFF_P5_D * fractional_part + COEFF_P5_E) * fractional_part + COEFF_P5_F);
+        __m512 factor = _mm512_add_ps(_mm512_mul_ps(
+                         _mm512_add_ps(_mm512_mul_ps(
+                                         COEFF_P5_D, fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
 
-        x -= factor;
+        x = _mm512_sub_ps(x,factor);
 
-        __m512i castedInteger = _mm512_cvtps_epi32(COEFF_A * x + COEFF_B);
+        __m512i castedInteger = _mm512_cvtps_epi32(_mm512_add_ps(_mm512_mul_ps(COEFF_A, x), COEFF_B));
 
         return _mm512_castsi512_ps(castedInteger);
     }
@@ -592,7 +594,7 @@ public:
     }
 
     inline InaVecAVX512COMMON<float> pow(size_t power) const{
-        return InaUtils::FastPow<InaVecAVX512COMMON<float>>(vec, power);
+        return InaUtils::FastPow<InaVecAVX512COMMON<float>>(*this, power);
     }
 };
 

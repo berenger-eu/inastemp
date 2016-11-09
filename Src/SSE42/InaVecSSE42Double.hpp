@@ -7,7 +7,6 @@
 
 #include "InastempConfig.h"
 #include "SSE41/InaVecSSE41Double.hpp"
-#include "InaSSE42Operators.hpp"
 
 #ifndef INASTEMP_USE_SSE42
 #error InaVecSSE42<double> is included but SSE42 is not enable in the configuration
