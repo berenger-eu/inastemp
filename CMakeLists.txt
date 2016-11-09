@@ -82,7 +82,6 @@ GetCompilerInfos()
 
 # All types from worse to best (ADD-NEW-HERE)
 set(ALL_TYPES "SSE3;SSSE3;SSE41;SSE42;AVX;AVX2;AVX512COMMON;AVX512KNL;AVX512SKL")
-set(ALL_USED_TYPES "SCALAR")
 set(INASTEMP_USE_SCALAR ON)
 set(INASTEMP_CXX_FLAGS "-std=c++11")
 
@@ -126,7 +125,7 @@ foreach(TYPE ${ALL_TYPES_REVERSE})
 
         if(${INASTEMP_USE_${TYPE}})
             set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} ${${TYPE}_FLAGS}")
-            set(ALL_USED_TYPES "${ALL_USED_TYPES};${TYPE}")
+            list(APPEND ALL_USED_TYPES "${TYPE}")
 
             if(COMPILER_INFO_${TYPE}_NOOP)
                 set(INASTEMP_USE_${TYPE}_OPERATORS ON)
@@ -154,10 +153,12 @@ foreach(TYPE ${ALL_TYPES_REVERSE})
     endif()
 endforeach()
 # The original order should be used as slow-to-fast types
+list(APPEND ALL_USED_TYPES "SCALAR")
 list(REVERSE ALL_USED_TYPES)
 list(LENGTH ALL_USED_TYPES INASTEMP_NB_USED_TYPES)
 if($ENV{VERBOSE})
     MESSAGE(STATUS "Main -- INASTEMP_NB_USED_TYPES ${INASTEMP_NB_USED_TYPES}")
+    MESSAGE(STATUS "Main -- ALL_USED_TYPES ${ALL_USED_TYPES}")
 endif()
 list(GET ALL_USED_TYPES -1 INASTEMP_BESTTYPE )
 
