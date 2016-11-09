@@ -153,7 +153,8 @@ foreach(TYPE ${ALL_TYPES_REVERSE})
         endif()
     endif()
 endforeach()
-
+# The original order should be used as slow-to-fast types
+list(REVERSE ALL_USED_TYPES)
 list(LENGTH ALL_USED_TYPES INASTEMP_NB_USED_TYPES)
 if($ENV{VERBOSE})
     MESSAGE(STATUS "Main -- INASTEMP_NB_USED_TYPES ${INASTEMP_NB_USED_TYPES}")
