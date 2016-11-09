@@ -593,7 +593,7 @@ public:
         return _mm512_castsi512_ps(_mm512_xor_si512(_mm512_castps_si512(vec), _mm512_castps_si512(minus0)));
     }
 
-    inline InaVecAVX512COMMON<float> pow(size_t power) const{
+    inline InaVecAVX512COMMON<float> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecAVX512COMMON<float>>(*this, power);
     }
 };

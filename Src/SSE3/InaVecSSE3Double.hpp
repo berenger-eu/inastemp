@@ -536,7 +536,7 @@ public:
         return _mm_xor_pd(vec, minus0);
     }
 
-    inline InaVecSSE3<double> pow(size_t power) const{
+    inline InaVecSSE3<double> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecSSE3<double>>(*this, power);
     }
 };

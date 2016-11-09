@@ -5,6 +5,9 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
+// for std::size_t
+#include <cstdio>
+
 namespace InaUtils {
 
 template < class TypeSrc, class TypeDest >
@@ -19,7 +22,7 @@ inline TypeDest ConvertBits(TypeSrc src) {
 }
 
 template <class VecType>
-inline VecType FastPow(VecType base, size_t power){
+inline VecType FastPow(VecType base, std::size_t power){
     VecType res = VecType(1.);
 
     while(power){

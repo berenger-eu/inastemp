@@ -567,7 +567,7 @@ public:
         return _mm256_xor_pd(vec, minus0);
     }
 
-    inline InaVecAVX<double> pow(size_t power) const{
+    inline InaVecAVX<double> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecAVX<double>>(*this, power);
     }
 };
