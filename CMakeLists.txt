@@ -85,7 +85,6 @@ if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
     set(ALL_TYPES "ALTIVEC")
     set(ALTIVEC_CPU_RULES "")
 
-    set(ALL_USED_TYPES "SCALAR")
     set(INASTEMP_USE_SCALAR ON)
     set(INASTEMP_CXX_FLAGS "-std=c++11")
 else()

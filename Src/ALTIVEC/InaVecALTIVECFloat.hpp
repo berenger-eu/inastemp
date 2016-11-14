@@ -6,7 +6,6 @@
 #define INAVECALTIVECFLOAT_HPP
 
 #include "InastempConfig.h"
-#include "InaALTIVECOperators.hpp"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 

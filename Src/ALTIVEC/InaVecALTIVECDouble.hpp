@@ -6,7 +6,6 @@
 #define INAVECALTIVECDOUBLE_HPP
 
 #include "InastempConfig.h"
-#include "InaALTIVECOperators.hpp"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 
@@ -224,20 +223,6 @@ public:
                                                 0x0U, 0x1U, 0x2U, 0x3U, 0x4U, 0x5U, 0x6U, 0x7U};
         vec = vec_perm( vec, vec, perm2301);
         return *this;
-    }
-
-    static void print(__vector double val){ // TODO remove
-        for(int idx = 0 ; idx < 2 ; idx++){
-            printf("[%d] %lf\n", idx, vec_extract(val, idx));
-        }
-        printf("\n");
-    }
-
-    static void print(__vector unsigned char val){ // TODO remove
-        for(int idx = 0 ; idx < 16 ; idx++){
-            printf("[%d] %i\n", idx, (int)vec_extract(val, idx));
-        }
-        printf("\n");
     }
 
     inline InaVecALTIVEC& setFromIndirectArray(const double values[], const int inIndirection[]) {
