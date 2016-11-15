@@ -94,7 +94,9 @@ public:
     }
 
     inline static InaVecMaskALTIVEC NotAnd(const InaVecMaskALTIVEC& inMask1, const InaVecMaskALTIVEC& inMask2){
-        return InaVecMaskALTIVEC(vec_and(vec_nand(inMask1.mask,inMask1.mask), inMask2.mask));
+        return InaVecMaskALTIVEC(reinterpret_cast<__vector __bool int>(
+                                 vec_nand(reinterpret_cast<__vector unsigned int>(inMask1.mask),
+                                          reinterpret_cast<__vector unsigned int>(inMask2.mask))));
     }
 
     inline static InaVecMaskALTIVEC Or(const InaVecMaskALTIVEC& inMask1, const InaVecMaskALTIVEC& inMask2){
@@ -194,19 +196,19 @@ public:
     inline explicit InaVecALTIVEC(const float ptr[]){
         // TODO use vec_xlw4(0, ptr);
         vec = vec_xl(0, ptr); 
-        // TODO if little indian
-        __vector unsigned char perm3210 = {0xCU, 0xDU, 0xEU, 0xFU, 0x8U, 0x9U, 0xAU, 0xBU,
-                                                0x4U, 0x5U, 0x6U, 0x7U, 0x0U, 0x1U, 0x2U, 0x3U};
-        vec = vec_perm( vec, vec, perm3210);
+        // TODO indian problem might need permutation
+        //__vector unsigned char perm3210 = {0xCU, 0xDU, 0xEU, 0xFU, 0x8U, 0x9U, 0xAU, 0xBU,
+        //                                        0x4U, 0x5U, 0x6U, 0x7U, 0x0U, 0x1U, 0x2U, 0x3U};
+        //vec = vec_perm( vec, vec, perm3210);
     }
 
     inline InaVecALTIVEC& setFromArray(const float ptr[]){
         // TODO use vec_xlw4(0, ptr);
         vec = vec_xl(0, ptr); 
-        // TODO if little indian
-        __vector unsigned char perm3210 = {0xCU, 0xDU, 0xEU, 0xFU, 0x8U, 0x9U, 0xAU, 0xBU,
-                                                0x4U, 0x5U, 0x6U, 0x7U, 0x0U, 0x1U, 0x2U, 0x3U};
-        vec = vec_perm( vec, vec, perm3210);
+        // TODO indian problem might need permutation
+        //__vector unsigned char perm3210 = {0xCU, 0xDU, 0xEU, 0xFU, 0x8U, 0x9U, 0xAU, 0xBU,
+        //                                        0x4U, 0x5U, 0x6U, 0x7U, 0x0U, 0x1U, 0x2U, 0x3U};
+        //vec = vec_perm( vec, vec, perm3210);
         return *this;
     }
 
@@ -236,7 +238,6 @@ public:
 
     // Move back to array
     inline void storeInArray(float ptr[]) const {
-        // We consider that ptr is aligned on sizeof(float)
         // TODO vec_ste( vec, 0, ptr); does not work
         alignas(16) float tmpptr[4];
         vec_st(vec, 0, tmpptr);
@@ -406,7 +407,9 @@ public:
     }
 
     inline InaVecMaskALTIVEC<float> isNotZeroMask() const {
-        return vec_nand(vec_cmpeq(vec_splats(0.f), vec), reinterpret_cast<__vector __bool int>(vec_splats(0xFFFFFFFFU)));
+        return reinterpret_cast<__vector __bool int>(
+                        vec_nand(reinterpret_cast<__vector unsigned int>(vec_cmpeq(vec_splats(0.f), vec)),
+                        reinterpret_cast<__vector unsigned int>(vec_splats(0xFFFFFFFFU))));
     }
 
     // Static basic methods
@@ -520,7 +523,9 @@ public:
     }
 
     inline static InaVecALTIVEC IfFalse(const InaVecMaskALTIVEC<float>& inMask, const InaVecALTIVEC& inIfFalse) {
-        return vec_and(vec_nand(inMask.getMask(),inMask.getMask()), inIfFalse.vec);
+        return reinterpret_cast<__vector float>(vec_and(vec_nand(reinterpret_cast<__vector unsigned int>(inMask.getMask()),
+                                reinterpret_cast<__vector unsigned int>(inMask.getMask())),
+                                    reinterpret_cast<__vector unsigned int>(inIfFalse.vec)));
     }
 
     // Inner operators
