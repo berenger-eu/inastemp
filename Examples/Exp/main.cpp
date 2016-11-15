@@ -406,7 +406,7 @@ void compareExpTime(const size_t NbOverLoop, const size_t NbExp){
 }
 
 int main(int /*argc*/, char* /*argv*/ []) {
-    std::cout << "[INFO] This programs run the computation of exp() using scalar, intrinsic vectors or inastemp vectors. \n";
+    std::cout << "[INFO] This program runs the computation of exp() using scalar, intrinsic vectors or inastemp vectors. \n";
 
     const size_t NbOverLoop = 5;
     const size_t NbExp      = 1024000;
