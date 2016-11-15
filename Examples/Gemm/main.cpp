@@ -882,7 +882,7 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 }
 
 int main(int /*argc*/, char* /*argv*/ []) {
-    std::cout << "[INFO] This programs run the computation of exp() using scalar, intrinsic vectors or inastemp vectors. \n";
+    std::cout << "[INFO] This program runs the computation of gemm using scalar, intrinsic vectors or inastemp vectors. \n";
 
     const size_t NbOverLoop = 3;
     const size_t matDimDouble = 2048;
