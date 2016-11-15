@@ -33,6 +33,16 @@ class TestAll : public UTester< TestAll< VecType > > {
         for (int idx = 0; idx < VecType::VecLength; ++idx) {
             UASSERTEEQUAL(reals[idx], realsReals[idx]);
         }
+
+        alignas(128) RealType realsalign[VecType::VecLength];
+        vec.storeInAlignedArray( realsalign);
+
+        alignas(128) RealType realsRealsalign[VecType::VecLength];
+        inReal.storeInArray( realsRealsalign);
+
+        for (int idx = 0; idx < VecType::VecLength; ++idx) {
+            UASSERTEEQUAL(realsalign[idx], realsRealsalign[idx]);
+        }
     }
 
     void equalToScalar(const VecType vec,
@@ -46,6 +56,13 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (int idx = 0; idx < VecType::VecLength; ++idx) {
             UASSERTEEQUAL(reals[idx], inReal);
+        }
+
+        alignas(128) RealType realsalign[VecType::VecLength];
+        vec.storeInAlignedArray( realsalign);
+
+        for (int idx = 0; idx < VecType::VecLength; ++idx) {
+            UASSERTEEQUAL(realsalign[idx], inReal);
         }
     }
 
@@ -67,6 +84,13 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (int idx = 0; idx < VecType::VecLength; ++idx) {
             UASSERTEEQUAL(reals[idx], inReals[idx]);
+        }
+
+        alignas(128) RealType realsalign[VecType::VecLength];
+        vec.storeInAlignedArray( realsalign);
+
+        for (int idx = 0; idx < VecType::VecLength; ++idx) {
+            UASSERTEEQUAL(realsalign[idx], inReals[idx]);
         }
     }
 
@@ -98,6 +122,13 @@ class TestAll : public UTester< TestAll< VecType > > {
         for (int idx = 0; idx < VecType::VecLength; ++idx) {
             UASSERTETRUE(approxEqual(reals[idx], inReal));
         }
+
+        alignas(128) RealType realsalign[VecType::VecLength];
+        vec.storeInAlignedArray( realsalign);
+
+        for (int idx = 0; idx < VecType::VecLength; ++idx) {
+            UASSERTETRUE(approxEqual(realsalign[idx], inReal));
+        }
     }
 
     void approxEqualToArray(const VecType vec,
@@ -112,6 +143,13 @@ class TestAll : public UTester< TestAll< VecType > > {
         for (int idx = 0; idx < VecType::VecLength; ++idx) {
             UASSERTETRUE(approxEqual(reals[idx], inReals[idx]));
         }
+
+        alignas(128) RealType realsalign[VecType::VecLength];
+        vec.storeInAlignedArray( realsalign);
+
+        for (int idx = 0; idx < VecType::VecLength; ++idx) {
+            UASSERTETRUE(approxEqual(realsalign[idx], inReals[idx]));
+        }
     }
 
     void approxLowAccEqualToArray(const VecType vec,
@@ -125,6 +163,13 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (int idx = 0; idx < VecType::VecLength; ++idx) {
             UASSERTETRUE(approxEqualLowAcc(reals[idx], inReals[idx]));
+        }
+
+        alignas(128) RealType realsalign[VecType::VecLength];
+        vec.storeInAlignedArray( realsalign);
+
+        for (int idx = 0; idx < VecType::VecLength; ++idx) {
+            UASSERTETRUE(approxEqualLowAcc(realsalign[idx], inReals[idx]));
         }
     }
 
@@ -255,6 +300,28 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxEqualToArray(VecType(reals).rsqrt(), rsqrtres);
 
             approxEqualToScalar(VecType(RealType(0)).exp(), std::exp(RealType(0)));
+        }
+
+
+
+        {
+            alignas(128) RealType reals[VecType::VecLength];
+            alignas(128) RealType expres[VecType::VecLength];
+            alignas(128) RealType expreslowacc[VecType::VecLength];
+            alignas(128) RealType sqrtres[VecType::VecLength];
+            alignas(128) RealType rsqrtres[VecType::VecLength];
+            for (int idx = 0; idx < VecType::VecLength; ++idx) {
+                reals[idx]    = RealType(idx + 1);
+                expres[idx]   = RealType(exp(reals[idx]));
+                expreslowacc[idx]   = RealType(exp(reals[idx]));
+                sqrtres[idx]  = RealType(sqrt(reals[idx]));
+                rsqrtres[idx] = RealType(1 / sqrt(reals[idx]));
+            }
+
+            approxEqualToArray(VecType().setFromAlignedArray(reals).exp(), expres);
+            approxLowAccEqualToArray(VecType().setFromAlignedArray(reals).expLowAcc(), expreslowacc);
+            approxEqualToArray(VecType().setFromAlignedArray(reals).sqrt(), sqrtres);
+            approxEqualToArray(VecType().setFromAlignedArray(reals).rsqrt(), rsqrtres);
         }
 
         {
