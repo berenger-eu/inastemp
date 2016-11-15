@@ -16,10 +16,15 @@
 #include "SSE3/InaVecSSE3Float.hpp"
 #endif
 
-#ifdef INASTEMP_USE_AVX2
-#include "AVX2/InaVecAVX2Double.hpp"
-#include "AVX2/InaVecAVX2Float.hpp"
+#ifdef INASTEMP_USE_AVX
+#include "AVX/InaVecAVXDouble.hpp"
+#include "AVX/InaVecAVXFloat.hpp"
 #include <immintrin.h>
+#endif
+
+#ifdef INASTEMP_USE_AVX512KNL
+#include "AVX512KNL/InaVecAVX512KNLDouble.hpp"
+#include "AVX512KNL/InaVecAVX512KNLFloat.hpp"
 #endif
 
 #include <memory>
@@ -32,11 +37,11 @@
 //!
 //! We compare :
 //! - a scalar kernel
-//! - an AVX2 by hand using intrinsics - if AVX available
-//! - a kernel based on the AVX2 class from inastemp  - if AVX available
+//! - an AVX by hand using intrinsics - if AVX available
+//! - a kernel based on the AVX class from inastemp  - if AVX available
 //! - an SSE3 by hand using intrinsics - if SSE3 available
 //! - a kernel based on the SSE3 class from inastemp  - if SSE3 available
-//! - a kernel based on the best available vectorizer from inastemp (might be AVX2!)
+//! - a kernel based on the best available vectorizer from inastemp (might be AVX!)
 
 
 
@@ -94,12 +99,158 @@ void ScalarFunction(const size_t nbParticles, const float* __restrict__ position
     }
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+/// AVX512KNL functions
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifdef INASTEMP_USE_AVX512KNL
+
+void HandVectorizedFunctionAVX512KNL(const size_t nbParticles, const double* __restrict__ positionsX,
+                        const double* __restrict__ positionsY,const double* __restrict__ positionsZ,
+                        const double* __restrict__ physicalValues, double* __restrict__ potentials,
+                        const double cutDistance, const double constantIfCut){
+
+    const size_t VecLength = 8; // sizeof(__m512d)/sizeof(double)
+
+    const __m512d VecOne = _mm512_set1_pd(1);
+    const __m512d VecConstantIfCut = _mm512_set1_pd(constantIfCut);
+    const __m512d VecCutDistance = _mm512_set1_pd(cutDistance);
+
+    for(size_t idxTarget = 0 ; idxTarget < nbParticles ; ++idxTarget){
+
+        const __m512d targetX = _mm512_set1_pd(positionsX[idxTarget]);
+        const __m512d targetY = _mm512_set1_pd(positionsY[idxTarget]);
+        const __m512d targetZ = _mm512_set1_pd(positionsZ[idxTarget]);
+
+        const __m512d targetPhysicalValue = _mm512_set1_pd(physicalValues[idxTarget]);
+        __m512d targetPotential = _mm512_setzero_pd();
+
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
+
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
+            const __m512d dx = targetX - _mm512_loadu_pd(&positionsX[idxSource]);
+            const __m512d dy = targetY - _mm512_loadu_pd(&positionsY[idxSource]);
+            const __m512d dz = targetZ - _mm512_loadu_pd(&positionsZ[idxSource]);
+
+            const __m512d distance = _mm512_sqrt_pd(dx*dx + dy*dy + dz*dz);
+            const __m512d inv_distance = VecOne/distance;
+
+            const __m512i testRes = _mm512_castpd_si512(_mm512_maskz_mov_pd(_mm512_cmp_pd_mask(distance, VecCutDistance, _CMP_LT_OQ),
+                                                                            _mm512_castsi512_pd(_mm512_set1_epi64(static_cast<long long>(0xFFFFFFFFFFFFFFFFL)))));
+
+            const __m512d sourcesPhysicalValue = _mm512_loadu_pd(&physicalValues[idxSource]);
+
+            targetPotential += _mm512_castsi512_pd(_mm512_or_si512(_mm512_castpd_si512(_mm512_castsi512_pd(_mm512_and_si512(testRes, _mm512_castpd_si512(sourcesPhysicalValue)))),
+                                                                   _mm512_castpd_si512(_mm512_castsi512_pd(_mm512_andnot_si512(testRes, _mm512_castpd_si512(sourcesPhysicalValue-VecConstantIfCut))))));
+
+            const __m512d resSource = inv_distance * _mm512_castsi512_pd(_mm512_or_si512(_mm512_castpd_si512(_mm512_castsi512_pd(_mm512_and_si512(testRes, _mm512_castpd_si512(targetPhysicalValue)))),
+                                                                                         _mm512_castpd_si512(_mm512_castsi512_pd(_mm512_andnot_si512(testRes, _mm512_castpd_si512(targetPhysicalValue-VecConstantIfCut))))));
+
+            const __m512d currentSource = _mm512_loadu_pd(&potentials[idxSource]);
+            _mm512_storeu_pd(&potentials[idxSource], resSource+currentSource);
+        }
+
+        potentials[idxTarget] += InaVecAVX512KNL<double>(targetPotential).horizontalSum();
+
+        /////////////////////////////////////////////////////////////////////////////////
+
+        for(size_t idxSource = lastToCompute ; idxSource < nbParticles ; ++idxSource){
+            const double dx = positionsX[idxTarget] - positionsX[idxSource];
+            const double dy = positionsY[idxTarget] - positionsY[idxSource];
+            const double dz = positionsZ[idxTarget] - positionsZ[idxSource];
+
+            const double distance = std::sqrt(dx*dx + dy*dy + dz*dz);
+            const double inv_distance = 1/distance;
+
+            if(distance < cutDistance){
+                potentials[idxTarget] += ( inv_distance * physicalValues[idxSource] );
+                potentials[idxSource] += ( inv_distance * physicalValues[idxTarget] );
+            }
+            else{
+                potentials[idxTarget] += ( inv_distance * (physicalValues[idxSource]-constantIfCut) );
+                potentials[idxSource] += ( inv_distance * (physicalValues[idxTarget]-constantIfCut) );
+            }
+        }
+    }
+}
+
+
+void HandVectorizedFunctionAVX512KNL(const size_t nbParticles, const float* __restrict__ positionsX,
+                        const float* __restrict__ positionsY,const float* __restrict__ positionsZ,
+                        const float* __restrict__ physicalValues, float* __restrict__ potentials,
+                        const float cutDistance, const float constantIfCut){
+
+    const size_t VecLength = 16; // sizeof(__m512)/sizeof(float)
+
+    const __m512 VecOne = _mm512_set1_ps(1);
+    const __m512 VecConstantIfCut = _mm512_set1_ps(constantIfCut);
+    const __m512 VecCutDistance = _mm512_set1_ps(cutDistance);
+
+    for(size_t idxTarget = 0 ; idxTarget < nbParticles ; ++idxTarget){
+
+        const __m512 targetX = _mm512_set1_ps(positionsX[idxTarget]);
+        const __m512 targetY = _mm512_set1_ps(positionsY[idxTarget]);
+        const __m512 targetZ = _mm512_set1_ps(positionsZ[idxTarget]);
+
+        const __m512 targetPhysicalValue = _mm512_set1_ps(physicalValues[idxTarget]);
+        __m512 targetPotential = _mm512_setzero_ps();
+
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
+
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
+            const __m512 dx = targetX - _mm512_loadu_ps(&positionsX[idxSource]);
+            const __m512 dy = targetY - _mm512_loadu_ps(&positionsY[idxSource]);
+            const __m512 dz = targetZ - _mm512_loadu_ps(&positionsZ[idxSource]);
+
+            const __m512 distance = _mm512_sqrt_ps(dx*dx + dy*dy + dz*dz);
+            const __m512 inv_distance = VecOne/distance;
+
+            const __m512i testRes = _mm512_castps_si512(_mm512_maskz_mov_ps(_mm512_cmp_ps_mask(distance, VecCutDistance, _CMP_LT_OQ),
+                                                                           _mm512_castsi512_ps(_mm512_set1_epi32(static_cast<int>(0xFFFFFFFF)))));
+
+            const __m512 sourcesPhysicalValue = _mm512_loadu_ps(&physicalValues[idxSource]);
+
+            targetPotential += _mm512_castsi512_ps(_mm512_or_si512(_mm512_castps_si512(_mm512_castsi512_ps(_mm512_and_si512(testRes, _mm512_castps_si512(sourcesPhysicalValue)))),
+                                                                   _mm512_castps_si512(_mm512_castsi512_ps(_mm512_andnot_si512(testRes, _mm512_castps_si512(sourcesPhysicalValue-VecConstantIfCut))))));
+
+            const __m512 resSource = inv_distance * _mm512_castsi512_ps(_mm512_or_si512(_mm512_castps_si512(_mm512_castsi512_ps(_mm512_and_si512(testRes, _mm512_castps_si512(targetPhysicalValue)))),
+                                                                                         _mm512_castps_si512(_mm512_castsi512_ps(_mm512_andnot_si512(testRes, _mm512_castps_si512(targetPhysicalValue-VecConstantIfCut))))));
+
+            const __m512 currentSource = _mm512_loadu_ps(&potentials[idxSource]);
+            _mm512_storeu_ps(&potentials[idxSource], resSource+currentSource);
+        }
+
+        potentials[idxTarget] += InaVecAVX512KNL<float>(targetPotential).horizontalSum();
+
+        /////////////////////////////////////////////////////////////////////////////////
+
+        for(size_t idxSource = lastToCompute ; idxSource < nbParticles ; ++idxSource){
+            const float dx = positionsX[idxTarget] - positionsX[idxSource];
+            const float dy = positionsY[idxTarget] - positionsY[idxSource];
+            const float dz = positionsZ[idxTarget] - positionsZ[idxSource];
+
+            const float distance = std::sqrt(dx*dx + dy*dy + dz*dz);
+            const float inv_distance = 1/distance;
+
+            if(distance < cutDistance){
+                potentials[idxTarget] += ( inv_distance * physicalValues[idxSource] );
+                potentials[idxSource] += ( inv_distance * physicalValues[idxTarget] );
+            }
+            else{
+                potentials[idxTarget] += ( inv_distance * (physicalValues[idxSource]-constantIfCut) );
+                potentials[idxSource] += ( inv_distance * (physicalValues[idxTarget]-constantIfCut) );
+            }
+        }
+    }
+}
+
+#endif
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-/// AVX2 functions
+/// AVX functions
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef INASTEMP_USE_AVX2
+#ifdef INASTEMP_USE_AVX
 
 void HandVectorizedFunctionAVX(const size_t nbParticles, const double* __restrict__ positionsX,
                         const double* __restrict__ positionsY,const double* __restrict__ positionsZ,
@@ -143,7 +294,7 @@ void HandVectorizedFunctionAVX(const size_t nbParticles, const double* __restric
             _mm256_storeu_pd(&potentials[idxSource], resSource+currentSource);
         }
 
-        potentials[idxTarget] += InaVecAVX2<double>(targetPotential).horizontalSum();
+        potentials[idxTarget] += InaVecAVX<double>(targetPotential).horizontalSum();
 
         /////////////////////////////////////////////////////////////////////////////////
 
@@ -210,7 +361,7 @@ void HandVectorizedFunctionAVX(const size_t nbParticles, const float* __restrict
             _mm256_storeu_ps(&potentials[idxSource], resSource+currentSource);
         }
 
-        potentials[idxTarget] += InaVecAVX2<float>(targetPotential).horizontalSum();
+        potentials[idxTarget] += InaVecAVX<float>(targetPotential).horizontalSum();
 
         /////////////////////////////////////////////////////////////////////////////////
 
@@ -467,8 +618,7 @@ void VectorizedFunction(const size_t nbParticles, const RealType* __restrict__ p
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 template <class RealType>
-void Test(){
-    const size_t NbParticles = 20000;
+void Test(const size_t NbParticles){
     const RealType cutDistance = RealType(0.5);
     const RealType constantIfCut = RealType(0.05);
 
@@ -519,7 +669,32 @@ void Test(){
     /////////////////////////////////////////////////////////////
 
 
-#ifdef INASTEMP_USE_AVX2
+#ifdef INASTEMP_USE_AVX512KNL
+    {
+        InaTimer timer;
+
+        HandVectorizedFunctionAVX512KNL(NbParticles, positionsX.get(), positionsY.get(), positionsZ.get(),
+                           physicalValues.get(), potentials.get(), cutDistance, constantIfCut);
+
+        timer.stop();
+        std::cout << "HandVectorizedFunctionAVX512KNL for " << (NbParticles*NbParticles/2) << " interactions took " << timer.getElapsed() << "s\n";
+    }
+
+    {
+        InaTimer timer;
+
+        VectorizedFunction<InaVecAVX512KNL<RealType>>(NbParticles, positionsX.get(), positionsY.get(), positionsZ.get(),
+                           physicalValues.get(), potentials.get(), cutDistance, constantIfCut);
+
+        timer.stop();
+        std::cout << InaVecAVX512KNL<RealType>().GetName() << " for " << (NbParticles*NbParticles/2) << " interactions took " << timer.getElapsed() << "s\n";
+    }
+#endif
+
+    /////////////////////////////////////////////////////////////
+
+
+#ifdef INASTEMP_USE_AVX
     {
         InaTimer timer;
 
@@ -533,11 +708,11 @@ void Test(){
     {
         InaTimer timer;
 
-        VectorizedFunction<InaVecAVX2<RealType>>(NbParticles, positionsX.get(), positionsY.get(), positionsZ.get(),
+        VectorizedFunction<InaVecAVX<RealType>>(NbParticles, positionsX.get(), positionsY.get(), positionsZ.get(),
                            physicalValues.get(), potentials.get(), cutDistance, constantIfCut);
 
         timer.stop();
-        std::cout << InaVecAVX2<RealType>().GetName() << " for " << (NbParticles*NbParticles/2) << " interactions took " << timer.getElapsed() << "s\n";
+        std::cout << InaVecAVX<RealType>().GetName() << " for " << (NbParticles*NbParticles/2) << " interactions took " << timer.getElapsed() << "s\n";
     }
 #endif
 
@@ -565,26 +740,21 @@ void Test(){
     }
 #endif
 
-    {
-        InaTimer timer;
-
-        VectorizedFunction<InaVecBestType<RealType>, RealType>(NbParticles, positionsX.get(), positionsY.get(), positionsZ.get(),
-                           physicalValues.get(), potentials.get(), cutDistance, constantIfCut);
-
-        timer.stop();
-        std::cout << InaVecBestType<RealType>().GetName() << " for " << (NbParticles*NbParticles/2) << " interactions took " << timer.getElapsed() << "s\n";
-    }
-
     /////////////////////////////////////////////////////////////
 }
 
 int main(int /*argc*/, char* /*argv*/ []) {
+    std::cout << "[INFO] This program runs the computation of particle-interactions using scalar, intrinsic vectors or inastemp vectors. \n";
+    std::cout << "[INFO] It use a custom test kernel with a branch in scalar (to proceed differently particles using a cutoff radius). \n";
+
+    const size_t NbParticles = 40000;
+    std::cout << "[INFO] It will compute pairwise interactions between " << NbParticles << " particles in Double and Float. \n";
 
     std::cout << "Test FLOAT:" << std::endl;
-    Test<float>();
+    Test<float>(NbParticles);
 
     std::cout << "Test DOUBLE:" << std::endl;
-    Test<double>();
+    Test<double>(NbParticles);
 
     return 0;
 }
