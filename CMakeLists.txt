@@ -197,6 +197,11 @@ if(NOT INASTEMP_AS_SUBPROJECT)
 
     set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -fpic -Wextra -Wnon-virtual-dtor -Wshadow -Wpointer-arith -Wcast-qual -Wconversion  -Wall -Wno-sign-conversion -pedantic -Woverloaded-virtual -Wpointer-arith -Wcast-qual -Wconversion -Wno-error")
 
+    if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
+        # Builting functions are not correctly making variables/parameters used
+        set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -Wno-unused-but-set-variable -Wno-unused-but-set-parameter")
+    endif()
+
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} -m64")
     endif()
