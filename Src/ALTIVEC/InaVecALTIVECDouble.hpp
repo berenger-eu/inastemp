@@ -247,7 +247,7 @@ public:
     // Move back to array
     inline void storeInArray(double ptr[]) const {
         // TODO use vec_ste
-        // vec_ste( reinterpret_cast<__vector  int>(vec), 0, reinterpret_cast<unsigned int*>(ptr));
+        // vec_ste( reinterpret_cast<__vector  unsigned int>(vec), 0, reinterpret_cast<unsigned int*>(ptr));
         alignas(16) double tmpptr[2];
         vec_st( reinterpret_cast<__vector unsigned int>(vec), 0, reinterpret_cast<unsigned int*>(tmpptr));
         ptr[0] = tmpptr[0];
