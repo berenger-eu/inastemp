@@ -61,14 +61,12 @@ public:
     // Bool data type compatibility
     inline explicit InaVecMaskALTIVEC(const bool inBool){
         const __vector __bool long long tmpMaskFF = reinterpret_cast<__vector __bool long long>(vec_splats(0xFFFFFFFFFFFFFFFFUL));
-        mask = (inBool? tmpMaskFF : reinterpret_cast<__vector __bool long long>(vec_xor(reinterpret_cast<__vector unsigned int>(mask),
-                                                                                        reinterpret_cast<__vector unsigned int>(mask))));
+        mask = (inBool? tmpMaskFF : reinterpret_cast<__vector __bool long long>(vec_splats(0x0UL)));
     }
 
     inline InaVecMaskALTIVEC& operator=(const bool inBool){
         const __vector __bool long long tmpMaskFF = reinterpret_cast<__vector __bool long long>(vec_splats(0xFFFFFFFFFFFFFFFFUL));
-        mask = (inBool? tmpMaskFF : reinterpret_cast<__vector __bool long long>(vec_xor(reinterpret_cast<__vector unsigned int>(mask),
-                                                                                        reinterpret_cast<__vector unsigned int>(mask))));
+        mask = (inBool? tmpMaskFF : reinterpret_cast<__vector __bool long long>(vec_splats(0x0UL)));
         return (*this);
     }
 

@@ -60,12 +60,12 @@ public:
     // Bool data type compatibility
     inline explicit InaVecMaskALTIVEC(const bool inBool){
         const __vector __bool int tmpMaskFF = reinterpret_cast<__vector __bool int>(vec_splats(0xFFFFFFFFU));
-        mask = (inBool? tmpMaskFF : vec_xor(tmpMaskFF, tmpMaskFF));
+        mask = (inBool? tmpMaskFF : reinterpret_cast<__vector __bool int>(vec_splats(0x0U)));
     }
 
     inline InaVecMaskALTIVEC& operator=(const bool inBool){
         const __vector __bool int tmpMaskFF = reinterpret_cast<__vector __bool int>(vec_splats(0xFFFFFFFFU));
-        mask = (inBool? tmpMaskFF : vec_xor(tmpMaskFF, tmpMaskFF));
+        mask = (inBool? tmpMaskFF : reinterpret_cast<__vector __bool int>(vec_splats(0x0U)));
         return (*this);
     }
 
