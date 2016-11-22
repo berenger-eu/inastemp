@@ -103,8 +103,8 @@ int test(const size_t nbLoops, std::ofstream& myfile){
                         const double duration = KernelAll<VecType, typename VecType::MaskType, RealType>(
                                     RealType(1), msk, power1, power2, power3, nbLoops, res);
 
-                        const size_t Flops = nbLoops * VecType::VecLength * (2 + power1 + power2 + power3);
-                        const size_t EffFlops = nbLoops * (VecType::VecLength * (2 + power1) + power2*idxSizeTrue + power3*(VecType::VecLength-idxSizeTrue));
+                        const size_t Flops = nbLoops * size_t(VecType::VecLength * (2 + power1 + power2 + power3));
+                        const size_t EffFlops = nbLoops * size_t(VecType::VecLength * (2 + power1) + power2*idxSizeTrue + power3*(VecType::VecLength-idxSizeTrue));
 
                         const double gflops = (double(Flops)/duration)/1E9;
                         const double effgflops = (double(EffFlops)/duration)/1E9;
@@ -121,9 +121,9 @@ int test(const size_t nbLoops, std::ofstream& myfile){
                                     RealType(1), msk, power1, power2, power3, nbLoops, res);
 
                         const size_t Flops = (msk.isAllTrue()?
-                                                nbLoops * VecType::VecLength * (2 + power1 + power2) :
-                                                nbLoops * VecType::VecLength * (2 + power1 + power2 + power3));
-                        const size_t EffFlops = nbLoops * (VecType::VecLength * (2 + power1) + power2*idxSizeTrue + power3*(VecType::VecLength-idxSizeTrue));
+                                                nbLoops * size_t(VecType::VecLength * (2 + power1 + power2)) :
+                                                nbLoops * size_t(VecType::VecLength * (2 + power1 + power2 + power3)));
+                        const size_t EffFlops = nbLoops * size_t(VecType::VecLength * (2 + power1) + power2*idxSizeTrue + power3*(VecType::VecLength-idxSizeTrue));
 
                         const double gflops = (double(Flops)/duration)/1E9;
                         const double effgflops = (double(EffFlops)/duration)/1E9;
