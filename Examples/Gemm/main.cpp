@@ -620,7 +620,7 @@ void ScalarGemmIna(const RealType* __restrict__ A, const RealType* __restrict__ 
 
                         for(size_t idxRow = 0 ; idxRow < BlockSize ; ++idxRow){
                             for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                                VecType sum = 0;
+                                VecType sum = 0.;
                                 for(size_t idxK = 0 ; idxK < PanelSizeK ; idxK += BlockSize){
                                     sum += VecType(&panelA[(idxRow+ib)*PanelSizeK+ idxK])
                                             * VecType(&panelB[idxCol*PanelSizeK+ idxK]);
