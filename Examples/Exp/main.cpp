@@ -314,6 +314,9 @@ void compareExpTime(const size_t NbOverLoop, const size_t NbExp){
         timer.stop();
         std::cout << "Scalar for " << NbExp * NbOverLoop
                   << " exp took " << timer.getElapsed() << "s (" << timer.getElapsed()/double(NbExp * NbOverLoop) << "s per exp)\n";
+		// Ensure that optimization compute for real        
+		volatile RealType tmp;
+        tmp = resScalar[0];
     }
     std::cout << "\n";
     /////////////////////////////////////////////////////////////
