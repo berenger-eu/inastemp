@@ -205,6 +205,32 @@ class TestAll : public UTester< TestAll< VecType > > {
         }
 
         {
+            for(int idxOffsetIn = 0 ; idxOffsetIn < sizeof(RealType)*VecType::VecLength ; ++idxOffsetIn){
+                unsigned char* bufferIn[sizeof(RealType)*VecType::VecLength*2] = {0};
+                RealType* realsIn = reinterpret_cast<RealType*>(&bufferIn[idxOffsetIn]);
+                for (int idx = 0; idx < VecType::VecLength; ++idx) {
+                    realsIn[idx]    = RealType(idx);
+                }
+
+                VecType vec(realsIn);
+                equalToArray(vec, realsIn);
+
+                vec.setFromArray(realsIn);
+                equalToArray(vec, realsIn);
+
+                for(int idxOffsetOut = 0 ; idxOffsetOut < sizeof(RealType)*VecType::VecLength ; ++idxOffsetOut){
+                    unsigned char* bufferOut[sizeof(RealType)*VecType::VecLength*2] = {0};
+                    RealType* realsOut = reinterpret_cast<RealType*>(&bufferOut[idxOffsetOut]);
+
+                    vec.storeInArray(realsOut);
+                    for (int idx = 0; idx < VecType::VecLength; ++idx) {
+                        UASSERTEEQUAL(realsOut[idx], realsIn[idx]);
+                    }
+                }
+            }
+        }
+
+        {
             RealType reals[VecType::VecLength];
             int indirect[VecType::VecLength];
             for (int idx = 0; idx < VecType::VecLength; ++idx) {
