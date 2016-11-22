@@ -150,6 +150,7 @@ foreach(TYPE ${ALL_TYPES_REVERSE})
         if($ENV{VERBOSE})
             MESSAGE(STATUS "Main -- The compiler cannot compile ${TYPE} intrinsics")
         endif()
+        set(INASTEMP_USE_${TYPE} FALSE)
     endif()
 endforeach()
 # The original order should be used as slow-to-fast types

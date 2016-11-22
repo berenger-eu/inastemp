@@ -314,6 +314,9 @@ void compareExpTime(const size_t NbOverLoop, const size_t NbExp){
         timer.stop();
         std::cout << "Scalar for " << NbExp * NbOverLoop
                   << " exp took " << timer.getElapsed() << "s (" << timer.getElapsed()/double(NbExp * NbOverLoop) << "s per exp)\n";
+		// Ensure that optimization compute for real        
+		volatile RealType tmp;
+        tmp = resScalar[0];
     }
     std::cout << "\n";
     /////////////////////////////////////////////////////////////
@@ -408,8 +411,8 @@ void compareExpTime(const size_t NbOverLoop, const size_t NbExp){
 int main(int /*argc*/, char* /*argv*/ []) {
     std::cout << "[INFO] This program runs the computation of exp() using scalar, intrinsic vectors or inastemp vectors. \n";
 
-    const size_t NbOverLoop = 5;
-    const size_t NbExp      = 1024000;
+    const size_t NbOverLoop = 7;
+    const size_t NbExp      = 10240000;
     std::cout << "[INFO] It will compute " << NbExp << " consecutive exp, and store them in an array. \n";
     std::cout << "[INFO] This process will be done " << NbOverLoop << " times. \n";
 
