@@ -228,13 +228,13 @@ void InaVecSSE41_ScalarGemmInaV2(const float* __restrict__ A, const float* __res
                         for(size_t idxK = 0 ; idxK < PanelSizeK ; ++idxK){
                             const __m128 valA = _mm_loadu_ps(&panelA[idxK*PanelSizeiA + ib]);
                             for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                                sum[idxCol] += valA * _mm_loadu_ps(&panelB[idxCol*PanelSizeK + idxK]);
+                                sum[idxCol] = _mm_add_ps(sum[idxCol],_mm_mul_ps(valA, _mm_loadu_ps(&panelB[idxCol*PanelSizeK + idxK])));
                             }
                         }
 
                         float* __restrict__ ptrC = &C[(jp+jb)*size + ip + ib];
                         for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                            __m128 res = sum[idxCol] + _mm_loadu_ps(&ptrC[idxCol*size]);
+                            __m128 res = _mm_add_ps(sum[idxCol],_mm_loadu_ps(&ptrC[idxCol*size]));
                             _mm_storeu_ps(&ptrC[idxCol*size], res);
                         }
                     }
@@ -291,13 +291,13 @@ void InaVecSSE41_ScalarGemmInaV2(const double* __restrict__ A, const double* __r
                         for(size_t idxK = 0 ; idxK < PanelSizeK ; ++idxK){
                             const __m128d valA = _mm_loadu_pd(&panelA[idxK*PanelSizeiA + ib]);
                             for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                                sum[idxCol] += valA * _mm_loadu_pd(&panelB[idxCol*PanelSizeK + idxK]);
+                                sum[idxCol] = _mm_add_pd(sum[idxCol], _mm_mul_pd(valA, _mm_loadu_pd(&panelB[idxCol*PanelSizeK + idxK])));
                             }
                         }
 
                         double* __restrict__ ptrC = &C[(jp+jb)*size + ip + ib];
                         for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                            __m128d res = sum[idxCol] + _mm_loadu_pd(&ptrC[idxCol*size]);
+                            __m128d res = _mm_add_pd(sum[idxCol], _mm_loadu_pd(&ptrC[idxCol*size]));
                             _mm_storeu_pd(&ptrC[idxCol*size], res);
                         }
                     }
@@ -360,13 +360,13 @@ void InaVecAVX_ScalarGemmInaV2(const float* __restrict__ A, const float* __restr
                         for(size_t idxK = 0 ; idxK < PanelSizeK ; ++idxK){
                             const __m256 valA = _mm256_loadu_ps(&panelA[idxK*PanelSizeiA + ib]);
                             for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                                sum[idxCol] += valA * _mm256_loadu_ps(&panelB[idxCol*PanelSizeK + idxK]);
+                                sum[idxCol] = _mm256_add_ps(sum[idxCol],_mm256_mul_ps(valA, _mm256_loadu_ps(&panelB[idxCol*PanelSizeK + idxK])));
                             }
                         }
 
                         float* __restrict__ ptrC = &C[(jp+jb)*size + ip + ib];
                         for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                            __m256 res = sum[idxCol] + _mm256_loadu_ps(&ptrC[idxCol*size]);
+                            __m256 res = _mm256_add_ps(sum[idxCol], _mm256_loadu_ps(&ptrC[idxCol*size]));
                             _mm256_storeu_ps(&ptrC[idxCol*size], res);
                         }
                     }
@@ -423,13 +423,13 @@ void InaVecAVX_ScalarGemmInaV2(const double* __restrict__ A, const double* __res
                         for(size_t idxK = 0 ; idxK < PanelSizeK ; ++idxK){
                             const __m256d valA = _mm256_loadu_pd(&panelA[idxK*PanelSizeiA + ib]);
                             for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                                sum[idxCol] += valA * _mm256_loadu_pd(&panelB[idxCol*PanelSizeK + idxK]);
+                                sum[idxCol] = _mm256_add_pd(sum[idxCol],_mm256_mul_pd(valA, _mm256_loadu_pd(&panelB[idxCol*PanelSizeK + idxK])));
                             }
                         }
 
                         double* __restrict__ ptrC = &C[(jp+jb)*size + ip + ib];
                         for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                            __m256d res = sum[idxCol] + _mm256_loadu_pd(&ptrC[idxCol*size]);
+                            __m256d res = _mm256_add_pd(sum[idxCol], _mm256_loadu_pd(&ptrC[idxCol*size]));
                             _mm256_storeu_pd(&ptrC[idxCol*size], res);
                         }
                     }
@@ -493,13 +493,13 @@ void InaVecAVX512KNL_ScalarGemmInaV2(const float* __restrict__ A, const float* _
                         for(size_t idxK = 0 ; idxK < PanelSizeK ; ++idxK){
                             const __m512 valA = _mm512_loadu_ps(&panelA[idxK*PanelSizeiA + ib]);
                             for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                                sum[idxCol] += valA * _mm512_loadu_ps(&panelB[idxCol*PanelSizeK + idxK]);
+                                sum[idxCol] = _mm512_add_ps(sum[idxCol],_mm512_mul_ps(valA, _mm512_loadu_ps(&panelB[idxCol*PanelSizeK + idxK])));
                             }
                         }
 
                         float* __restrict__ ptrC = &C[(jp+jb)*size + ip + ib];
                         for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                            __m512 res = sum[idxCol] + _mm512_loadu_ps(&ptrC[idxCol*size]);
+                            __m512 res = _mm512_add_ps(sum[idxCol], _mm512_loadu_ps(&ptrC[idxCol*size]));
                             _mm512_storeu_ps(&ptrC[idxCol*size], res);
                         }
                     }
@@ -556,13 +556,13 @@ void InaVecAVX512KNL_ScalarGemmInaV2(const double* __restrict__ A, const double*
                         for(size_t idxK = 0 ; idxK < PanelSizeK ; ++idxK){
                             const __m512d valA = _mm512_loadu_pd(&panelA[idxK*PanelSizeiA + ib]);
                             for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                                sum[idxCol] += valA * _mm512_loadu_pd(&panelB[idxCol*PanelSizeK + idxK]);
+                                sum[idxCol] = _mm512_add_pd(sum[idxCol],_mm512_mul_pd(valA, _mm512_loadu_pd(&panelB[idxCol*PanelSizeK + idxK])));
                             }
                         }
 
                         double* __restrict__ ptrC = &C[(jp+jb)*size + ip + ib];
                         for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
-                            __m512d res = sum[idxCol] + _mm512_loadu_pd(&ptrC[idxCol*size]);
+                            __m512d res = _mm512_add_pd(sum[idxCol], _mm512_loadu_pd(&ptrC[idxCol*size]));
                             _mm512_storeu_pd(&ptrC[idxCol*size], res);
                         }
                     }

@@ -128,26 +128,26 @@ void HandVectorizedFunctionAVX512KNL(const size_t nbParticles, const double* __r
         const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
         for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
-            const __m512d dx = targetX - _mm512_loadu_pd(&positionsX[idxSource]);
-            const __m512d dy = targetY - _mm512_loadu_pd(&positionsY[idxSource]);
-            const __m512d dz = targetZ - _mm512_loadu_pd(&positionsZ[idxSource]);
+            const __m512d dx = _mm512_sub_pd(targetX , _mm512_loadu_pd(&positionsX[idxSource]));
+            const __m512d dy = _mm512_sub_pd(targetY , _mm512_loadu_pd(&positionsY[idxSource]));
+            const __m512d dz = _mm512_sub_pd(targetZ , _mm512_loadu_pd(&positionsZ[idxSource]));
 
-            const __m512d distance = _mm512_sqrt_pd(dx*dx + dy*dy + dz*dz);
-            const __m512d inv_distance = VecOne/distance;
+            const __m512d distance = _mm512_sqrt_pd(_mm512_add_pd(_mm512_add_pd(_mm512_mul_pd(dx,dx),_mm512_mul_pd(dy,dy)), _mm512_mul_pd(dz,dz) ));
+            const __m512d inv_distance = _mm512_div_pd(VecOne,distance);
 
             const __m512i testRes = _mm512_castpd_si512(_mm512_maskz_mov_pd(_mm512_cmp_pd_mask(distance, VecCutDistance, _CMP_LT_OQ),
                                                                             _mm512_castsi512_pd(_mm512_set1_epi64(static_cast<long long>(0xFFFFFFFFFFFFFFFFL)))));
 
             const __m512d sourcesPhysicalValue = _mm512_loadu_pd(&physicalValues[idxSource]);
 
-            targetPotential += _mm512_castsi512_pd(_mm512_or_si512(_mm512_castpd_si512(_mm512_castsi512_pd(_mm512_and_si512(testRes, _mm512_castpd_si512(sourcesPhysicalValue)))),
-                                                                   _mm512_castpd_si512(_mm512_castsi512_pd(_mm512_andnot_si512(testRes, _mm512_castpd_si512(sourcesPhysicalValue-VecConstantIfCut))))));
+            targetPotential =  _mm512_add_pd( targetPotential,  _mm512_mul_pd(inv_distance, _mm512_castsi512_pd(_mm512_or_si512(_mm512_castpd_si512(_mm512_castsi512_pd(_mm512_and_si512(testRes, _mm512_castpd_si512(sourcesPhysicalValue)))),
+                                                                   _mm512_castpd_si512(_mm512_castsi512_pd(_mm512_andnot_si512(testRes, _mm512_castpd_si512(_mm512_sub_pd(sourcesPhysicalValue, VecConstantIfCut)))))))));
 
-            const __m512d resSource = inv_distance * _mm512_castsi512_pd(_mm512_or_si512(_mm512_castpd_si512(_mm512_castsi512_pd(_mm512_and_si512(testRes, _mm512_castpd_si512(targetPhysicalValue)))),
-                                                                                         _mm512_castpd_si512(_mm512_castsi512_pd(_mm512_andnot_si512(testRes, _mm512_castpd_si512(targetPhysicalValue-VecConstantIfCut))))));
+            const __m512d resSource = _mm512_mul_pd(inv_distance, _mm512_castsi512_pd(_mm512_or_si512(_mm512_castpd_si512(_mm512_castsi512_pd(_mm512_and_si512(testRes, _mm512_castpd_si512(targetPhysicalValue)))),
+                                                                                         _mm512_castpd_si512(_mm512_castsi512_pd(_mm512_andnot_si512(testRes, _mm512_castpd_si512(_mm512_sub_pd(targetPhysicalValue, VecConstantIfCut))))))));
 
             const __m512d currentSource = _mm512_loadu_pd(&potentials[idxSource]);
-            _mm512_storeu_pd(&potentials[idxSource], resSource+currentSource);
+            _mm512_storeu_pd(&potentials[idxSource], _mm512_add_pd(resSource , currentSource));
         }
 
         potentials[idxTarget] += InaVecAVX512KNL<double>(targetPotential).horizontalSum();
@@ -198,26 +198,26 @@ void HandVectorizedFunctionAVX512KNL(const size_t nbParticles, const float* __re
         const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
         for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
-            const __m512 dx = targetX - _mm512_loadu_ps(&positionsX[idxSource]);
-            const __m512 dy = targetY - _mm512_loadu_ps(&positionsY[idxSource]);
-            const __m512 dz = targetZ - _mm512_loadu_ps(&positionsZ[idxSource]);
+            const __m512 dx = _mm512_sub_ps(targetX , _mm512_loadu_ps(&positionsX[idxSource]));
+            const __m512 dy = _mm512_sub_ps(targetY , _mm512_loadu_ps(&positionsY[idxSource]));
+            const __m512 dz = _mm512_sub_ps(targetZ , _mm512_loadu_ps(&positionsZ[idxSource]));
 
-            const __m512 distance = _mm512_sqrt_ps(dx*dx + dy*dy + dz*dz);
-            const __m512 inv_distance = VecOne/distance;
+            const __m512 distance = _mm512_sqrt_ps(_mm512_add_ps(_mm512_add_ps(_mm512_mul_ps(dx,dx),_mm512_mul_ps(dy,dy)), _mm512_mul_ps(dz,dz) ));
+            const __m512 inv_distance = _mm512_div_ps(VecOne,distance);
 
             const __m512i testRes = _mm512_castps_si512(_mm512_maskz_mov_ps(_mm512_cmp_ps_mask(distance, VecCutDistance, _CMP_LT_OQ),
                                                                            _mm512_castsi512_ps(_mm512_set1_epi32(static_cast<int>(0xFFFFFFFF)))));
 
             const __m512 sourcesPhysicalValue = _mm512_loadu_ps(&physicalValues[idxSource]);
 
-            targetPotential += _mm512_castsi512_ps(_mm512_or_si512(_mm512_castps_si512(_mm512_castsi512_ps(_mm512_and_si512(testRes, _mm512_castps_si512(sourcesPhysicalValue)))),
-                                                                   _mm512_castps_si512(_mm512_castsi512_ps(_mm512_andnot_si512(testRes, _mm512_castps_si512(sourcesPhysicalValue-VecConstantIfCut))))));
+            targetPotential =  _mm512_add_ps( targetPotential,  _mm512_mul_ps(inv_distance, _mm512_castsi512_ps(_mm512_or_si512(_mm512_castps_si512(_mm512_castsi512_ps(_mm512_and_si512(testRes, _mm512_castps_si512(sourcesPhysicalValue)))),
+                                                                   _mm512_castps_si512(_mm512_castsi512_ps(_mm512_andnot_si512(testRes, _mm512_castps_si512(_mm512_sub_ps(sourcesPhysicalValue, VecConstantIfCut)))))))));
 
-            const __m512 resSource = inv_distance * _mm512_castsi512_ps(_mm512_or_si512(_mm512_castps_si512(_mm512_castsi512_ps(_mm512_and_si512(testRes, _mm512_castps_si512(targetPhysicalValue)))),
-                                                                                         _mm512_castps_si512(_mm512_castsi512_ps(_mm512_andnot_si512(testRes, _mm512_castps_si512(targetPhysicalValue-VecConstantIfCut))))));
+            const __m512 resSource = _mm512_mul_ps(inv_distance, _mm512_castsi512_ps(_mm512_or_si512(_mm512_castps_si512(_mm512_castsi512_ps(_mm512_and_si512(testRes, _mm512_castps_si512(targetPhysicalValue)))),
+                                                                                         _mm512_castps_si512(_mm512_castsi512_ps(_mm512_andnot_si512(testRes, _mm512_castps_si512(_mm512_sub_ps(targetPhysicalValue, VecConstantIfCut))))))));
 
             const __m512 currentSource = _mm512_loadu_ps(&potentials[idxSource]);
-            _mm512_storeu_ps(&potentials[idxSource], resSource+currentSource);
+            _mm512_storeu_ps(&potentials[idxSource], _mm512_add_ps(resSource , currentSource));
         }
 
         potentials[idxTarget] += InaVecAVX512KNL<float>(targetPotential).horizontalSum();
@@ -275,23 +275,23 @@ void HandVectorizedFunctionAVX(const size_t nbParticles, const double* __restric
         const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
         for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
-            const __m256d dx = targetX - _mm256_loadu_pd(&positionsX[idxSource]);
-            const __m256d dy = targetY - _mm256_loadu_pd(&positionsY[idxSource]);
-            const __m256d dz = targetZ - _mm256_loadu_pd(&positionsZ[idxSource]);
+            const __m256d dx = _mm256_sub_pd(targetX , _mm256_loadu_pd(&positionsX[idxSource]));
+            const __m256d dy = _mm256_sub_pd(targetY , _mm256_loadu_pd(&positionsY[idxSource]));
+            const __m256d dz = _mm256_sub_pd(targetZ , _mm256_loadu_pd(&positionsZ[idxSource]));
 
-            const __m256d distance = _mm256_sqrt_pd(dx*dx + dy*dy + dz*dz);
-            const __m256d inv_distance = VecOne/distance;
+            const __m256d distance = _mm256_sqrt_pd(_mm256_add_pd(_mm256_add_pd(_mm256_mul_pd(dx,dx),_mm256_mul_pd(dy,dy)), _mm256_mul_pd(dz,dz) ));
+            const __m256d inv_distance = _mm256_div_pd(VecOne,distance);
 
             const __m256d testRes = _mm256_cmp_pd(distance, VecCutDistance, _CMP_LT_OQ);
 
             const __m256d sourcesPhysicalValue = _mm256_loadu_pd(&physicalValues[idxSource]);
 
-            targetPotential += inv_distance * _mm256_or_pd(_mm256_and_pd(testRes, sourcesPhysicalValue),
-                                                           _mm256_andnot_pd(testRes, sourcesPhysicalValue-VecConstantIfCut));
-            const __m256d resSource = inv_distance * _mm256_or_pd(_mm256_and_pd(testRes, targetPhysicalValue),
-                                                                  _mm256_andnot_pd(testRes, targetPhysicalValue-VecConstantIfCut));
+            targetPotential =  _mm256_add_pd( targetPotential,  _mm256_mul_pd(inv_distance, _mm256_or_pd(_mm256_and_pd(testRes, sourcesPhysicalValue),
+                                                           _mm256_andnot_pd(testRes, _mm256_sub_pd(sourcesPhysicalValue, VecConstantIfCut)))));
+            const __m256d resSource = _mm256_mul_pd(inv_distance, _mm256_or_pd(_mm256_and_pd(testRes, targetPhysicalValue),
+                                                                  _mm256_andnot_pd(testRes, _mm256_sub_pd(targetPhysicalValue, VecConstantIfCut))));
             const __m256d currentSource = _mm256_loadu_pd(&potentials[idxSource]);
-            _mm256_storeu_pd(&potentials[idxSource], resSource+currentSource);
+            _mm256_storeu_pd(&potentials[idxSource], _mm256_add_pd(resSource , currentSource));
         }
 
         potentials[idxTarget] += InaVecAVX<double>(targetPotential).horizontalSum();
@@ -342,23 +342,23 @@ void HandVectorizedFunctionAVX(const size_t nbParticles, const float* __restrict
         const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
         for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
-            const __m256 dx = targetX - _mm256_loadu_ps(&positionsX[idxSource]);
-            const __m256 dy = targetY - _mm256_loadu_ps(&positionsY[idxSource]);
-            const __m256 dz = targetZ - _mm256_loadu_ps(&positionsZ[idxSource]);
+            const __m256 dx = _mm256_sub_ps(targetX , _mm256_loadu_ps(&positionsX[idxSource]));
+            const __m256 dy = _mm256_sub_ps(targetY , _mm256_loadu_ps(&positionsY[idxSource]));
+            const __m256 dz = _mm256_sub_ps(targetZ , _mm256_loadu_ps(&positionsZ[idxSource]));
 
-            const __m256 distance = _mm256_sqrt_ps(dx*dx + dy*dy + dz*dz);
-            const __m256 inv_distance = VecOne/distance;
+            const __m256 distance = _mm256_sqrt_ps(_mm256_add_ps(_mm256_add_ps(_mm256_mul_ps(dx,dx),_mm256_mul_ps(dy,dy)), _mm256_mul_ps(dz,dz) ));
+            const __m256 inv_distance = _mm256_div_ps(VecOne,distance);
 
             const __m256 testRes = _mm256_cmp_ps(distance, VecCutDistance, _CMP_LT_OQ);
 
             const __m256 sourcesPhysicalValue = _mm256_loadu_ps(&physicalValues[idxSource]);
 
-            targetPotential += inv_distance * _mm256_or_ps(_mm256_and_ps(testRes, sourcesPhysicalValue),
-                                                           _mm256_andnot_ps(testRes, sourcesPhysicalValue-VecConstantIfCut));
-            const __m256 resSource = inv_distance * _mm256_or_ps(_mm256_and_ps(testRes, targetPhysicalValue),
-                                                                  _mm256_andnot_ps(testRes, targetPhysicalValue-VecConstantIfCut));
+            targetPotential =  _mm256_add_ps( targetPotential,  _mm256_mul_ps(inv_distance, _mm256_or_ps(_mm256_and_ps(testRes, sourcesPhysicalValue),
+                                                           _mm256_andnot_ps(testRes, _mm256_sub_ps(sourcesPhysicalValue, VecConstantIfCut)))));
+            const __m256 resSource = _mm256_mul_ps(inv_distance, _mm256_or_ps(_mm256_and_ps(testRes, targetPhysicalValue),
+                                                                  _mm256_andnot_ps(testRes, _mm256_sub_ps(targetPhysicalValue, VecConstantIfCut))));
             const __m256 currentSource = _mm256_loadu_ps(&potentials[idxSource]);
-            _mm256_storeu_ps(&potentials[idxSource], resSource+currentSource);
+            _mm256_storeu_ps(&potentials[idxSource], _mm256_add_ps(resSource , currentSource));
         }
 
         potentials[idxTarget] += InaVecAVX<float>(targetPotential).horizontalSum();
@@ -418,23 +418,23 @@ void HandVectorizedFunctionSSE3(const size_t nbParticles, const double* __restri
         const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
         for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
-            const __m128d dx = targetX - _mm_loadu_pd(&positionsX[idxSource]);
-            const __m128d dy = targetY - _mm_loadu_pd(&positionsY[idxSource]);
-            const __m128d dz = targetZ - _mm_loadu_pd(&positionsZ[idxSource]);
+            const __m128d dx = _mm_sub_pd(targetX , _mm_loadu_pd(&positionsX[idxSource]));
+            const __m128d dy = _mm_sub_pd(targetY , _mm_loadu_pd(&positionsY[idxSource]));
+            const __m128d dz = _mm_sub_pd(targetZ , _mm_loadu_pd(&positionsZ[idxSource]));
 
-            const __m128d distance = _mm_sqrt_pd(dx*dx + dy*dy + dz*dz);
-            const __m128d inv_distance = VecOne/distance;
+            const __m128d distance = _mm_sqrt_pd(_mm_add_pd(_mm_add_pd(_mm_mul_pd(dx,dx),_mm_mul_pd(dy,dy)), _mm_mul_pd(dz,dz) ));
+            const __m128d inv_distance = _mm_div_pd(VecOne,distance);
 
             const __m128d testRes = _mm_cmplt_pd(distance, VecCutDistance);
 
             const __m128d sourcesPhysicalValue = _mm_loadu_pd(&physicalValues[idxSource]);
 
-            targetPotential += inv_distance * _mm_or_pd(_mm_and_pd(testRes, sourcesPhysicalValue),
-                                                           _mm_andnot_pd(testRes, sourcesPhysicalValue-VecConstantIfCut));
-            const __m128d resSource = inv_distance * _mm_or_pd(_mm_and_pd(testRes, targetPhysicalValue),
-                                                                  _mm_andnot_pd(testRes, targetPhysicalValue-VecConstantIfCut));
+            targetPotential =  _mm_add_pd( targetPotential,  _mm_mul_pd(inv_distance, _mm_or_pd(_mm_and_pd(testRes, sourcesPhysicalValue),
+                                                           _mm_andnot_pd(testRes, _mm_sub_pd(sourcesPhysicalValue, VecConstantIfCut)))));
+            const __m128d resSource = _mm_mul_pd(inv_distance, _mm_or_pd(_mm_and_pd(testRes, targetPhysicalValue),
+                                                                  _mm_andnot_pd(testRes, _mm_sub_pd(targetPhysicalValue, VecConstantIfCut))));
             const __m128d currentSource = _mm_loadu_pd(&potentials[idxSource]);
-            _mm_storeu_pd(&potentials[idxSource], resSource+currentSource);
+            _mm_storeu_pd(&potentials[idxSource], _mm_add_pd(resSource , currentSource));
         }
 
         potentials[idxTarget] += InaVecSSE3<double>(targetPotential).horizontalSum();
@@ -484,23 +484,23 @@ void HandVectorizedFunctionSSE3(const size_t nbParticles, const float* __restric
         const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
         for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
-            const __m128 dx = targetX - _mm_loadu_ps(&positionsX[idxSource]);
-            const __m128 dy = targetY - _mm_loadu_ps(&positionsY[idxSource]);
-            const __m128 dz = targetZ - _mm_loadu_ps(&positionsZ[idxSource]);
+            const __m128 dx = _mm_sub_ps(targetX , _mm_loadu_ps(&positionsX[idxSource]));
+            const __m128 dy = _mm_sub_ps(targetY , _mm_loadu_ps(&positionsY[idxSource]));
+            const __m128 dz = _mm_sub_ps(targetZ , _mm_loadu_ps(&positionsZ[idxSource]));
 
-            const __m128 distance = _mm_sqrt_ps(dx*dx + dy*dy + dz*dz);
-            const __m128 inv_distance = VecOne/distance;
+            const __m128 distance = _mm_sqrt_ps(_mm_add_ps(_mm_add_ps(_mm_mul_ps(dx,dx),_mm_mul_ps(dy,dy)), _mm_mul_ps(dz,dz) ));
+            const __m128 inv_distance = _mm_div_ps(VecOne,distance);
 
             const __m128 testRes = _mm_cmplt_ps(distance, VecCutDistance);
 
             const __m128 sourcesPhysicalValue = _mm_loadu_ps(&physicalValues[idxSource]);
 
-            targetPotential += inv_distance * _mm_or_ps(_mm_and_ps(testRes, sourcesPhysicalValue),
-                                                           _mm_andnot_ps(testRes, sourcesPhysicalValue-VecConstantIfCut));
-            const __m128 resSource = inv_distance * _mm_or_ps(_mm_and_ps(testRes, targetPhysicalValue),
-                                                                  _mm_andnot_ps(testRes, targetPhysicalValue-VecConstantIfCut));
+            targetPotential =  _mm_add_ps( targetPotential,  _mm_mul_ps(inv_distance, _mm_or_ps(_mm_and_ps(testRes, sourcesPhysicalValue),
+                                                           _mm_andnot_ps(testRes, _mm_sub_ps(sourcesPhysicalValue, VecConstantIfCut)))));
+            const __m128 resSource = _mm_mul_ps(inv_distance, _mm_or_ps(_mm_and_ps(testRes, targetPhysicalValue),
+                                                                  _mm_andnot_ps(testRes, _mm_sub_ps(targetPhysicalValue, VecConstantIfCut))));
             const __m128 currentSource = _mm_loadu_ps(&potentials[idxSource]);
-            _mm_storeu_ps(&potentials[idxSource], resSource+currentSource);
+            _mm_storeu_ps(&potentials[idxSource], _mm_add_ps(resSource , currentSource));
         }
 
         potentials[idxTarget] += InaVecSSE3<float>(targetPotential).horizontalSum();
