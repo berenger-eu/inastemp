@@ -115,6 +115,10 @@ public:
         return *this;
     }
 
+    inline InaVecInterface(const std::initializer_list<RealType> lst)
+        : Parent(lst.begin()){
+    }
+
     /** Load and store */
 
     inline /*not explicit*/ InaVecInterface(const VecRawType inVec)

@@ -11,6 +11,7 @@
 #include "Common/InaIfElse.hpp"
 
 #include <cmath>
+#include <initializer_list>
 
 template <class RealType>
 class InaVecMaskSCALAR;
@@ -150,6 +151,10 @@ public:
     // Constructor from scalar
 
     // Constructor from vec
+    inline InaVecSCALAR(const std::initializer_list<double> lst)
+        : InaVecSCALAR(lst.begin()){
+    }
+
     inline explicit InaVecSCALAR(const double ptr[])
         : vec(*ptr){
     }

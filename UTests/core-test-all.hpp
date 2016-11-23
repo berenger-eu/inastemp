@@ -194,6 +194,27 @@ class TestAll : public UTester< TestAll< VecType > > {
         }
 
         {
+            static_assert(VecType::VecLength < 64,
+                          "The unit test cannot test for std::initializer_list for"
+                          "data type with more than 64 values");
+            const RealType rv = 0;
+            VecType vconstruct {{rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
+                        rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
+                        rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
+                        rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv}};
+            VecType vcopyconstruct = {{rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
+                        rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
+                        rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
+                        rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv}};
+            VecType vcopyop;
+            vcopyop = VecType{{rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
+                        rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
+                        rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
+                        rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv}};
+            vcopyop += vconstruct * vcopyconstruct; // unused
+        }
+
+        {
             alignas(128) RealType reals[VecType::VecLength];
             alignas(128) char buffer[VecType::VecLength*sizeof(RealType)+1];
             RealType* realsna = reinterpret_cast<RealType*>(&buffer+1);

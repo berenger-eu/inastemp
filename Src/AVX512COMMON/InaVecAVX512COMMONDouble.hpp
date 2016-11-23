@@ -18,6 +18,7 @@
 #include <immintrin.h>
 
 #include <cmath>
+#include <initializer_list>
 
 // Forward declarations
 template <class RealType>
@@ -184,6 +185,10 @@ public:
     }
 
     // Constructor from vec
+    inline InaVecAVX512COMMON(const std::initializer_list<double> lst)
+        : InaVecAVX512COMMON(lst.begin()){
+    }
+
     inline explicit InaVecAVX512COMMON(const double ptr[])
         : vec(_mm512_loadu_pd(ptr)){
     }

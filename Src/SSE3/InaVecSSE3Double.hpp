@@ -17,6 +17,7 @@
 
 #include <emmintrin.h>
 #include <cmath>
+#include <initializer_list>
 
 // Forward declarations
 template <class RealType>
@@ -179,7 +180,11 @@ public:
         vec = _mm_set1_pd(inVal);
     }
 
-    // Constructor from vec
+    // Constructor from vec    
+    inline InaVecSSE3(const std::initializer_list<double> lst)
+        : InaVecSSE3(lst.begin()){
+    }
+
     inline explicit InaVecSSE3(const double ptr[])
         : vec(_mm_loadu_pd(ptr)){
     }
