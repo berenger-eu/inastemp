@@ -108,7 +108,7 @@ void ScalarFunction(const size_t nbParticles, const float* __restrict__ position
 /// ALTIVEC functions
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-//#ifdef INASTEMP_USE_ALTIVEC
+#ifdef INASTEMP_USE_ALTIVEC
 
 void HandVectorizedFunctionALTIVEC(const size_t nbParticles, const double* __restrict__ positionsX,
                         const double* __restrict__ positionsY,const double* __restrict__ positionsZ,
@@ -248,7 +248,7 @@ void HandVectorizedFunctionALTIVEC(const size_t nbParticles, const float* __rest
     }
 }
 
-//#endif
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
