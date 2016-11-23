@@ -202,21 +202,11 @@ public:
 
     // Constructor from vec
     inline explicit InaVecALTIVEC(const double ptr[]){
-        // TODO use vec_xld2
         vec = vec_xl(0, ptr); 
-        // TODO indian problem might need permutation
-        //__vector unsigned char perm2301 = {0x8U, 0x9U, 0xAU, 0xBU, 0xCU, 0xDU, 0xEU, 0xFU,
-        //                                        0x0U, 0x1U, 0x2U, 0x3U, 0x4U, 0x5U, 0x6U, 0x7U};
-        //vec = vec_perm( vec, vec, perm2301);
     }
 
     inline InaVecALTIVEC& setFromArray(const double ptr[]){
-        // TODO use vec_xld2
         vec = vec_xl(0, ptr); 
-        // TODO indian problem might need permutation
-        //__vector unsigned char perm2301 = {0x8U, 0x9U, 0xAU, 0xBU, 0xCU, 0xDU, 0xEU, 0xFU,
-        //                                        0x0U, 0x1U, 0x2U, 0x3U, 0x4U, 0x5U, 0x6U, 0x7U};
-        //vec = vec_perm( vec, vec, perm2301);
         return *this;
     }
 
@@ -246,12 +236,8 @@ public:
 
     // Move back to array
     inline void storeInArray(double ptr[]) const {
-        // TODO use vec_ste
-        // vec_ste( reinterpret_cast<__vector  unsigned int>(vec), 0, reinterpret_cast<unsigned int*>(ptr));
-        alignas(16) double tmpptr[2];
-        vec_st( reinterpret_cast<__vector unsigned int>(vec), 0, reinterpret_cast<unsigned int*>(tmpptr));
-        ptr[0] = tmpptr[0];
-        ptr[1] = tmpptr[1];
+        // TODO remove cast
+        vec_xst( reinterpret_cast<__vector unsigned int>(vec), 0, reinterpret_cast<unsigned int*>(ptr));
     }
 
     inline void storeInAlignedArray(double ptr[]) const {
