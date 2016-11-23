@@ -631,13 +631,7 @@ void InaVecALTIVEC_ScalarGemmInaV2(const float* __restrict__ A, const float* __r
                         float* __restrict__ ptrC = &C[(jp+jb)*size + ip + ib];
                         for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
                             __vector float res = sum[idxCol] + vec_xl(0, &ptrC[idxCol*size]);
-
-                            alignas(16) float tmpptr[4];
-                            vec_st(res, 0, tmpptr);
-                            ptrC[idxCol*size+0] = tmpptr[0];
-                            ptrC[idxCol*size+1] = tmpptr[1];
-                            ptrC[idxCol*size+2] = tmpptr[2];
-                            ptrC[idxCol*size+3] = tmpptr[3];
+                            vec_xst(res, 0, &ptrC[idxCol*size]);
                         }
                     }
                 }
@@ -700,10 +694,7 @@ void InaVecALTIVEC_ScalarGemmInaV2(const double* __restrict__ A, const double* _
                         double* __restrict__ ptrC = &C[(jp+jb)*size + ip + ib];
                         for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
                             __vector double res = sum[idxCol] + vec_xl(0, &ptrC[idxCol*size]);
-                            alignas(16) double tmpptr[2];
-                            vec_st( reinterpret_cast<__vector unsigned int>(res), 0, reinterpret_cast<unsigned int*>(tmpptr));
-                            ptrC[idxCol*size+0] = tmpptr[0];
-                            ptrC[idxCol*size+1] = tmpptr[1];
+                            vec_xst( reinterpret_cast<__vector unsigned int>(res), 0, reinterpret_cast<unsigned int*>(&ptrC[idxCol*size]));
                         }
                     }
                 }

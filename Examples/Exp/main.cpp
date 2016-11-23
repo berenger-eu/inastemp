@@ -306,12 +306,7 @@ inline void InaVecALTIVEC_exp(const float inVal[], float outVal[]) {
      __vector int castedInteger = vec_cts(COEFF_A * x + COEFF_B, 0);
 
      vec = reinterpret_cast<__vector float>(castedInteger);
-     alignas(16) float tmpptr[4];
-     vec_st(vec, 0, tmpptr);
-     outVal[0] = tmpptr[0];
-     outVal[1] = tmpptr[1];
-     outVal[2] = tmpptr[2];
-     outVal[3] = tmpptr[3];
+     vec_xst(vec, 0, outVal);
 }
 
 inline void InaVecALTIVEC_exp(const double inVal[], double outVal[]) {
@@ -347,7 +342,7 @@ inline void InaVecALTIVEC_exp(const double inVal[], double outVal[]) {
     ltmpptr[0] = long(tmpptr[0]);
     ltmpptr[1] = long(tmpptr[1]);
     vec = reinterpret_cast<__vector double>(vec_xl(0, ltmpptr));
-    vec_st(reinterpret_cast<__vector unsigned int>(vec), 0, reinterpret_cast<unsigned int*>(outVal));
+    vec_xst(reinterpret_cast<__vector unsigned int>(vec), 0, reinterpret_cast<unsigned int*>(outVal));
 }
 #endif
 

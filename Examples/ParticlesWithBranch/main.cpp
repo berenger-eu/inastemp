@@ -152,10 +152,7 @@ void HandVectorizedFunctionALTIVEC(const size_t nbParticles, const double* __res
 
             const __vector double currentSource = vec_xl(0, &potentials[idxSource]);
 
-            alignas(16) double tmpptr[2];
-            vec_st(reinterpret_cast<__vector unsigned int>(resSource+currentSource), 0, reinterpret_cast<unsigned int*>(tmpptr));
-            potentials[idxSource+0] = tmpptr[0];
-            potentials[idxSource+1] = tmpptr[1];
+            vec_xst(reinterpret_cast<__vector unsigned int>(resSource+currentSource), 0, reinterpret_cast<unsigned int*>(&potentials[idxSource]));
         }
 
         potentials[idxTarget] += InaVecALTIVEC<double>(targetPotential).horizontalSum();
@@ -224,12 +221,7 @@ void HandVectorizedFunctionALTIVEC(const size_t nbParticles, const float* __rest
                                                                                          vec_and(vec_nand(reinterpret_cast<__vector unsigned int>(testRes),reinterpret_cast<__vector unsigned int>(testRes)), reinterpret_cast<__vector unsigned int>(targetPhysicalValue-VecConstantIfCut))));
 
             const __vector float currentSource = vec_xl(0, &potentials[idxSource]);
-            alignas(16) float tmpptr[4];
-            vec_st(resSource+currentSource, 0, tmpptr);
-            potentials[idxSource+0] = tmpptr[0];
-            potentials[idxSource+1] = tmpptr[1];
-            potentials[idxSource+2] = tmpptr[2];
-            potentials[idxSource+3] = tmpptr[3];
+            vec_xst(resSource+currentSource, 0, &potentials[idxSource]);
         }
 
         potentials[idxTarget] += InaVecALTIVEC<float>(targetPotential).horizontalSum();
