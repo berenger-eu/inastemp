@@ -50,6 +50,8 @@ Template C++ source-code                           Compiled Template C++ code
 
 - The following x86 SIMD types are currently supported:
     - SSE3, SSSE3, SSE4.1, SSE4.2, AVX, AVX2, AVX512-KNL, AVX512-SKL
+- The following Powere PC SIMD types are currently supported:
+    - Power-8 Altivec/VMX
 - arithmetic operators `*/+-` are provided
 - CPU capacities are detected automatically during the CMake stage
 - The compiler capacities are detected automatically during the CMake stage
@@ -78,7 +80,7 @@ VERBOSE=1 cmake ..
 make
 ```
 
-### CMake variables - Hardware detection
+### CMake variables - Hardware detection (X86)
 
 There are two hardware detections:
 - the instructions supported by the compiler
@@ -107,6 +109,14 @@ For example, here is a part of the output of the `ccmake ..` command on a AVX2 C
 
 By turning the cmake variable `INASTEMP_ISDE_CPU` to `ON` the hardware detection is done over intel SDE.
 In this case, one can ask Inastemp to check any hardware (passing the appropriate options to isde).
+
+### CMake variables - Hardware detection (Power PC)
+
+Inastemp perform the following test to enable the VMX classes (and to disable all the X86 classes):
+```
+if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
+```
+If the detection looks incorrect, please check the value returned by `${CMAKE_SYSTEM_PROCESSOR}` and open an issue on our gitlab.
 
 ### Using Inastemp as a sub-project with CMake
 
@@ -143,6 +153,9 @@ Inastemp was developed and tested using the following compilers on the x86_64 ar
 - Clang 3.5
 - Intel 16.0
 Earlier versions may work as well.
+
+It was also tested on IBM POWER 8 NVL/4023GHz (Openpower) using the following compilers:
+- Gcc 6.2.0
 
 - Intel special flags
 We pass `-diag-disable 2304 -diag-disable 10121 -diag-disable 10120` to intel compiler to remove the implicit conversion warnings between Inastemp classes.
