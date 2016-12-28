@@ -272,6 +272,80 @@ inline void InaVecAVX512KNL_exp(const double inVal[], double outVal[]) {
 }
 #endif
 
+
+#ifdef INASTEMP_USE_ALTIVEC
+
+#include "ALTIVEC/InaVecALTIVECDouble.hpp"
+#include "ALTIVEC/InaVecALTIVECFloat.hpp"
+
+inline void InaVecALTIVEC_exp(const float inVal[], float outVal[]) {
+     __vector float vec = vec_xl(0, inVal);
+
+     const __vector float COEFF_LOG2E = vec_splats(float(InaFastExp::CoeffLog2E()));
+     const __vector float COEFF_A     = vec_splats(float(InaFastExp::CoeffA32()));
+     const __vector float COEFF_B     = vec_splats(float(InaFastExp::CoeffB32()));
+     const __vector float COEFF_P5_A  = vec_splats(float(InaFastExp::GetCoefficient6_5()));
+     const __vector float COEFF_P5_B  = vec_splats(float(InaFastExp::GetCoefficient6_4()));
+     const __vector float COEFF_P5_C  = vec_splats(float(InaFastExp::GetCoefficient6_3()));
+     const __vector float COEFF_P5_D  = vec_splats(float(InaFastExp::GetCoefficient6_2()));
+     const __vector float COEFF_P5_E  = vec_splats(float(InaFastExp::GetCoefficient6_1()));
+     const __vector float COEFF_P5_F  = vec_splats(float(InaFastExp::GetCoefficient6_0()));
+
+     __vector float x = vec * COEFF_LOG2E;
+
+     const __vector float fractional_part = x - vec_floor(x);
+
+     __vector float factor = (((((COEFF_P5_A * fractional_part + COEFF_P5_B)
+                        * fractional_part + COEFF_P5_C)
+                        * fractional_part + COEFF_P5_D)
+                        * fractional_part + COEFF_P5_E)
+                        * fractional_part + COEFF_P5_F);
+
+     x -= factor;
+
+     __vector int castedInteger = vec_cts(COEFF_A * x + COEFF_B, 0);
+
+     vec = reinterpret_cast<__vector float>(castedInteger);
+     vec_xst(vec, 0, outVal);
+}
+
+inline void InaVecALTIVEC_exp(const double inVal[], double outVal[]) {
+    __vector double vec = vec_xl(0, &inVal[0]);
+
+    const __vector double COEFF_LOG2E = vec_splats(double(InaFastExp::CoeffLog2E()));
+    const __vector double COEFF_A     = vec_splats(double(InaFastExp::CoeffA64()));
+    const __vector double COEFF_B     = vec_splats(double(InaFastExp::CoeffB64()));
+    const __vector double COEFF_P5_C  = vec_splats(double(InaFastExp::GetCoefficient4_3()));
+    const __vector double COEFF_P5_D  = vec_splats(double(InaFastExp::GetCoefficient4_2()));
+    const __vector double COEFF_P5_E  = vec_splats(double(InaFastExp::GetCoefficient4_1()));
+    const __vector double COEFF_P5_F  = vec_splats(double(InaFastExp::GetCoefficient4_0()));
+
+    __vector double x = vec * COEFF_LOG2E;
+
+    const __vector double fractional_part = x - vec_floor(x);
+
+    __vector double factor = (((COEFF_P5_C * fractional_part + COEFF_P5_D)
+                       * fractional_part + COEFF_P5_E)
+                       * fractional_part + COEFF_P5_F);
+
+    x -= factor;
+
+    x = COEFF_A * x + COEFF_B;
+
+    // TODO find conversion function
+    //__vector long castedInteger = vec_cts(x, 0);
+    //return reinterpret_cast<__vector double>(castedInteger);
+    alignas(16) double tmpptr[2];
+    vec_st( reinterpret_cast<__vector unsigned int>(x), 0, reinterpret_cast<unsigned int*>(tmpptr));
+
+    alignas(16) long ltmpptr[2];
+    ltmpptr[0] = long(tmpptr[0]);
+    ltmpptr[1] = long(tmpptr[1]);
+    vec = reinterpret_cast<__vector double>(vec_xl(0, ltmpptr));
+    vec_xst(reinterpret_cast<__vector unsigned int>(vec), 0, reinterpret_cast<unsigned int*>(outVal));
+}
+#endif
+
 template <class VecType>
 void GenericExpInavec(const size_t NbOverLoop, const size_t NbExp){
     using RealType = typename VecType::RealType;
@@ -402,6 +476,34 @@ void compareExpTime(const size_t NbOverLoop, const size_t NbExp){
 
         timer.stop();
         std::cout << "Vector " << "AVX512KNL" << " for " << NbExp * NbOverLoop
+                  << " exp took " << timer.getElapsed() << "s (" << timer.getElapsed()/double(NbExp * NbOverLoop) << "s per exp)\n";
+    }
+    std::cout << "\n";
+#endif
+
+#ifdef INASTEMP_USE_ALTIVEC
+    GenericExpInavec<InaVecALTIVEC<RealType>>(NbOverLoop, NbExp);
+
+    {
+        // Raw SIMD
+        const int VecLength = InaVecALTIVEC<RealType>::VecLength;
+        // Note : we increase the length of the vector to avoid checking the loop size
+        std::unique_ptr< RealType[] > resSimd(new RealType[NbExp + VecLength]);
+        InaTimer timer;
+
+        for (size_t idxLoop = 0; idxLoop < NbOverLoop; ++idxLoop) {
+            for (size_t idx = 0; idx < NbExp; idx += VecLength) {
+                alignas(64) RealType bufferX[VecLength];
+                // Copy value into a buffer since we do it on the fly
+                for (size_t idxX = 0; idxX < VecLength; ++idxX) {
+                    bufferX[idxX] = static_cast<RealType>((idx + idxX) % 200);
+                }
+                InaVecALTIVEC_exp(bufferX, &resSimd[idx]);
+            }
+        }
+
+        timer.stop();
+        std::cout << "Vector " << "ALTIVEC" << " for " << NbExp * NbOverLoop
                   << " exp took " << timer.getElapsed() << "s (" << timer.getElapsed()/double(NbExp * NbOverLoop) << "s per exp)\n";
     }
     std::cout << "\n";

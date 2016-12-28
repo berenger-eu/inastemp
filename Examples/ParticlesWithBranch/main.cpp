@@ -27,6 +27,11 @@
 #include "AVX512KNL/InaVecAVX512KNLFloat.hpp"
 #endif
 
+#ifdef INASTEMP_USE_ALTIVEC
+#include "ALTIVEC/InaVecALTIVECDouble.hpp"
+#include "ALTIVEC/InaVecALTIVECFloat.hpp"
+#endif
+
 #include <memory>
 #include <iostream>
 #include <random>
@@ -98,6 +103,153 @@ void ScalarFunction(const size_t nbParticles, const float* __restrict__ position
         }
     }
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+/// ALTIVEC functions
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifdef INASTEMP_USE_ALTIVEC
+
+void HandVectorizedFunctionALTIVEC(const size_t nbParticles, const double* __restrict__ positionsX,
+                        const double* __restrict__ positionsY,const double* __restrict__ positionsZ,
+                        const double* __restrict__ physicalValues, double* __restrict__ potentials,
+                        const double cutDistance, const double constantIfCut){
+
+    const size_t VecLength = 2;
+
+    const __vector double VecOne = vec_splats(1.);
+    const __vector double VecConstantIfCut = vec_splats(constantIfCut);
+    const __vector double VecCutDistance = vec_splats(cutDistance);
+
+    for(size_t idxTarget = 0 ; idxTarget < nbParticles ; ++idxTarget){
+
+        const __vector double targetX = vec_splats(positionsX[idxTarget]);
+        const __vector double targetY = vec_splats(positionsY[idxTarget]);
+        const __vector double targetZ = vec_splats(positionsZ[idxTarget]);
+
+        const __vector double targetPhysicalValue = vec_splats(physicalValues[idxTarget]);
+        __vector double targetPotential = vec_splats(0.);
+
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
+
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
+            const __vector double dx = targetX - vec_xl(0, &positionsX[idxSource]);
+            const __vector double dy = targetY - vec_xl(0, &positionsY[idxSource]);
+            const __vector double dz = targetZ - vec_xl(0, &positionsZ[idxSource]);
+
+            const __vector double distance = vec_sqrt(dx*dx + dy*dy + dz*dz);
+            const __vector double inv_distance = VecOne/distance;
+
+            const __vector __bool long long testRes = vec_cmpgt(distance, VecCutDistance);
+
+            const __vector double sourcesPhysicalValue = vec_xl(0, &physicalValues[idxSource]);
+
+            targetPotential += reinterpret_cast<__vector double>(vec_or(vec_and(reinterpret_cast<__vector unsigned int>(testRes), reinterpret_cast<__vector unsigned int>(sourcesPhysicalValue)),
+                                                                   vec_and(vec_nand(reinterpret_cast<__vector unsigned int>(testRes),reinterpret_cast<__vector unsigned int>(testRes)), reinterpret_cast<__vector unsigned int>(sourcesPhysicalValue-VecConstantIfCut))));
+
+            const __vector double resSource = inv_distance * reinterpret_cast<__vector double>(vec_or(vec_and(reinterpret_cast<__vector unsigned int>(testRes), reinterpret_cast<__vector unsigned int>(targetPhysicalValue)),
+                                                                                         vec_and(vec_nand(reinterpret_cast<__vector unsigned int>(testRes),reinterpret_cast<__vector unsigned int>(testRes)), reinterpret_cast<__vector unsigned int>(targetPhysicalValue-VecConstantIfCut))));
+
+            const __vector double currentSource = vec_xl(0, &potentials[idxSource]);
+
+            vec_xst(reinterpret_cast<__vector unsigned int>(resSource+currentSource), 0, reinterpret_cast<unsigned int*>(&potentials[idxSource]));
+        }
+
+        potentials[idxTarget] += InaVecALTIVEC<double>(targetPotential).horizontalSum();
+
+        /////////////////////////////////////////////////////////////////////////////////
+
+        for(size_t idxSource = lastToCompute ; idxSource < nbParticles ; ++idxSource){
+            const double dx = positionsX[idxTarget] - positionsX[idxSource];
+            const double dy = positionsY[idxTarget] - positionsY[idxSource];
+            const double dz = positionsZ[idxTarget] - positionsZ[idxSource];
+
+            const double distance = std::sqrt(dx*dx + dy*dy + dz*dz);
+            const double inv_distance = 1/distance;
+
+            if(distance < cutDistance){
+                potentials[idxTarget] += ( inv_distance * physicalValues[idxSource] );
+                potentials[idxSource] += ( inv_distance * physicalValues[idxTarget] );
+            }
+            else{
+                potentials[idxTarget] += ( inv_distance * (physicalValues[idxSource]-constantIfCut) );
+                potentials[idxSource] += ( inv_distance * (physicalValues[idxTarget]-constantIfCut) );
+            }
+        }
+    }
+}
+
+
+void HandVectorizedFunctionALTIVEC(const size_t nbParticles, const float* __restrict__ positionsX,
+                        const float* __restrict__ positionsY,const float* __restrict__ positionsZ,
+                        const float* __restrict__ physicalValues, float* __restrict__ potentials,
+                        const float cutDistance, const float constantIfCut){
+
+    const size_t VecLength = 4;
+
+    const __vector float VecOne = vec_splats(1.f);
+    const __vector float VecConstantIfCut = vec_splats(constantIfCut);
+    const __vector float VecCutDistance = vec_splats(cutDistance);
+
+    for(size_t idxTarget = 0 ; idxTarget < nbParticles ; ++idxTarget){
+
+        const __vector float targetX = vec_splats(positionsX[idxTarget]);
+        const __vector float targetY = vec_splats(positionsY[idxTarget]);
+        const __vector float targetZ = vec_splats(positionsZ[idxTarget]);
+
+        const __vector float targetPhysicalValue = vec_splats(physicalValues[idxTarget]);
+        __vector float targetPotential = vec_splats(0.f);
+
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
+
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
+            const __vector float dx = targetX - vec_xl(0, &positionsX[idxSource]);
+            const __vector float dy = targetY - vec_xl(0, &positionsY[idxSource]);
+            const __vector float dz = targetZ - vec_xl(0, &positionsZ[idxSource]);
+
+            const __vector float distance = vec_sqrt(dx*dx + dy*dy + dz*dz);
+            const __vector float inv_distance = VecOne/distance;
+
+            const __vector __bool int testRes = vec_cmpgt(distance, VecCutDistance);
+
+            const __vector float sourcesPhysicalValue = vec_xl(0,&physicalValues[idxSource]);
+
+            targetPotential += reinterpret_cast<__vector float>(vec_or(vec_and(reinterpret_cast<__vector unsigned int>(testRes), reinterpret_cast<__vector unsigned int>(sourcesPhysicalValue)),
+                                                                   vec_and(vec_nand(reinterpret_cast<__vector unsigned int>(testRes),reinterpret_cast<__vector unsigned int>(testRes)), reinterpret_cast<__vector unsigned int>(sourcesPhysicalValue-VecConstantIfCut))));
+
+            const __vector float resSource = inv_distance * reinterpret_cast<__vector float>(vec_or(vec_and(reinterpret_cast<__vector unsigned int>(testRes), reinterpret_cast<__vector unsigned int>(targetPhysicalValue)),
+                                                                                         vec_and(vec_nand(reinterpret_cast<__vector unsigned int>(testRes),reinterpret_cast<__vector unsigned int>(testRes)), reinterpret_cast<__vector unsigned int>(targetPhysicalValue-VecConstantIfCut))));
+
+            const __vector float currentSource = vec_xl(0, &potentials[idxSource]);
+            vec_xst(resSource+currentSource, 0, &potentials[idxSource]);
+        }
+
+        potentials[idxTarget] += InaVecALTIVEC<float>(targetPotential).horizontalSum();
+
+        /////////////////////////////////////////////////////////////////////////////////
+
+        for(size_t idxSource = lastToCompute ; idxSource < nbParticles ; ++idxSource){
+            const float dx = positionsX[idxTarget] - positionsX[idxSource];
+            const float dy = positionsY[idxTarget] - positionsY[idxSource];
+            const float dz = positionsZ[idxTarget] - positionsZ[idxSource];
+
+            const float distance = std::sqrt(dx*dx + dy*dy + dz*dz);
+            const float inv_distance = 1/distance;
+
+            if(distance < cutDistance){
+                potentials[idxTarget] += ( inv_distance * physicalValues[idxSource] );
+                potentials[idxSource] += ( inv_distance * physicalValues[idxTarget] );
+            }
+            else{
+                potentials[idxTarget] += ( inv_distance * (physicalValues[idxSource]-constantIfCut) );
+                potentials[idxSource] += ( inv_distance * (physicalValues[idxTarget]-constantIfCut) );
+            }
+        }
+    }
+}
+
+#endif
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 /// AVX512KNL functions
@@ -740,6 +892,29 @@ void Test(const size_t NbParticles){
     }
 #endif
 
+    /////////////////////////////////////////////////////////////
+
+
+#ifdef INASTEMP_USE_ALTIVEC
+    {
+        InaTimer timer;
+
+        HandVectorizedFunctionALTIVEC(NbParticles, positionsX.get(), positionsY.get(), positionsZ.get(),
+                           physicalValues.get(), potentials.get(), cutDistance, constantIfCut);
+
+        timer.stop();
+        std::cout << "HandVectorizedFunctionALTIVEC for " << (NbParticles*NbParticles/2) << " interactions took " << timer.getElapsed() << "s\n";
+    }
+    {
+        InaTimer timer;
+
+        VectorizedFunction<InaVecALTIVEC<RealType>>(NbParticles, positionsX.get(), positionsY.get(), positionsZ.get(),
+                           physicalValues.get(), potentials.get(), cutDistance, constantIfCut);
+
+        timer.stop();
+        std::cout << InaVecALTIVEC<RealType>().GetName() << " for " << (NbParticles*NbParticles/2) << " interactions took " << timer.getElapsed() << "s\n";
+    }
+#endif
     /////////////////////////////////////////////////////////////
 }
 
