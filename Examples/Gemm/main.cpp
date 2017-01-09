@@ -10,6 +10,10 @@
 #include "InastempConfig.h"
 #include "Common/InaTimer.hpp"
 
+
+#include "SCALAR/InaVecSCALARDouble.hpp"
+#include "SCALAR/InaVecSCALARFloat.hpp"
+
 #include <memory>
 #include <iostream>
 #include <cstring>
@@ -943,6 +947,10 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
         std::cout << "Scalar for size " << matDim
                   << " took " << timer.getElapsed() << "s (" << (double(NbOverLoop*nbFlops)/timer.getElapsed())/1E9 << "GFlop/s)\n";
     }
+
+    /////////////////////////////////////////////////////////////
+
+    ComputeGemmIna<InaVecSCALAR<RealType>, RealType, PanelSizeA, PanelSizeB, PanelSizeK>(NbOverLoop, matDim, nbFlops, A.get(), B.get());
 
     /////////////////////////////////////////////////////////////
 #ifdef INASTEMP_USE_SSE41

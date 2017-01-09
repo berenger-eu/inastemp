@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <iostream>
+#include <cmath>
 
 
 #ifdef INASTEMP_USE_SSE41
@@ -381,12 +382,32 @@ void compareExpTime(const size_t NbOverLoop, const size_t NbExp){
 
         for (size_t idxLoop = 0; idxLoop < NbOverLoop; ++idxLoop) {
             for (size_t idx = 0; idx < NbExp; ++idx) {
-                resScalar[idx] = static_cast<RealType>(InaVecSCALAR<RealType>(RealType(idx % 200)).exp());
+                resScalar[idx] = static_cast<RealType>(std::exp(RealType(idx % 200)));
             }
         }
 
         timer.stop();
         std::cout << "Scalar for " << NbExp * NbOverLoop
+                  << " exp took " << timer.getElapsed() << "s (" << timer.getElapsed()/double(NbExp * NbOverLoop) << "s per exp)\n";
+                // Ensure that optimization compute for real
+                volatile RealType tmp;
+        tmp = resScalar[0];
+    }
+    std::cout << "\n";
+    /////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
+
+    {
+        InaTimer timer;
+
+        for (size_t idxLoop = 0; idxLoop < NbOverLoop; ++idxLoop) {
+            for (size_t idx = 0; idx < NbExp; ++idx) {
+                resScalar[idx] = static_cast<RealType>(InaVecSCALAR<RealType>(RealType(idx % 200)).exp());
+            }
+        }
+
+        timer.stop();
+        std::cout << "Inastemp Scalar for " << NbExp * NbOverLoop
                   << " exp took " << timer.getElapsed() << "s (" << timer.getElapsed()/double(NbExp * NbOverLoop) << "s per exp)\n";
 		// Ensure that optimization compute for real        
 		volatile RealType tmp;
