@@ -20,6 +20,8 @@
 #undef vector
 #undef pixel
 
+#include <initializer_list>
+
 // Forward declarations
 template <class RealType>
 class InaVecMaskALTIVEC;
@@ -186,6 +188,11 @@ public:
     inline InaVecALTIVEC& operator=(const float val){
         vec = vec_splats(val);
         return *this;
+    }
+
+    // Constructor from vec
+    inline InaVecALTIVEC(const std::initializer_list<float> lst)
+        : InaVecALTIVEC(lst.begin()){
     }
 
     inline void setFromScalar(const float val){

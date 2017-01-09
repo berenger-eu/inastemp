@@ -21,6 +21,7 @@
 #undef pixel
 
 #include <cmath>
+#include <initializer_list>
 
 // Forward declarations
 template <class RealType>
@@ -194,6 +195,11 @@ public:
     inline InaVecALTIVEC& operator=(const double val){
         vec = vec_splats(val);
         return *this;
+    }
+
+    // Constructor from vec
+    inline InaVecALTIVEC(const std::initializer_list<double> lst)
+        : InaVecALTIVEC(lst.begin()){
     }
 
     inline void setFromScalar(const double val){
