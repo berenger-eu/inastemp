@@ -36,6 +36,20 @@ inline VecType FastPow(VecType base, std::size_t power){
     return res;
 }
 
+inline std::size_t FastPowNbMul(std::size_t power){
+    std::size_t nbMul = 0;
+
+    while(power){
+        if(1 & power){
+            nbMul += 1;
+        }
+        nbMul += 1;
+        power >>= 1;
+    }
+
+    return nbMul;
+}
+
 }
 
 #endif // UTILS_HPP
