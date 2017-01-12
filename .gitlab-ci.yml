@@ -136,14 +136,14 @@ inastempgccsdecov:
     - lcov
   artifacts:
     paths:
-      - coverage/
+      - build/coverage/
 
 pages:
   stage: deploy
   dependencies:
     - inastempgccsdecov
   script:
-    - mv coverage/ public/
+    - mv build/coverage/ public/
   artifacts:
     paths:
       - public
