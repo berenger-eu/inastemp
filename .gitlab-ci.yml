@@ -118,3 +118,36 @@ inastempsdehsw:
     - make test
   tags:
     - sde
+
+
+inastempgccsdecov:
+  stage: test
+  script:
+    - mkdir build
+    - cd build
+    - VERBOSE=1 cmake -DINASTEMP_WITH_PROF=ON ..
+    - VERBOSE=1 make
+    - VERBOSE=1 make lcov_clean
+    - VERBOSE=1 make test
+    - VERBOSE=1 make lcov_capture
+    - VERBOSE=1 make lcov_html
+  tags:
+    - gcc
+    - lcov
+  artifacts:
+    paths:
+      - coverage/
+
+pages:
+  stage: deploy
+  dependencies:
+    - inastempgccsdecov
+  script:
+    - mv coverage/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - code-coverage
+    - master
