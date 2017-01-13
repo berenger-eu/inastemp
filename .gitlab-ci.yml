@@ -143,6 +143,7 @@ pages:
   dependencies:
     - inastempgccsdecov
   script:
+    - mkdir public
     - mv build/coverage/* public/
   artifacts:
     paths:
