@@ -187,6 +187,30 @@ list(GET ALL_USED_TYPES -1 INASTEMP_BESTTYPE )
 SET( INASTEMP_EXTRA_CXX_FLAGS "-funroll-loops" CACHE STRING "These flags are used for all configurations"  )
 set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} ${INASTEMP_EXTRA_CXX_FLAGS}")
 
+if(${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX )
+    # For test coverage
+    option(INASTEMP_WITH_PROF "Enable profiling and coverage report analysis" OFF)
+
+    if(INASTEMP_WITH_PROF)
+        set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
+        list(APPEND INASTEMP_LIBRARIES "-fprofile-arcs")
+
+        add_custom_target(lcov_clean
+                   COMMAND lcov --directory "${CMAKE_BINARY_DIR}" --zerocounters
+                   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+        add_custom_target(lcov_capture
+                   COMMAND lcov --directory "${CMAKE_BINARY_DIR}" --capture --output-file "${CMAKE_BINARY_DIR}/app.info"
+                   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+        add_custom_target(lcov_html
+                   COMMAND genhtml --output-directory "${CMAKE_BINARY_DIR}/coverage" --demangle-cpp --sort --title "Complexes" --function-coverage --branch-coverage --legend "${CMAKE_BINARY_DIR}/app.info"
+                   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+        message(STATUS "INASTEMP_WITH_PROF has been turned to ${INASTEMP_WITH_PROF}")
+    endif()
+endif()
+
 # Options
 if(NOT INASTEMP_AS_SUBPROJECT)
     SET( INASTEMP_EXTRA_CXX_FLAGS_RELEASE "-O3" CACHE STRING "These flags are added to the usual ones for RELEASE"  )
