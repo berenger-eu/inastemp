@@ -61,25 +61,25 @@ public:
 
     // Bool data type compatibility
     inline explicit InaVecMaskALTIVEC(const bool inBool){
-        const __vector __bool long long tmpMaskFF = reinterpret_cast<__vector __bool long long>(vec_splats(0xFFFFFFFFFFFFFFFFUL));
-        mask = (inBool? tmpMaskFF : reinterpret_cast<__vector __bool long long>(vec_splats(0x0UL)));
+        const __vector __bool long long tmpMaskFF = reinterpret_cast<__vector __bool long long>(vec_splats(0xFFFFFFFFFFFFFFFFULL));
+        mask = (inBool? tmpMaskFF : reinterpret_cast<__vector __bool long long>(vec_splats(0x0ULL)));
     }
 
     inline InaVecMaskALTIVEC& operator=(const bool inBool){
-        const __vector __bool long long tmpMaskFF = reinterpret_cast<__vector __bool long long>(vec_splats(0xFFFFFFFFFFFFFFFFUL));
-        mask = (inBool? tmpMaskFF : reinterpret_cast<__vector __bool long long>(vec_splats(0x0UL)));
+        const __vector __bool long long tmpMaskFF = reinterpret_cast<__vector __bool long long>(vec_splats(0xFFFFFFFFFFFFFFFFULL));
+        mask = (inBool? tmpMaskFF : reinterpret_cast<__vector __bool long long>(vec_splats(0x0ULL)));
         return (*this);
     }
 
     // Binary methods
     inline InaVecMaskALTIVEC Not() const{
-        const __vector __bool long long tmpMaskFF = reinterpret_cast<__vector __bool long long>(vec_splats(0xFFFFFFFFFFFFFFFFUL));
+        const __vector __bool long long tmpMaskFF = reinterpret_cast<__vector __bool long long>(vec_splats(0xFFFFFFFFFFFFFFFFULL));
         return NotAnd(mask, tmpMaskFF);
     }
 
     inline bool isAllTrue() const{
         // true if all FF => !FF => 0 & FF => 0
-        const __vector __bool long long tmpMaskFF = reinterpret_cast<__vector __bool long long>(vec_splats(0xFFFFFFFFFFFFFFFFUL));;
+        const __vector __bool long long tmpMaskFF = reinterpret_cast<__vector __bool long long>(vec_splats(0xFFFFFFFFFFFFFFFFULL));;
         const int res = vec_all_eq(mask, tmpMaskFF);
         return static_cast<bool>(res);
     }
@@ -208,11 +208,11 @@ public:
 
     // Constructor from vec
     inline explicit InaVecALTIVEC(const double ptr[]){
-        vec = vec_xl(0, ptr); 
+        vec = vec_xl(0, const_cast<double*>(ptr)); 
     }
 
     inline InaVecALTIVEC& setFromArray(const double ptr[]){
-        vec = vec_xl(0, ptr); 
+        vec = vec_xl(0, const_cast<double*>(ptr)); 
         return *this;
     }
 
@@ -310,7 +310,11 @@ public:
         alignas(16) double tmpptr[2];
         vec_st( reinterpret_cast<__vector unsigned int>(x), 0, reinterpret_cast<unsigned int*>(tmpptr));
 
+#ifdef INASTEMP_USE_XL
+        alignas(16) long long ltmpptr[2];
+#else
         alignas(16) long ltmpptr[2];
+#endif
         ltmpptr[0] = long(tmpptr[0]);
         ltmpptr[1] = long(tmpptr[1]);
         return reinterpret_cast<__vector double>(vec_xl(0, ltmpptr)); 
@@ -343,7 +347,11 @@ public:
         alignas(16) double tmpptr[2];
         vec_st( reinterpret_cast<__vector unsigned int>(x), 0, reinterpret_cast<unsigned int*>(tmpptr));
 
+#ifdef INASTEMP_USE_XL
+        alignas(16) long long ltmpptr[2];
+#else
         alignas(16) long ltmpptr[2];
+#endif
         ltmpptr[0] = long(tmpptr[0]);
         ltmpptr[1] = long(tmpptr[1]);
         return reinterpret_cast<__vector double>(vec_xl(0, ltmpptr)); 
@@ -362,7 +370,7 @@ public:
     }
 
     inline InaVecALTIVEC signOf() const {
-        const __vector double minus0 = reinterpret_cast<__vector double>(vec_splats(0x8000000000000000UL));
+        const __vector double minus0 = reinterpret_cast<__vector double>(vec_splats(0x8000000000000000ULL));
         const __vector double signs  = vec_and(vec, minus0);
         const __vector double ge0  = reinterpret_cast<__vector double>(vec_cmpeq(vec_splats(0.), vec));
         return vec_and(vec_nand(ge0,ge0), vec_or(signs, vec_splats(1.)));
@@ -569,7 +577,7 @@ public:
     }
 
     inline InaVecALTIVEC<double> operator-() const {
-        const __vector double minus0 = reinterpret_cast<__vector double>(vec_splats(0x8000000000000000UL));
+        const __vector double minus0 = reinterpret_cast<__vector double>(vec_splats(0x8000000000000000ULL));
         return vec_xor(vec, minus0);
     }
 

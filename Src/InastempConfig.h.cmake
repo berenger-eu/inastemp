@@ -27,6 +27,7 @@
 #cmakedefine INASTEMP_USE_AVX512SKL
 
 #cmakedefine INASTEMP_USE_ALTIVEC
+#cmakedefine INASTEMP_USE_XL
 
 // Inform about best one
 #define INASTEMP_@INASTEMP_BESTTYPE@_IS_BEST

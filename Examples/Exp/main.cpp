@@ -280,7 +280,7 @@ inline void InaVecAVX512KNL_exp(const double inVal[], double outVal[]) {
 #include "ALTIVEC/InaVecALTIVECFloat.hpp"
 
 inline void InaVecALTIVEC_exp(const float inVal[], float outVal[]) {
-     __vector float vec = vec_xl(0, inVal);
+     __vector float vec = vec_xl(0, const_cast<float*>(inVal));
 
      const __vector float COEFF_LOG2E = vec_splats(float(InaFastExp::CoeffLog2E()));
      const __vector float COEFF_A     = vec_splats(float(InaFastExp::CoeffA32()));
@@ -311,7 +311,7 @@ inline void InaVecALTIVEC_exp(const float inVal[], float outVal[]) {
 }
 
 inline void InaVecALTIVEC_exp(const double inVal[], double outVal[]) {
-    __vector double vec = vec_xl(0, &inVal[0]);
+    __vector double vec = vec_xl(0, const_cast<double*>(&inVal[0]));
 
     const __vector double COEFF_LOG2E = vec_splats(double(InaFastExp::CoeffLog2E()));
     const __vector double COEFF_A     = vec_splats(double(InaFastExp::CoeffA64()));
@@ -339,7 +339,11 @@ inline void InaVecALTIVEC_exp(const double inVal[], double outVal[]) {
     alignas(16) double tmpptr[2];
     vec_st( reinterpret_cast<__vector unsigned int>(x), 0, reinterpret_cast<unsigned int*>(tmpptr));
 
+#ifdef INASTEMP_USE_XL
+    alignas(16) long long ltmpptr[2];
+#else
     alignas(16) long ltmpptr[2];
+#endif
     ltmpptr[0] = long(tmpptr[0]);
     ltmpptr[1] = long(tmpptr[1]);
     vec = reinterpret_cast<__vector double>(vec_xl(0, ltmpptr));
