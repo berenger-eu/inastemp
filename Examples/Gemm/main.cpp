@@ -706,6 +706,119 @@ void InaVecALTIVEC_ScalarGemmInaV2(const double* __restrict__ A, const double* _
         }
     }
 }
+
+
+
+template <size_t PanelSizeK, size_t PanelSizeiA,
+          size_t PanelSizejB>
+void InaVecALTIVEC_ScalarGemmIna(const double* __restrict__ A, const double* __restrict__ B,
+                double* __restrict__ C, const size_t size){
+
+    const int BlockSize = 2;
+
+    static_assert(PanelSizeK >= BlockSize, "PanelSizeK must be greater than block");
+    static_assert(PanelSizeiA >= BlockSize, "PanelSizeiA must be greater than block");
+    static_assert(PanelSizejB >= BlockSize, "PanelSizejB must be greater than block");
+    static_assert((PanelSizeK/BlockSize)*BlockSize == PanelSizeK, "PanelSizeK must be a multiple of block");
+    static_assert((PanelSizeiA/BlockSize)*BlockSize == PanelSizeiA, "PanelSizeiA must be a multiple of block");
+    static_assert((PanelSizejB/BlockSize)*BlockSize == PanelSizejB, "PanelSizejB must be a multiple of block");
+    // Restrict to a multiple of panelsize for simplcity
+    assert((size/PanelSizeK)*PanelSizeK == size);
+    assert((size/PanelSizeiA)*PanelSizeiA == size);
+    assert((size/PanelSizejB)*PanelSizejB == size);
+
+    for(size_t ip = 0 ; ip < size ; ip += PanelSizeiA){
+        for(size_t jp = 0 ; jp < size ; jp += PanelSizejB){
+
+            for(size_t kp = 0 ; kp < size ; kp += PanelSizeK){
+
+                alignas(64) double panelA[PanelSizeiA*PanelSizeK];
+                alignas(64) double panelB[PanelSizeK*BlockSize];
+
+                for(size_t jb = 0 ; jb < PanelSizejB ; jb += BlockSize){
+
+                    CopyMat<double, BlockSize>(panelB, PanelSizeK, &B[jp*size + kp], size);
+
+                    for(size_t ib = 0 ; ib < PanelSizeiA ; ib += BlockSize){
+
+                        if(jb == 0){
+                            CopyMat<double, BlockSize>(&panelA[PanelSizeK*ib], PanelSizeK, &A[(ib+ip)*size + kp], size);
+                        }
+
+                        for(size_t idxRow = 0 ; idxRow < BlockSize ; ++idxRow){
+                            for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
+                                __vector double sum = vec_splats(0.);
+                                for(size_t idxK = 0 ; idxK < PanelSizeK ; idxK += BlockSize){
+                                    sum += vec_xl(0, &panelA[(idxRow+ib)*PanelSizeK+ idxK])
+                                            * vec_xl(0, &panelB[idxCol*PanelSizeK+ idxK]);
+                                }
+                                double ptr[2];
+                                vec_xst( reinterpret_cast<__vector unsigned int>(sum), 0, reinterpret_cast<unsigned int*>(ptr));
+                                C[(jp+jb+idxCol)*size + ip + ib + idxRow] += ptr[0] + ptr[1];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+template <size_t PanelSizeK, size_t PanelSizeiA,
+          size_t PanelSizejB>
+void InaVecALTIVEC_ScalarGemmIna(const float* __restrict__ A, const float* __restrict__ B,
+                float* __restrict__ C, const size_t size){
+
+    const int BlockSize = 4;
+
+    static_assert(PanelSizeK >= BlockSize, "PanelSizeK must be greater than block");
+    static_assert(PanelSizeiA >= BlockSize, "PanelSizeiA must be greater than block");
+    static_assert(PanelSizejB >= BlockSize, "PanelSizejB must be greater than block");
+    static_assert((PanelSizeK/BlockSize)*BlockSize == PanelSizeK, "PanelSizeK must be a multiple of block");
+    static_assert((PanelSizeiA/BlockSize)*BlockSize == PanelSizeiA, "PanelSizeiA must be a multiple of block");
+    static_assert((PanelSizejB/BlockSize)*BlockSize == PanelSizejB, "PanelSizejB must be a multiple of block");
+    // Restrict to a multiple of panelsize for simplcity
+    assert((size/PanelSizeK)*PanelSizeK == size);
+    assert((size/PanelSizeiA)*PanelSizeiA == size);
+    assert((size/PanelSizejB)*PanelSizejB == size);
+
+    for(size_t ip = 0 ; ip < size ; ip += PanelSizeiA){
+        for(size_t jp = 0 ; jp < size ; jp += PanelSizejB){
+
+            for(size_t kp = 0 ; kp < size ; kp += PanelSizeK){
+
+                alignas(64) float panelA[PanelSizeiA*PanelSizeK];
+                alignas(64) float panelB[PanelSizeK*BlockSize];
+
+                for(size_t jb = 0 ; jb < PanelSizejB ; jb += BlockSize){
+
+                    CopyMat<float, BlockSize>(panelB, PanelSizeK, &B[jp*size + kp], size);
+
+                    for(size_t ib = 0 ; ib < PanelSizeiA ; ib += BlockSize){
+
+                        if(jb == 0){
+                            CopyMat<float, BlockSize>(&panelA[PanelSizeK*ib], PanelSizeK, &A[(ib+ip)*size + kp], size);
+                        }
+
+                        for(size_t idxRow = 0 ; idxRow < BlockSize ; ++idxRow){
+                            for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
+                                __vector float sum = vec_splats(0.f);
+                                for(size_t idxK = 0 ; idxK < PanelSizeK ; idxK += BlockSize){
+                                    sum += vec_xl(0, &panelA[(idxRow+ib)*PanelSizeK+ idxK])
+                                            * vec_xl(0, &panelB[idxCol*PanelSizeK+ idxK]);
+                                }
+                                float ptr[4];
+                                vec_xst(sum, 0, ptr);
+                                C[(jp+jb+idxCol)*size + ip + ib + idxRow] += ptr[0] + ptr[1] + ptr[2] + ptr[3];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 #endif
 
 
@@ -1034,6 +1147,20 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 
         timer.stop();
         std::cout << "Vector V2 " << "ALTIVEC" << " for size " << matDim
+                  << " took " << timer.getElapsed() << "s (" << (double(NbOverLoop*nbFlops)/timer.getElapsed())/1E9 << "GFlop/s)\n";
+    }
+    {
+        std::unique_ptr< RealType[] > CIna(new RealType[matDim*matDim]);
+        memset(CIna.get(), 0, sizeof(RealType)*matDim*matDim);
+
+        InaTimer timer;
+
+        for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
+            InaVecALTIVEC_ScalarGemmIna<PanelSizeK, PanelSizeA, PanelSizeB>(A.get(), B.get(), CIna.get(), matDim);
+        }
+
+        timer.stop();
+        std::cout << "Vector " << "ALTIVEC" << " for size " << matDim
                   << " took " << timer.getElapsed() << "s (" << (double(NbOverLoop*nbFlops)/timer.getElapsed())/1E9 << "GFlop/s)\n";
     }
 #endif
