@@ -118,8 +118,8 @@ public:
     using VecRawType           = float;
     using MaskType             = InaVecMaskSCALAR<float>;
     using RealType             = float;
-    static const int VecLength = 1.f;
-    static const int Alignement= 1.f;
+    static const int VecLength = 1;
+    static const int Alignement= 1;
 
     inline InaVecSCALAR(){}
     inline InaVecSCALAR(const InaVecSCALAR&) = default;
