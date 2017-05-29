@@ -126,6 +126,9 @@ Considering that the folder `inastemp exist in the root directory of the project
 # tell inastemp we do not want examples/tests
 # (will be detected automatically otherwise because it is included as a subproject)
 set(INASTEMP_JUST_LIB TRUE)
+# Set the C++ standard required by the master project (default inastamp is 11)
+set(CMAKE_CXX_STANDARD 11) # Could be 11 or 14 ...
+set(CMAKE_CXX_STANDARD_REQUIRED ON) # Could be OFF in specific cases
 # add the cmakelist directory
 add_subdirectory(inastemp)
 # use the filled variables from inastemp

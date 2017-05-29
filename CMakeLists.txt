@@ -72,6 +72,10 @@ set(INASTEMP_VERSION  "${INASTEMP_MAJOR_VERSION}.${INASTEMP_MINOR_VERSION}.${INA
 #===========================================================================
 # Options
 #===========================================================================
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
     if($ENV{VERBOSE})
         MESSAGE(STATUS "Main -- compile for ppc64le architecture")
@@ -86,7 +90,6 @@ if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
     set(ALTIVEC_CPU_RULES "")
 
     set(INASTEMP_USE_SCALAR ON)
-    set(INASTEMP_CXX_FLAGS "-std=c++11")
 else()
     if($ENV{VERBOSE})
         MESSAGE(STATUS "Main -- compile for x86 architecture")
@@ -102,7 +105,6 @@ else()
     # All types from worse to best (ADD-NEW-HERE)
     set(ALL_TYPES "SSE3;SSSE3;SSE41;SSE42;AVX;AVX2;AVX512COMMON;AVX512KNL;AVX512SKL")
     set(INASTEMP_USE_SCALAR ON)
-    set(INASTEMP_CXX_FLAGS "-std=c++11")
 
     # Set custom cpu <=> vec rules (maybe ADD-NEW-HERE if needed)
     set(AVX512COMMON_CPU_RULES "AVX512F;AVX512ER")
@@ -182,10 +184,6 @@ if($ENV{VERBOSE})
     MESSAGE(STATUS "Main -- ALL_USED_TYPES ${ALL_USED_TYPES}")
 endif()
 list(GET ALL_USED_TYPES -1 INASTEMP_BESTTYPE )
-
-# Extra-flags
-SET( INASTEMP_EXTRA_CXX_FLAGS "-funroll-loops" CACHE STRING "These flags are used for all configurations"  )
-set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} ${INASTEMP_EXTRA_CXX_FLAGS}")
 
 if(${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX )
     # For test coverage
