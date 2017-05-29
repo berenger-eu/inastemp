@@ -249,7 +249,6 @@ public:
     inline double horizontalSum() const {
         const __m128d valupper = _mm256_extractf128_pd(vec, 1);
         const __m128d rest = _mm256_castpd256_pd128(vec);
-        _mm256_zeroupper();
         const __m128d valval = _mm_add_pd(valupper, rest);
         const __m128d res    = _mm_add_pd(_mm_permute_pd(valval, 1), valval);
         return _mm_cvtsd_f64(res);
@@ -258,7 +257,6 @@ public:
     inline double horizontalMul() const {
         const __m128d valupper = _mm256_extractf128_pd(vec, 1);
         const __m128d rest = _mm256_castpd256_pd128(vec);
-        _mm256_zeroupper();
         const __m128d valval = _mm_mul_pd(valupper, rest);
         const __m128d res    = _mm_mul_pd(_mm_permute_pd(valval, 1), valval);
         return _mm_cvtsd_f64(res);
@@ -305,7 +303,6 @@ public:
 
         __m128d valupper = _mm256_extractf128_pd(x, 1);
         __m128d vallower = _mm256_castpd256_pd128(x);
-        // Removed because it makes GCC bugging:_mm256_zeroupper();
 
         alignas(64) long long int allvalint[VecLength] = { _mm_cvtsd_si64(vallower),
                                                            _mm_cvtsd_si64(_mm_shuffle_pd(vallower, vallower, 1)),
@@ -342,7 +339,6 @@ public:
 
         __m128d valupper = _mm256_extractf128_pd(x, 1);
         __m128d vallower = _mm256_castpd256_pd128(x);
-        // Removed because it makes GCC bugging:_mm256_zeroupper();
 
         alignas(64) long long int allvalint[VecLength] = { _mm_cvtsd_si64(vallower),
                                                            _mm_cvtsd_si64(_mm_shuffle_pd(vallower, vallower, 1)),
