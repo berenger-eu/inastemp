@@ -257,7 +257,6 @@ public:
     inline float horizontalSum() const {
         const __m128 valupper = _mm256_extractf128_ps(vec, 1);
         const __m128 rest = _mm256_extractf128_ps(vec, 0);
-        _mm256_zeroupper();
         const __m128 valval = _mm_add_ps(valupper,
                                          rest);
         __m128 valsum = _mm_add_ps(_mm_permute_ps(valval, 0x1B), valval);
@@ -268,7 +267,6 @@ public:
     inline float horizontalMul() const {
         const __m128 valupper = _mm256_extractf128_ps(vec, 1);
         const __m128 rest = _mm256_extractf128_ps(vec, 0);
-        _mm256_zeroupper();
         const __m128 valval = _mm_mul_ps(valupper,
                                          rest);
         __m128 valsum = _mm_mul_ps(_mm_permute_ps(valval, 0x1B), valval);
