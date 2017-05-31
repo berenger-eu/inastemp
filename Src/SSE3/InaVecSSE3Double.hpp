@@ -16,6 +16,7 @@
 #include "Common/InaFastExp.hpp"
 
 #include <emmintrin.h>
+#include <pmmintrin.h>
 #include <cmath>
 #include <initializer_list>
 
