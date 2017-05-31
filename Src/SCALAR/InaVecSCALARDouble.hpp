@@ -408,6 +408,16 @@ public:
     inline InaVecSCALAR<double> pow(size_t power) const{
         return InaUtils::FastPow<InaVecSCALAR<double>>(vec, power);
     }
+
+    // Multiple sum
+    template <class ... Args>
+    inline static void MultiHorizontalSum(double sumRes[], const InaVecSCALAR<double>& inVec, Args ...args){
+        sumRes[0] += inVec.vec;
+        MultiHorizontalSum(&sumRes[1], args ...);
+    }
+
+    inline static void MultiHorizontalSum(double /*sumRes*/[]){
+    }
 };
 
 // Bits operators

@@ -571,6 +571,48 @@ public:
     inline InaVecAVX<double> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecAVX<double>>(*this, power);
     }
+
+    // Multiple sum
+    template <class ... Args>
+    inline static void MultiHorizontalSum(double sumRes[], const InaVecAVX<double>& inVec1,
+                                          const InaVecAVX<double>& inVec2, const InaVecAVX<double>& inVec3,
+                                          const InaVecAVX<double>& inVec4, Args ...args){
+        const __m256d val_a01_b01_a23_b23 = _mm256_hadd_pd(inVec1.vec, inVec2.vec);
+        const __m256d val_c01_d01_c23_d23 = _mm256_hadd_pd(inVec3.vec, inVec4.vec);
+
+        const __m256d val_a01_b01_c23_d23 = _mm256_permute2f128_pd(val_a01_b01_a23_b23, val_c01_d01_c23_d23, 0x30);// 011.0000
+        const __m256d val_a23_b23_d01_d23 = _mm256_permute2f128_pd(val_a01_b01_a23_b23, val_c01_d01_c23_d23, 0x21);// 010.0001
+
+        const __m256d val_suma_sumb_sumc_sumd = val_a01_b01_c23_d23 + val_a23_b23_d01_d23;
+
+        __m256d vecBuffer = _mm256_loadu_pd(sumRes);
+        vecBuffer += val_suma_sumb_sumc_sumd;
+        _mm256_storeu_pd(sumRes, vecBuffer);
+
+        MultiHorizontalSum(&sumRes[4], args... );
+    }
+
+    template <class ... Args>
+    inline static void MultiHorizontalSum(double sumRes[], const InaVecAVX<double>& inVec1,
+                                          const InaVecAVX<double>& inVec2, Args ...args){
+        const __m256d val_a01_b01_a23_b23 = _mm256_hadd_pd(inVec1.vec, inVec2.vec);
+
+        __m128d valupper = _mm256_extractf128_pd(val_a01_b01_a23_b23, 1);
+        __m128d vallower = _mm256_castpd256_pd128(val_a01_b01_a23_b23);
+
+        __m128d vecBuffer = _mm_loadu_pd(sumRes);
+        vecBuffer += valupper+vallower;
+        _mm_storeu_pd(sumRes, vecBuffer);
+
+        MultiHorizontalSum(&sumRes[2], args... );
+    }
+
+    inline static void MultiHorizontalSum(double sumRes[], const InaVecAVX<double>& inVec){
+        sumRes[0] += inVec.horizontalSum();
+    }
+
+    inline static void MultiHorizontalSum(double /*sumRes*/[]){
+    }
 };
 
 // Bits operators

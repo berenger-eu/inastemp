@@ -585,6 +585,15 @@ public:
         return InaUtils::FastPow<InaVecALTIVEC<double>>(vec, power);
     }
 
+    // Multiple sum
+    template <class ... Args>
+    inline static void MultiHorizontalSum(double sumRes[], const InaVecALTIVEC<double>& inVec, Args ...args){
+        sumRes[0] += inVec.horizontalSum();
+        MultiHorizontalSum(&sumRes[1], args... );
+    }
+
+    inline static void MultiHorizontalSum(double /*sumRes*/[]){
+    }
 };
 
 // Bits operators

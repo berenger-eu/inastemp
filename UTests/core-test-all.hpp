@@ -11,6 +11,34 @@
 #include <cmath>
 #include <cstring>
 
+
+template <class VecType, int RemainingVec>
+struct MultiHorizontalSumTester{
+    template <class ... Params>
+    static void addToTest(typename VecType::RealType res[], typename VecType::RealType good_res[],
+                          const int my_idx, Params... params){
+        std::array<typename VecType::RealType, VecType::VecLength> values;
+        for(int idx = 0 ; idx < VecType::VecLength ; ++idx){
+            values[idx] = typename VecType::RealType(my_idx*idx);
+        }
+        VecType v(&values[0]);
+
+        MultiHorizontalSumTester<VecType, RemainingVec-1>::addToTest(res, good_res, my_idx+1, params..., v);
+
+        good_res[my_idx] = v.horizontalSum();
+    }
+};
+
+template <class VecType>
+struct MultiHorizontalSumTester<VecType,0>{
+    template <class ... Params>
+    static void addToTest(typename VecType::RealType res[], typename VecType::RealType /*good_res*/[],
+                          const int /*my_idx*/, Params... params){
+        VecType::MultiHorizontalSum(res, params...);
+    }
+};
+
+
 template < class VecType >
 class TestAll : public UTester< TestAll< VecType > > {
     using Parent = UTester< TestAll< VecType > >;
@@ -774,6 +802,214 @@ class TestAll : public UTester< TestAll< VecType > > {
 
             equalToScalar(VecType(5.).pow(10),RealType(std::pow(5., 10)));
             equalToScalar(VecType(2.).pow(12),RealType(std::pow(2., 12)));
+        }
+
+        {
+            VecType::MultiHorizontalSum(nullptr); // Should compile
+
+            RealType res = 0;
+            VecType::MultiHorizontalSum(&res, VecType(1));
+            UASSERTEEQUAL(VecType(1).horizontalSum(), res);
+
+            res = 0;
+            VecType::MultiHorizontalSum(&res, VecType(10));
+            UASSERTEEQUAL(VecType(10).horizontalSum(), res);
+        }
+        {
+            RealType res[2] = {0};
+            VecType v1(1);
+            VecType v2(10);
+
+            VecType::MultiHorizontalSum(res, v1, v2);
+
+            UASSERTEEQUAL(v1.horizontalSum(), res[0]);
+            UASSERTEEQUAL(v2.horizontalSum(), res[1]);
+        }
+        {
+            RealType res[3] = {0};
+            VecType v1(1);
+            VecType v2(10);
+            VecType v3(100);
+
+            VecType::MultiHorizontalSum(res, v1, v2, v3);
+
+            UASSERTEEQUAL(v1.horizontalSum(), res[0]);
+            UASSERTEEQUAL(v2.horizontalSum(), res[1]);
+            UASSERTEEQUAL(v3.horizontalSum(), res[2]);
+        }
+        {
+            RealType res[4] = {0};
+            VecType v1(1);
+            VecType v2(10);
+            VecType v3(100);
+            VecType v4(1000);
+
+            VecType::MultiHorizontalSum(res, v1, v2, v3, v4);
+
+            UASSERTEEQUAL(v1.horizontalSum(), res[0]);
+            UASSERTEEQUAL(v2.horizontalSum(), res[1]);
+            UASSERTEEQUAL(v3.horizontalSum(), res[2]);
+            UASSERTEEQUAL(v4.horizontalSum(), res[3]);
+        }
+        {
+            RealType res[5] = {0};
+            VecType v1(1);
+            VecType v2(10);
+            VecType v3(100);
+            VecType v4(1000);
+            VecType v5(10000);
+
+            VecType::MultiHorizontalSum(res, v1, v2, v3, v4, v5);
+
+            UASSERTEEQUAL(v1.horizontalSum(), res[0]);
+            UASSERTEEQUAL(v2.horizontalSum(), res[1]);
+            UASSERTEEQUAL(v3.horizontalSum(), res[2]);
+            UASSERTEEQUAL(v4.horizontalSum(), res[3]);
+            UASSERTEEQUAL(v5.horizontalSum(), res[4]);
+        }
+        {
+            const int nb_vec_test = 3;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 4;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 5;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 6;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 7;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 8;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 9;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 10;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 11;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 12;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 13;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 14;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 15;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 16;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 17;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
+        }
+        {
+            const int nb_vec_test = 18;
+            RealType res[nb_vec_test] = {0};
+            RealType good_res[nb_vec_test] = {0};
+            MultiHorizontalSumTester<VecType,nb_vec_test>::addToTest(res, good_res, 0);
+            for(int idx = 0 ; idx < nb_vec_test ; ++idx){
+                UASSERTEEQUAL(good_res[idx], res[idx]);
+            }
         }
     }
 

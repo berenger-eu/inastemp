@@ -601,6 +601,16 @@ public:
     inline InaVecAVX512COMMON<float> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecAVX512COMMON<float>>(*this, power);
     }
+
+    // Multiple sum
+    template <class ... Args>
+    inline static void MultiHorizontalSum(float sumRes[], const InaVecAVX512COMMON<float>& inVec, Args ...args){
+        sumRes[0] += inVec.horizontalSum();
+        MultiHorizontalSum(&sumRes[1], args... );
+    }
+
+    inline static void MultiHorizontalSum(float /*sumRes*/[]){
+    }
 };
 
 // Bits operators

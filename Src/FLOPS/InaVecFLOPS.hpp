@@ -551,6 +551,15 @@ public:
 
     template <class VecType2>
     friend InaVecFLOPS<VecType2> operator*(const InaVecFLOPS<VecType2>& inVec1, const InaVecFLOPS<VecType2>& inVec2);
+
+
+    // Multiple sum
+    template <class ... Args>
+    inline static void MultiHorizontalSum(RealType sumRes[], Args ...args){
+        const int nbVecs = sizeof...(args);
+        FlopsStats.incAddOp((VecLength-1)*nbVecs);
+        Parent::MultiHorizontalSum(sumRes, args...);
+    }
 };
 
 // Bits operators
