@@ -16,6 +16,7 @@
 #include "Common/InaFastExp.hpp"
 
 #include <emmintrin.h>
+#include <pmmintrin.h>
 #include <cmath>
 #include <initializer_list>
 
@@ -534,6 +535,50 @@ public:
 
     inline InaVecSSE3<float> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecSSE3<float>>(*this, power);
+    }
+
+    // Multiple sum
+    template <class ... Args>
+    inline static void MultiHorizontalSum(float sumRes[], const InaVecSSE3<float>& inVec1,
+                                          const InaVecSSE3<float>& inVec2, const InaVecSSE3<float>& inVec3,
+                                          const InaVecSSE3<float>& inVec4, Args ...args){
+        const __m128 val_a01_a23_b01_b23 = _mm_hadd_ps(inVec1.vec, inVec2.vec);
+        const __m128 val_c01_c23_d01_d23 = _mm_hadd_ps(inVec3.vec, inVec4.vec);
+
+        const __m128 val_suma_sumb_sumc_sumd = _mm_hadd_ps(val_a01_a23_b01_b23, val_c01_c23_d01_d23);
+
+        __m128 vecBuffer = _mm_loadu_ps(sumRes);
+        vecBuffer += val_suma_sumb_sumc_sumd;
+        _mm_storeu_ps(sumRes, vecBuffer);
+
+        MultiHorizontalSum(&sumRes[4], args... );
+    }
+
+    template <class ... Args>
+    inline static void MultiHorizontalSum(float sumRes[], const InaVecSSE3<float>& inVec1,
+                                          const InaVecSSE3<float>& inVec2, Args ...args){
+        const __m128 val_a01_a23_b01_b23 = _mm_hadd_ps(inVec1.vec, inVec2.vec);
+        const __m128 val_a23_a01_b23_b01 = _mm_shuffle_ps(val_a01_a23_b01_b23, val_a01_a23_b01_b23, 0xB1);// 10.11.00.01
+
+        const __m128 val_suma_x_sumb_x = _mm_add_ps(val_a01_a23_b01_b23, val_a23_a01_b23_b01);
+
+        alignas(Alignement) float buffer[VecLength] = {0};
+        buffer[0] = sumRes[0];
+        buffer[2] = sumRes[1];
+        __m128 vecBuffer = _mm_load_ps(buffer);
+        vecBuffer += val_suma_x_sumb_x;
+        _mm_store_ps(buffer, vecBuffer);
+        sumRes[0] = buffer[0];
+        sumRes[1] = buffer[2];
+
+        MultiHorizontalSum(&sumRes[2], args... );
+    }
+
+    inline static void MultiHorizontalSum(float sumRes[], const InaVecSSE3<float>& inVec){
+        sumRes[0] += inVec.horizontalSum();
+    }
+
+    inline static void MultiHorizontalSum(float /*sumRes*/[]){
     }
 };
 

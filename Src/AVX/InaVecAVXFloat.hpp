@@ -557,6 +557,95 @@ public:
     inline InaVecAVX<float> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecAVX<float>>(*this, power);
     }
+
+    // Multiple sum
+    template <class ... Args>
+    inline static void MultiHorizontalSum(float sumRes[], const InaVecAVX<float>& inVec1,
+                                          const InaVecAVX<float>& inVec2, const InaVecAVX<float>& inVec3,
+                                          const InaVecAVX<float>& inVec4, const InaVecAVX<float>& inVec5,
+                                          const InaVecAVX<float>& inVec6, const InaVecAVX<float>& inVec7,
+                                          const InaVecAVX<float>& inVec8, Args ...args){
+       const __m256 val_a01_a23_b01_b23_a45_a67_b45_b67 = _mm256_hadd_ps(inVec1.vec, inVec2.vec);
+        const __m256 val_c01_c23_d01_d23_c45_c67_d45_d67 = _mm256_hadd_ps(inVec3.vec, inVec4.vec);
+
+        const __m256 val_e01_e23_f01_f23_e45_e67_f45_f67 = _mm256_hadd_ps(inVec5.vec, inVec6.vec);
+        const __m256 val_g01_g23_h01_h23_g45_g67_h45_h67 = _mm256_hadd_ps(inVec7.vec, inVec8.vec);
+
+        const __m256 val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567 = _mm256_hadd_ps(val_a01_a23_b01_b23_a45_a67_b45_b67,
+                                                           val_c01_c23_d01_d23_c45_c67_d45_d67);
+
+        const __m256 val_e0123_f01b23_g0123_h01b23_e4567_f4567_g4567_h4567 = _mm256_hadd_ps(val_e01_e23_f01_f23_e45_e67_f45_f67,
+                                                           val_g01_g23_h01_h23_g45_g67_h45_h67);
+
+        const __m256 val_a0123_b01b23_c0123_d01b23_e0123_f01b23_g0123_h01b23 =
+                                            _mm256_permute2f128_ps(val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567,
+                                                                   val_e0123_f01b23_g0123_h01b23_e4567_f4567_g4567_h4567, 0x20);// 010.0000
+        const __m256 val_a4567_b4567_c4567_d4567_e4567_f4567_g4567_h4567 =
+                                             _mm256_permute2f128_ps(val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567,
+                                                                   val_e0123_f01b23_g0123_h01b23_e4567_f4567_g4567_h4567, 0x31);// 000.0001
+
+        const __m256 sum_a_b_c_d_e_f_g_h = val_a0123_b01b23_c0123_d01b23_e0123_f01b23_g0123_h01b23 + val_a4567_b4567_c4567_d4567_e4567_f4567_g4567_h4567;
+
+        __m256 vecBuffer = _mm256_loadu_ps(sumRes);
+        vecBuffer += sum_a_b_c_d_e_f_g_h;
+        _mm256_storeu_ps(sumRes, vecBuffer);
+
+        MultiHorizontalSum(&sumRes[8], args... );
+    }
+
+    template <class ... Args>
+    inline static void MultiHorizontalSum(float sumRes[], const InaVecAVX<float>& inVec1,
+                                          const InaVecAVX<float>& inVec2, const InaVecAVX<float>& inVec3,
+                                          const InaVecAVX<float>& inVec4, Args ...args){
+        const __m256 val_a01_a23_b01_b23_a45_a67_b45_b67 = _mm256_hadd_ps(inVec1.vec, inVec2.vec);
+        const __m256 val_c01_c23_d01_d23_c45_c67_d45_d67 = _mm256_hadd_ps(inVec3.vec, inVec4.vec);
+
+        const __m256 val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567 = _mm256_hadd_ps(val_a01_a23_b01_b23_a45_a67_b45_b67,
+                                                           val_c01_c23_d01_d23_c45_c67_d45_d67);
+
+        __m128 valupper = _mm256_extractf128_ps(val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567, 1);
+        __m128 vallower = _mm256_castps256_ps128(val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567);
+
+        __m128 vecBuffer = _mm_loadu_ps(sumRes);
+        vecBuffer += valupper + vallower;
+        _mm_storeu_ps(sumRes, vecBuffer);
+
+        MultiHorizontalSum(&sumRes[4], args... );
+    }
+
+    template <class ... Args>
+    inline static void MultiHorizontalSum(float sumRes[], const InaVecAVX<float>& inVec1,
+                                          const InaVecAVX<float>& inVec2, Args ...args){
+
+        const __m256 val_a01_a23_b01_b23_a45_a67_b45_b67 = _mm256_hadd_ps(inVec1.vec, inVec2.vec);
+
+        const __m128 valupper = _mm256_extractf128_ps(val_a01_a23_b01_b23_a45_a67_b45_b67, 1);
+        const __m128 vallower = _mm256_castps256_ps128(val_a01_a23_b01_b23_a45_a67_b45_b67);
+
+        const __m128 val_a0123_b0123_a4567_b4567 = _mm_hadd_ps(valupper, vallower);
+
+        const __m128 val_a4567_b4567_a0123_b0123 = _mm_shuffle_ps(val_a0123_b0123_a4567_b4567, val_a0123_b0123_a4567_b4567, 0x9E);// 10.01.11.10
+
+        const __m128 val_suma_x_sumb_x = _mm_add_ps(val_a0123_b0123_a4567_b4567, val_a4567_b4567_a0123_b0123);
+
+        alignas(Alignement) float buffer[VecLength] = {0};
+        buffer[0] = sumRes[0];
+        buffer[1] = sumRes[1];
+        __m128 vecBuffer = _mm_load_ps(buffer);
+        vecBuffer += val_suma_x_sumb_x;
+        _mm_store_ps(buffer, vecBuffer);
+        sumRes[0] = buffer[0];
+        sumRes[1] = buffer[1];
+
+        MultiHorizontalSum(&sumRes[2], args... );
+    }
+
+    inline static void MultiHorizontalSum(float sumRes[], const InaVecAVX<float>& inVec){
+        sumRes[0] += inVec.horizontalSum();
+    }
+
+    inline static void MultiHorizontalSum(float /*sumRes*/[]){
+    }
 };
 
 // Bits operators

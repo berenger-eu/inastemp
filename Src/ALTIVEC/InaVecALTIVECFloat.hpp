@@ -549,6 +549,15 @@ public:
         return InaUtils::FastPow<InaVecALTIVEC<float>>(vec, power);
     }
 
+    // Multiple sum
+    template <class ... Args>
+    inline static void MultiHorizontalSum(float sumRes[], const InaVecALTIVEC<float>& inVec, Args ...args){
+        sumRes[0] += inVec.horizontalSum();
+        MultiHorizontalSum(&sumRes[1], args... );
+    }
+
+    inline static void MultiHorizontalSum(float /*sumRes*/[]){
+    }
 };
 
 

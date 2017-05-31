@@ -16,6 +16,7 @@
 #include "Common/InaFastExp.hpp"
 
 #include <emmintrin.h>
+#include <pmmintrin.h>
 #include <cmath>
 #include <initializer_list>
 
@@ -543,6 +544,25 @@ public:
 
     inline InaVecSSE3<double> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecSSE3<double>>(*this, power);
+    }
+
+    // Multiple sum
+    template <class ... Args>
+    inline static void MultiHorizontalSum(double sumRes[], const InaVecSSE3<double>& inVec1,
+                                          const InaVecSSE3<double>& inVec2, Args ...args){
+        const __m128d val_a01_b01 = _mm_hadd_pd(inVec1.vec, inVec2.vec);
+        __m128d vecBuffer = _mm_loadu_pd(sumRes);
+        vecBuffer += val_a01_b01;
+        _mm_storeu_pd(sumRes, vecBuffer);
+
+        MultiHorizontalSum(&sumRes[2], args... );
+    }
+
+    inline static void MultiHorizontalSum(double sumRes[], const InaVecSSE3<double>& inVec){
+        sumRes[0] += inVec.horizontalSum();
+    }
+
+    inline static void MultiHorizontalSum(double /*sumRes*/[]){
     }
 };
 
