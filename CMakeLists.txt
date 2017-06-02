@@ -72,9 +72,19 @@ set(INASTEMP_VERSION  "${INASTEMP_MAJOR_VERSION}.${INASTEMP_MINOR_VERSION}.${INA
 #===========================================================================
 # Options
 #===========================================================================
+
+# Available from version 3.1
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+if((${CMAKE_MAJOR_VERSION} STREQUAL 3 AND CMAKE_MINOR_VERSION LESS 6) OR (${CMAKE_MAJOR_VERSION} LESS 3) AND (CMAKE_CXX_COMPILER_ID STREQUAL "Intel"))
+    MESSAGE(WARNING " Main -- CMAKE_CXX_STANDARD does not work with Intel compiler for cmake version < 3.6, we add -std=c++11 flag by hand which might not be compatible with your project")
+    set(INASTEMP_CXX_FLAGS "-std=c++11")
+elseif((${CMAKE_MAJOR_VERSION} STREQUAL 3 AND CMAKE_MINOR_VERSION LESS 1) OR (${CMAKE_MAJOR_VERSION} LESS 3))
+    MESSAGE(WARNING " Main -- CMAKE_CXX_STANDARD does not work for cmake version < 3.1, we insert -std=c++11 flag by hand which might not be compatible with your project")
+    set(INASTEMP_CXX_FLAGS "-std=c++11")
+endif()
 
 if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
     if($ENV{VERBOSE})
