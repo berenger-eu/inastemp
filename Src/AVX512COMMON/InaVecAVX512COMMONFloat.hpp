@@ -363,7 +363,8 @@ public:
     }
 
     inline InaVecAVX512COMMON rsqrt() const {
-        return _mm512_rsqrt28_ps(vec);
+        // _mm512_rsqrt28_ps(vec); => ER only
+        return _mm512_div_ps(_mm512_set1_ps(1), _mm512_sqrt_ps(vec));
     }
 
     inline InaVecAVX512COMMON abs() const {

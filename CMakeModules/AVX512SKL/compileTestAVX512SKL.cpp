@@ -21,7 +21,7 @@ int main(){
             __m512d src;
             __mmask8 k;
             __m512d a;
-            _mm512_mask_rcp28_pd ( src, k, a);
+            __m512d res = _mm512_mask_rcp28_pd ( src, k, a);
         }
         // cd
         {
