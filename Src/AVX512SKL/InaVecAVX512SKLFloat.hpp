@@ -24,9 +24,29 @@
 template <class RealType>
 using InaVecMaskAVX512SKL = InaVecMaskAVX512COMMON<RealType>;
 
+// Forward declarations
 template <class RealType>
-using InaVecAVX512SKL = InaVecAVX512COMMON<RealType>;
+class InaVecAVX512SKL;
 
+template <>
+class alignas(InaVecAVX512COMMON<float>::Alignement) InaVecAVX512SKL<float> : public InaVecAVX512COMMON<float> {
+    using Parent = InaVecAVX512COMMON<float>;
 
+public:
+    using InaVecAVX512COMMON<float>::InaVecAVX512COMMON;
+
+    inline InaVecAVX512SKL(){}
+
+    inline InaVecAVX512SKL(const InaVecAVX512COMMON<float>& other)
+        : Parent(other){}
+
+    inline static const char* GetName(){
+        return "InaVecAVX512SKL<float>";
+    }
+
+    inline static InaIfElse< InaVecAVX512SKL<float> >::ThenClass If(const typename Parent::MaskType& inTest) {
+        return InaIfElse< InaVecAVX512SKL<float> >::IfClass().If(inTest);
+    }
+};
 
 #endif
