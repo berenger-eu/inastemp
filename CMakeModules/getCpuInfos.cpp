@@ -319,6 +319,7 @@ std::list<CpuProperty> getProperties(){
         21	avx512ifma	AVX-512 Integer Fused Multiply-Add Instructions
         26	avx512pf	AVX-512 Prefetch Instructions
         27	avx512er	AVX-512 Exponential and Reciprocal Instructions
+        28	avx512cd	AVX-512 Conflict Detection Instructions
         30	avx512bw	AVX-512 Byte and Word Instructions
         31	avx512vl	AVX-512 Vector Length Extensions
         */
@@ -328,6 +329,7 @@ std::list<CpuProperty> getProperties(){
         properties.push_back(CpuProperty("AVX512IFMA", CPUInfoGetEBX(info, 21)));
         properties.push_back(CpuProperty("AVX512PF", CPUInfoGetEBX(info, 26)));
         properties.push_back(CpuProperty("AVX512ER", CPUInfoGetEBX(info, 27)));
+        properties.push_back(CpuProperty("AVX512CD", CPUInfoGetEBX(info, 28)));
         properties.push_back(CpuProperty("AVX512BW", CPUInfoGetEBX(info, 30)));
         properties.push_back(CpuProperty("AVX512VL", CPUInfoGetEBX(info, 31)));
     }
@@ -356,3 +358,4 @@ int main(){
 
     return 0;
 }
+
