@@ -19,7 +19,7 @@ struct MultiHorizontalSumTester{
                           const int my_idx, Params... params){
         std::array<typename VecType::RealType, VecType::VecLength> values;
         for(int idx = 0 ; idx < VecType::VecLength ; ++idx){
-            values[idx] = typename VecType::RealType(my_idx*idx);
+            values[static_cast<size_t>(idx)] = typename VecType::RealType(my_idx*idx);
         }
         VecType v(&values[0]);
 
