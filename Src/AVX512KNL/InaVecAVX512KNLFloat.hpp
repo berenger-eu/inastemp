@@ -24,6 +24,9 @@
 template <class RealType>
 using InaVecMaskAVX512KNL = InaVecMaskAVX512COMMON<RealType>;
 
+// Forward declarations
+template <class RealType>
+class InaVecAVX512KNL;
 
 template <>
 class alignas(InaVecAVX512COMMON<float>::Alignement) InaVecAVX512KNL<float> : public InaVecAVX512COMMON<float> {
