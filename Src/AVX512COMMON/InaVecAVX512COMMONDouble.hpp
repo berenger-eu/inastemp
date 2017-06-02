@@ -607,9 +607,80 @@ public:
 
     // Multiple sum
     template <class ... Args>
-    inline static void MultiHorizontalSum(double sumRes[], const InaVecAVX512COMMON<double>& inVec, Args ...args){
+    inline static void MultiHorizontalSum(double sumRes[], const InaVecAVX512COMMON<double>& inVec1,
+                                          const InaVecAVX512COMMON<double>& inVec2, const InaVecAVX512COMMON<double>& inVec3,
+                                          const InaVecAVX512COMMON<double>& inVec4, Args ...args){
+        __m512i half = _mm512_set_epi64( 3, 2, 1, 0, 7, 6, 5, 4);
+
+        __m512d permuteVecs01 = _mm512_castsi512_pd(_mm512_or_si512(_mm512_castpd_si512(_mm512_maskz_permutexvar_pd(0x0F, half, inVec1.vec)),
+                             _mm512_castpd_si512(_mm512_maskz_permutexvar_pd(0xF0, half, inVec2.vec))));
+
+        __m512d orderVecs01 = _mm512_mask_mov_pd(inVec1.vec, 0xF0, inVec2.vec);
+        __m512d vec01 = permuteVecs01 + orderVecs01;
+
+        __m512d permuteVecs23 = _mm512_castsi512_pd(_mm512_or_si512(_mm512_castpd_si512(_mm512_maskz_permutexvar_pd(0x0F, half, inVec3.vec)),
+                             _mm512_castpd_si512(_mm512_maskz_permutexvar_pd(0xF0, half, inVec4.vec))));
+
+        __m512d orderVec23 = _mm512_mask_mov_pd(inVec3.vec, 0xF0, inVec4.vec);
+        __m512d vec23 = permuteVecs23 + orderVec23;
+
+        __m512i half2 = _mm512_set_epi64( 5, 4, 3, 2, 5, 4, 3, 2);
+
+        __m512d permuteVecs0123 = _mm512_castsi512_pd(_mm512_or_si512(_mm512_castpd_si512(_mm512_maskz_permutexvar_pd(0x0F, half2, vec01)),
+                                                                     _mm512_castpd_si512(_mm512_maskz_permutexvar_pd(0xF0, half2, vec23))));
+
+        __m512i half22 = _mm512_set_epi64( 7, 6, 1, 0, 7, 6, 1, 0);
+        __m512d orderVecs0123 = _mm512_castsi512_pd(_mm512_or_si512(_mm512_castpd_si512(_mm512_maskz_permutexvar_pd(0x0F, half22, vec01)),
+                                                                    _mm512_castpd_si512(_mm512_maskz_permutexvar_pd(0xF0, half22, vec23))));
+
+        __m512d vec0123 = permuteVecs0123 + orderVecs0123;
+
+        __m512i half3 = _mm512_set_epi64( 7, 5, 6, 4, 3, 1, 2, 0);
+        __m512d vec0123perm = _mm512_maskz_permutexvar_pd(0xFF, half3, vec0123);
+
+        __m256d low  = _mm512_castpd512_pd256(vec0123perm);
+        __m256d high = _mm512_extractf64x4_pd(vec0123perm, 1);
+
+        const __m256d val_a01_b01_c23_d23 = _mm256_permute2f128_pd(low, high, 0x30);// 011.0000
+        const __m256d val_a23_b23_d01_d23 = _mm256_permute2f128_pd(low, high, 0x21);// 010.0001
+
+        const __m256d val_suma_sumb_sumc_sumd = val_a01_b01_c23_d23 + val_a23_b23_d01_d23;
+
+        __m256d vecBuffer = _mm256_loadu_pd(sumRes);
+        vecBuffer += val_suma_sumb_sumc_sumd;
+        _mm256_storeu_pd(sumRes, vecBuffer);
+
+        MultiHorizontalSum(&sumRes[4], args... );
+    }
+
+    template <class ... Args>
+    inline static void MultiHorizontalSum(double sumRes[], const InaVecAVX512COMMON<double>& inVec1,
+                                          const InaVecAVX512COMMON<double>& inVec2, Args ...args){
+        __m512i half = _mm512_set_epi64( 3, 2, 1, 0, 7, 6, 5, 4);
+
+        __m512d permuteVecs = _mm512_castsi512_pd(_mm512_or_si512(_mm512_castpd_si512(_mm512_maskz_permutexvar_pd(0x0F, half, inVec1.vec)),
+                             _mm512_castpd_si512(_mm512_maskz_permutexvar_pd(0xF0, half, inVec2.vec))));
+
+        __m512d orderVecs = _mm512_mask_mov_pd(inVec1.vec, 0xF0, inVec2.vec);
+        __m512d vec = permuteVecs + orderVecs;
+
+        __m256d low  = _mm512_castpd512_pd256(vec);
+        __m256d high = _mm512_extractf64x4_pd(vec, 1);
+
+        const __m256d val_a01_b01_a23_b23 = _mm256_hadd_pd(low, high);
+
+        __m128d valupper = _mm256_extractf128_pd(val_a01_b01_a23_b23, 1);
+        __m128d vallower = _mm256_castpd256_pd128(val_a01_b01_a23_b23);
+
+        __m128d vecBuffer = _mm_loadu_pd(sumRes);
+        vecBuffer += valupper+vallower;
+        _mm_storeu_pd(sumRes, vecBuffer);
+
+        MultiHorizontalSum(&sumRes[2], args... );
+    }
+
+    inline static void MultiHorizontalSum(double sumRes[], const InaVecAVX512COMMON<double>& inVec){
         sumRes[0] += inVec.horizontalSum();
-        MultiHorizontalSum(&sumRes[1], args... );
     }
 
     inline static void MultiHorizontalSum(double /*sumRes*/[]){

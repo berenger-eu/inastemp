@@ -605,9 +605,96 @@ public:
 
     // Multiple sum
     template <class ... Args>
-    inline static void MultiHorizontalSum(float sumRes[], const InaVecAVX512COMMON<float>& inVec, Args ...args){
+    inline static void MultiHorizontalSum(float sumRes[], const InaVecAVX512COMMON<float>& inVec1,
+                                          const InaVecAVX512COMMON<float>& inVec2, const InaVecAVX512COMMON<float>& inVec3,
+                                          const InaVecAVX512COMMON<float>& inVec4, Args ...args){
+        __m512i half = _mm512_set_epi32(7, 6, 5, 4, 3, 2, 1, 0,
+                                       15, 14, 13, 12, 11, 10, 9, 8);
+
+        __m512 permuteVecs01 = _mm512_castsi512_ps(_mm512_or_si512(_mm512_castps_si512(_mm512_maskz_permutexvar_ps(0x00FF, half, inVec1.vec)),
+                             _mm512_castps_si512(_mm512_maskz_permutexvar_ps(0xFF00, half, inVec2.vec))));
+
+        __m512 orderVecs01 = _mm512_mask_mov_ps(inVec1.vec, 0xFF00, inVec2.vec);
+
+        __m512 vec01 = permuteVecs01 + orderVecs01;
+
+        __m512 permuteVecs23 = _mm512_castsi512_ps(_mm512_or_si512(_mm512_castps_si512(_mm512_maskz_permutexvar_ps(0x00FF, half, inVec3.vec)),
+                             _mm512_castps_si512(_mm512_maskz_permutexvar_ps(0xFF00, half, inVec4.vec))));
+
+        __m512 orderVecs23 = _mm512_mask_mov_ps(inVec3.vec, 0xFF00, inVec4.vec);
+
+        __m512 vec23 = permuteVecs23 + orderVecs23;
+
+        __m512i half2 = _mm512_set_epi32( 11, 10, 9, 8, 15, 14, 13, 12,
+                                          3, 2, 1, 0, 7, 6, 5, 4);
+
+        __m512 permuteVecs0123 = _mm512_castsi512_ps(_mm512_or_si512(_mm512_castps_si512(_mm512_maskz_permutexvar_ps(0x0F0F, half2, vec01)),
+                             _mm512_castps_si512(_mm512_maskz_permutexvar_ps(0xF0F0, half2, vec23))));
+
+        __m512 orderVecs0123 = _mm512_mask_mov_ps(vec01, 0xF0F0, vec23);
+
+        __m512 vec0123 = permuteVecs0123 + orderVecs0123;
+
+        __m512i half3 = _mm512_set_epi32( 15, 14, 7, 6, 13, 12, 5, 4,
+                                          11, 10,  3, 2, 9, 8, 1, 0);
+        __m512 vec0123perm = _mm512_maskz_permutexvar_ps(0xFFFF, half3, vec0123);
+
+
+        __m256 low  = _mm512_castps512_ps256(vec0123perm);
+        __m256 high = _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(vec0123perm), 1));
+        const __m256 val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567 = _mm256_hadd_ps(low,
+                                                           high);
+
+        __m128 valupper = _mm256_extractf128_ps(val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567, 1);
+        __m128 vallower = _mm256_castps256_ps128(val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567);
+
+        __m128 vecBuffer = _mm_loadu_ps(sumRes);
+        vecBuffer += valupper + vallower;
+        _mm_storeu_ps(sumRes, vecBuffer);
+
+        MultiHorizontalSum(&sumRes[4], args... );
+    }
+
+    template <class ... Args>
+    inline static void MultiHorizontalSum(float sumRes[], const InaVecAVX512COMMON<float>& inVec1,
+                                          const InaVecAVX512COMMON<float>& inVec2, Args ...args){
+
+        __m512i half = _mm512_set_epi32(7, 6, 5, 4, 3, 2, 1, 0,
+                                       15, 14, 13, 12, 11, 10, 9, 8);
+
+        __m512 permuteVecs = _mm512_castsi512_ps(_mm512_or_si512(_mm512_castps_si512(_mm512_maskz_permutexvar_ps(0x00FF, half, inVec1.vec)),
+                             _mm512_castps_si512(_mm512_maskz_permutexvar_ps(0xFF00, half, inVec2.vec))));
+
+        __m512 orderVecs = _mm512_mask_mov_ps(inVec1.vec, 0xFF00, inVec2.vec);
+        __m512 vec = permuteVecs + orderVecs;
+        
+        __m256 low  = _mm512_castps512_ps256(vec);
+        __m256 high = _mm256_castpd_ps(_mm512_extractf64x4_pd(_mm512_castps_pd(vec), 1));
+        const __m256 val_a01_a23_b01_b23_a45_a67_b45_b67 = _mm256_hadd_ps(low, high);
+
+        const __m128 valupper = _mm256_extractf128_ps(val_a01_a23_b01_b23_a45_a67_b45_b67, 1);
+        const __m128 vallower = _mm256_castps256_ps128(val_a01_a23_b01_b23_a45_a67_b45_b67);
+
+        const __m128 val_a0123_b0123_a4567_b4567 = _mm_hadd_ps(valupper, vallower);
+
+        const __m128 val_a4567_b4567_a0123_b0123 = _mm_shuffle_ps(val_a0123_b0123_a4567_b4567, val_a0123_b0123_a4567_b4567, 0x9E);// 10.01.11.10
+
+        const __m128 val_suma_x_sumb_x = _mm_add_ps(val_a0123_b0123_a4567_b4567, val_a4567_b4567_a0123_b0123);
+
+        alignas(Alignement) float buffer[VecLength] = {0};
+        buffer[0] = sumRes[0];
+        buffer[1] = sumRes[1];
+        __m128 vecBuffer = _mm_load_ps(buffer);
+        vecBuffer += val_suma_x_sumb_x;
+        _mm_store_ps(buffer, vecBuffer);
+        sumRes[0] = buffer[0];
+        sumRes[1] = buffer[1];
+        
+        MultiHorizontalSum(&sumRes[2], args... );
+    }
+    
+    inline static void MultiHorizontalSum(float sumRes[], const InaVecAVX512COMMON<float>& inVec){
         sumRes[0] += inVec.horizontalSum();
-        MultiHorizontalSum(&sumRes[1], args... );
     }
 
     inline static void MultiHorizontalSum(float /*sumRes*/[]){
