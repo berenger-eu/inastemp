@@ -29,6 +29,11 @@ CMAKE will detect the hardware capacities and turn on some intrinsics by default
 One can turn them on/off using `ccmake` or other configuration tool if needed.
 Unit tests and examples can be compiled and the headers installed with the usual CMAKE stage.
 
+- Related publication
+Inastemp paper has been published in the Scientific Programming Journal (Hindawi).
+The pdf can be found at http://downloads.hindawi.com/journals/sp/aip/5482468.pdf
+We will appreciate that any use or discussion of Inastemp refers to this document (see https://www.hindawi.com/journals/sp/ to get the complete reference).
+
 
 ### Templates --- Breaking the Genericity/Optimization Opposition
 
