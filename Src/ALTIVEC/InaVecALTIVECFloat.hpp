@@ -5,7 +5,7 @@
 #ifndef INAVECALTIVECFLOAT_HPP
 #define INAVECALTIVECFLOAT_HPP
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 

@@ -5,7 +5,7 @@
 #ifndef INAVECSSE42FLOAT_HPP
 #define INAVECSSE42FLOAT_HPP
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "SSE41/InaVecSSE41Float.hpp"
 
 #ifndef INASTEMP_USE_SSE42

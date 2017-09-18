@@ -2,8 +2,12 @@
 // Inastemp - Berenger Bramas MPCDF - 2016
 // Under MIT Licence, please you must read the LICENCE file.
 ///////////////////////////////////////////////////////////////////////////
-#ifndef INASTEMPCONFIG_H
-#define INASTEMPCONFIG_H
+#ifndef INASTEMPCOMPILECONFIG_H
+#define INASTEMPCOMPILECONFIG_H
+
+#ifdef INASTEMP_USE_STATIC_CONFIG
+#error "It is forbiden to include InastempCompileConfig in case of static config, please protect inclusion with INASTEMP_USE_STATIC_CONFIG."
+#endif
 
 // Define all macros (ADD-NEW-HERE)
 #cmakedefine INASTEMP_USE_SCALAR

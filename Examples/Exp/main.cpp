@@ -6,7 +6,7 @@
 // In this example we time the duration to compute a given number of Exponential
 // We compare the scalar version and the BestType
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "SCALAR/InaVecSCALARDouble.hpp"
 #include "SCALAR/InaVecSCALARFloat.hpp"
 #include "Common/InaTimer.hpp"

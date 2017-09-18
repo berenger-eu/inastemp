@@ -24,7 +24,7 @@ A good way to use Inastemp would be to have a software engineer managing the inc
 and to have the scientists work with basic simple functions templatized against a vector type.
 
 - Overview
-The library itself purely consists of headers. However, it comes with CMAKE files.
+The library itself purely consists of headers. However, it comes with CMAKE files but it is not mandatory to use them.
 CMAKE will detect the hardware capacities and turn on some intrinsics by default.
 One can turn them on/off using `ccmake` or other configuration tool if needed.
 Unit tests and examples can be compiled and the headers installed with the usual CMAKE stage.
@@ -72,6 +72,7 @@ Template C++ source-code                           Compiled Template C++ code
 
 ### Basic compilation
 
+- Using CMake:
 ```bash
 # Create a Build directory
 mkdir Build
@@ -84,6 +85,11 @@ VERBOSE=1 cmake ..
 # Then make will build the unit test and examples
 make
 ```
+
+- Direct inclusion of the headers:
+simply include `Src/InastempStaticConfig.h` before anything else.
+In such case, only the instruction sets that are enable by the compiler will be enable in Inastemp.
+For example, compiling using Gcc and `-mAVX` will turn on AVX.
 
 ### CMake variables - Hardware detection (X86)
 

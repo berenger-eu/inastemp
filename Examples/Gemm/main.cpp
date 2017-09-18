@@ -7,7 +7,7 @@
 // to simplify the example, the matrices are square
 // and the size is a factor of the blocking coefficient
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "Common/InaTimer.hpp"
 
 

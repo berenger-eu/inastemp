@@ -6,7 +6,7 @@
 #define INAVECSCALARDOUBLE_HPP
 
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "Common/InaUtils.hpp"
 #include "Common/InaIfElse.hpp"
 

@@ -5,7 +5,7 @@
 #ifndef INAVECAVX2FLOAT_HPP
 #define INAVECAVX2FLOAT_HPP
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "AVX/InaVecAVXFloat.hpp"
 
 #ifndef INASTEMP_USE_AVX2

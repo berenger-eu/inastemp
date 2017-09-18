@@ -2,12 +2,9 @@
 // Inastemp - Berenger Bramas MPCDF - 2016
 // Under MIT Licence, please you must read the LICENCE file.
 ///////////////////////////////////////////////////////////////////////////
-#include "InastempGlobal.h"
+#include "InastempStaticConfig.h"
 
-#include "@TYPE@/InaVec@TYPE@Double.hpp"
-#include "@TYPE@/InaVec@TYPE@Float.hpp"
-
-#include "core-test-all.hpp"
+#include "core-test-all-static.hpp"
 #include "FLOPS/InaVecFLOPS.hpp"
 
 int main() {

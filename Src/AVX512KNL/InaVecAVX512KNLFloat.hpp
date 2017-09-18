@@ -5,7 +5,7 @@
 #ifndef INAVECAVX512KNLFLOAT_HPP
 #define INAVECAVX512KNLFLOAT_HPP
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 #include "AVX512COMMON/InaVecAVX512COMMONFloat.hpp"

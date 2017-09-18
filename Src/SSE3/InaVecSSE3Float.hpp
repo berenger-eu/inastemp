@@ -5,7 +5,7 @@
 #ifndef INAVECSSE3FLOAT_HPP
 #define INAVECSSE3FLOAT_HPP
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 
