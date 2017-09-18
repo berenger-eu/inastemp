@@ -2,10 +2,10 @@
 // Inastemp - Berenger Bramas MPCDF - 2016
 // Under MIT Licence, please you must read the LICENCE file.
 ///////////////////////////////////////////////////////////////////////////
-#ifndef CORETESTALL_HPP
-#define CORETESTALL_HPP
+#ifndef CORETESTALLSTATIC_HPP
+#define CORETESTALLSTATIC_HPP
 
-#include "InastempGlobal.h"
+#include "InastempStaticConfig.h"
 #include "UTester.hpp"
 
 #include <cmath>

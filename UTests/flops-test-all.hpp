@@ -5,7 +5,7 @@
 #ifndef FLOPSTESTALL_HPP
 #define FLOPSTESTALL_HPP
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "UTester.hpp"
 
 #include <cmath>

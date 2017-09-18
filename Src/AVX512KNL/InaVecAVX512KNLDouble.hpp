@@ -5,7 +5,7 @@
 #ifndef INAVECAVX512KNLDOUBLE_HPP
 #define INAVECAVX512KNLDOUBLE_HPP
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 #include "AVX512COMMON/InaVecAVX512COMMONDouble.hpp"

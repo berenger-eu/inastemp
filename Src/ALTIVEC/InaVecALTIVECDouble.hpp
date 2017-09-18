@@ -5,7 +5,7 @@
 #ifndef INAVECALTIVECDOUBLE_HPP
 #define INAVECALTIVECDOUBLE_HPP
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 

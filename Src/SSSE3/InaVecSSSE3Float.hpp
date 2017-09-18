@@ -5,7 +5,7 @@
 #ifndef INAVECSSSE3FLOAT_HPP
 #define INAVECSSSE3FLOAT_HPP
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "SSE3/InaVecSSE3Float.hpp"
 
 #ifndef INASTEMP_USE_SSSE3

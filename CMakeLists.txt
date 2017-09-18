@@ -253,8 +253,8 @@ endif()
 #===========================================================================
 # Generate config
 #===========================================================================
-configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/Src/InastempConfig.h.cmake
-        ${CMAKE_CURRENT_BINARY_DIR}/Src/InastempConfig.h  )
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/Src/InastempCompileConfig.h.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/Src/InastempCompileConfig.h  )
 
 #===========================================================================
 # Build lib

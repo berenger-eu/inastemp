@@ -5,7 +5,7 @@
 #ifndef INAVECSSE42DOUBLE_HPP
 #define INAVECSSE42DOUBLE_HPP
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "SSE41/InaVecSSE41Double.hpp"
 
 #ifndef INASTEMP_USE_SSE42

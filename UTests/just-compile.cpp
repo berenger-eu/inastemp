@@ -3,7 +3,7 @@
 // Under MIT Licence, please you must read the LICENCE file.
 ///////////////////////////////////////////////////////////////////////////
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 
 
 #include "@TYPE@/InaVec@TYPE@Double.hpp"

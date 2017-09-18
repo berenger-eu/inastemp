@@ -5,7 +5,7 @@
 #ifndef INAVECAVX2DOUBLE_HPP
 #define INAVECAVX2DOUBLE_HPP
 
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "AVX/InaVecAVXDouble.hpp"
 
 #ifndef INASTEMP_USE_AVX2

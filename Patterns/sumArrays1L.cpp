@@ -2,7 +2,7 @@
 // Inastemp - Berenger Bramas MPCDF - 2016
 // Under MIT Licence, please you must read the LICENCE file.
 ///////////////////////////////////////////////////////////////////////////
-#include "InastempConfig.h"
+#include "InastempGlobal.h"
 #include "SCALAR/InaVecSCALARDouble.hpp"
 
 #include <cassert>
