@@ -9,7 +9,7 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 #===========================================================================
 # Project Declaration
 #===========================================================================
-project(INASTEMP C CXX)
+project(INASTEMP CXX)
 
 # check if compiling into source directories
 string(COMPARE EQUAL "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}" insource)

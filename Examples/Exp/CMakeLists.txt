@@ -2,7 +2,7 @@
 # Inastemp - Berenger Bramas MPCDF - 2016
 # Under MIT Licence, please you must read the LICENCE file.
 ###########################################################################
-project(EXAMPLES_EXP_INASTEMP C CXX)
+project(EXAMPLES_EXP_INASTEMP CXX)
 
 ADD_DEFINITIONS(${INASTEMP_CXX_FLAGS})
 

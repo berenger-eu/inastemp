@@ -2,7 +2,7 @@
 # Inastemp - Berenger Bramas MPCDF - 2016
 # Under MIT Licence, please you must read the LICENCE file.
 ###########################################################################
-project(EXAMPLES_INASTEMP C CXX)
+project(EXAMPLES_INASTEMP CXX)
 
 OPTION( INASTEMP_BUILD_EXAMPLES  "Set to ON to build examples" ON )
 
