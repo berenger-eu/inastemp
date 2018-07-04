@@ -20,7 +20,8 @@ file(
 FOREACH(hpp_file ${hpp_in_dir})	
     file(RELATIVE_PATH relative_hpp_file ${CMAKE_CURRENT_SOURCE_DIR} ${hpp_file})
     if(INASTEMP_DO_INSTALL)
-        INSTALL( FILES ${hpp_file} DESTINATION include/${relative_hpp_file} )
+        get_filename_component(relative_hpp_dir ${relative_hpp_file} DIRECTORY)
+        INSTALL( FILES "${hpp_file}" DESTINATION "include/${relative_hpp_dir}" )
     endif()
 
     if($ENV{VERBOSE})
@@ -29,6 +30,6 @@ FOREACH(hpp_file ${hpp_in_dir})
 ENDFOREACH()
 
 if(INASTEMP_DO_INSTALL)
-    INSTALL( FILES "${INASTEMP_BINARY_DIR}/Src/InastempConfig.h" DESTINATION include/Src )
+    INSTALL( FILES "${INASTEMP_BINARY_DIR}/Src/InastempCompileConfig.h" DESTINATION "include/" )
 endif()
 
