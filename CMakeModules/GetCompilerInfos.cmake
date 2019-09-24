@@ -45,7 +45,7 @@ endmacro(GetCompilerInfosCore)
 macro(GetCompilerInfos)
 
 # (ADD-NEW-HERE for each compilers)
-if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
+if(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
     # POWERPC
     if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         SET( ARCH_NATIVE_FLAG "-mcpu=pwr8" CACHE STRING "Additional flag for the compiler capacities detection such as -mcpu=power8 for example"  )
@@ -61,7 +61,21 @@ if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
     endif()
 
     set(ALL_TYPES "ALTIVEC")
+elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ARM")
+    # POWERPC
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        SET( ARCH_NATIVE_FLAG "-march=armv8.2-a+sve" CACHE STRING "Additional flag for the compiler capacities detection such as -march=armv8.2-a+sve for example"  )
+        set(SVE_FLAGS "${ARCH_NATIVE_FLAG}")
 
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        SET( ARCH_NATIVE_FLAG "-march=armv8.2-a+sve" CACHE STRING "Additional flag for the compiler capacities detection such as -mcpu=-march=armv8.2-a+sve for example"  )
+        set(SVE_FLAGS "${ARCH_NATIVE_FLAG}")
+    else()
+        SET( ARCH_NATIVE_FLAG "-march=armv8-a+sve" CACHE STRING "Additional flag for the compiler capacities detection such as -march=armv8-a+sve for example"  )
+        set(SVE_FLAGS "${ARCH_NATIVE_FLAG}")
+    endif()
+
+    set(ALL_TYPES "SVE")
 else()
     # X86
     SET( ARCH_NATIVE_FLAG "-march=native" CACHE STRING "Additional flag for the compiler capacities detection"  )

@@ -86,7 +86,16 @@ elseif((${CMAKE_MAJOR_VERSION} STREQUAL 3 AND CMAKE_MINOR_VERSION LESS 1) OR (${
     set(INASTEMP_CXX_FLAGS "-std=c++11")
 endif()
 
-if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
+if(NOT CUSTOM_SYSTEM_PROCESSOR)
+    set(CUSTOM_SYSTEM_PROCESSOR ${CUSTOM_SYSTEM_PROCESSOR})
+endif()
+
+if($ENV{VERBOSE})
+    MESSAGE(STATUS "Main -- CMAKE_SYSTEM_PROCESSOR = ${CMAKE_SYSTEM_PROCESSOR}")
+    MESSAGE(STATUS "Main -- CUSTOM_SYSTEM_PROCESSOR = ${CUSTOM_SYSTEM_PROCESSOR}")
+endif()
+
+if(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
     if($ENV{VERBOSE})
         MESSAGE(STATUS "Main -- compile for ppc64le architecture")
     endif()
@@ -100,13 +109,31 @@ if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
     set(ALTIVEC_CPU_RULES "")
 
     set(INASTEMP_USE_SCALAR ON)
+elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ARM")
+    if($ENV{VERBOSE})
+        MESSAGE(STATUS "Main -- compile for arm architecture")
+    endif()
+    
+    #  Ask CPU capacities
+    include(GetARMCpuInfos)
+    GetARMCpuInfos()
+
+    #  Ask compiler capacities
+    include(GetCompilerInfos)
+    GetCompilerInfos()
+
+    # All types from worse to best (ADD-NEW-HERE)
+    set(ALL_TYPES "SVE")
+    set(SVE_CPU_RULES "")
+
+    set(INASTEMP_USE_SCALAR ON)
 else()
     if($ENV{VERBOSE})
         MESSAGE(STATUS "Main -- compile for x86 architecture")
     endif()
     #  Ask CPU capacities
-    include(GetCpuInfos)
-    GetCpuInfos()
+    include(GetX86CpuInfos)
+    GetX86CpuInfos()
 
     #  Ask compiler capacities
     include(GetCompilerInfos)

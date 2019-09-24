@@ -2,7 +2,7 @@
 # Inastemp - Berenger Bramas MPCDF - 2016
 # Under MIT Licence, please you must read the LICENCE file.
 ###########################################################################
-# This goes with the getCpuInfos.cpp
+# This goes with the getARMCpuInfos.cpp
 # This will create one CMAKE value per output option from the cpp file.
 # For example the output of the CPP file can be:
 # SSE3=TRUE;AVX=FALSE
@@ -12,52 +12,52 @@
 #
 # The binary should return 0 on success.
 ###########################################################################################
-macro(GetCpuInfos)
+macro(GetARMCpuInfos)
 # The original CPP file
-set(GetCpuInfosFile "${PROJECT_SOURCE_DIR}/CMakeModules/getCpuInfos.cpp")
+set(GetARMCpuInfosFile "${PROJECT_SOURCE_DIR}/CMakeModules/getARMCpuInfos.cpp")
 
 # Fatal error if the file does not exist
-if(NOT EXISTS ${GetCpuInfosFile})
-	message(FATAL_ERROR "The GetCpuInfosFile does not exist (${GetCpuInfosFile})")
+if(NOT EXISTS ${GetARMCpuInfosFile})
+	message(FATAL_ERROR "The GetARMCpuInfosFile does not exist (${GetARMCpuInfosFile})")
 endif()
 
-OPTION( INASTEMP_ISDE_CPU  "Set to ON to run the CPU detection over sde64" OFF )
+OPTION( INASTEMP_ARMIE_CPU  "Set to ON to run the CPU detection over sde64" OFF )
 
 # Compile and execute the file
-if(INASTEMP_ISDE_CPU)
-    SET( INASTEMP_ISDE_CPU_ARGS "-knl" CACHE STRING "Arguments for sde64"  )
+if(INASTEMP_ARMIE_CPU)
+    SET( INASTEMP_ARMIE_CPU_ARGS "" CACHE STRING "Arguments for armie"  )
 
     if($ENV{VERBOSE})
-    	message(STATUS "GetCpuInfosFile -- use intel SDE")
-    	message(STATUS "GetCpuInfosFile -- INASTEMP_ISDE_CPU_ARGS = ${INASTEMP_ISDE_CPU_ARGS}")
+    	message(STATUS "GetARMCpuInfosFile -- use armie")
+    	message(STATUS "GetARMCpuInfosFile -- INASTEMP_ARMIE_CPU_ARGS = ${INASTEMP_ARMIE_CPU_ARGS}")
     endif()
     
     get_filename_component(
-		GetCpuInfosFileExec ${GetCpuInfosFile}
+		GetARMCpuInfosFileExec ${GetARMCpuInfosFile}
 		NAME_WE
 	)
 
-    set(GetCpuInfosFileExec "${CMAKE_CURRENT_BINARY_DIR}/${GetCpuInfosFileExec}")
+    set(GetARMCpuInfosFileExec "${CMAKE_CURRENT_BINARY_DIR}/${GetARMCpuInfosFileExec}")
 
     try_compile(COMPILE_RESULT_VAR
-            ${CMAKE_CURRENT_BINARY_DIR}/GetCpuInfos
-            ${GetCpuInfosFile}
+            ${CMAKE_CURRENT_BINARY_DIR}/GetARMCpuInfos
+            ${GetARMCpuInfosFile}
             OUTPUT_VARIABLE comp
-            COPY_FILE ${GetCpuInfosFileExec})
+            COPY_FILE ${GetARMCpuInfosFileExec})
 
     if(COMPILE_RESULT_VAR)
-        if(NOT EXISTS ${GetCpuInfosFileExec})
-	        message(FATAL_ERROR "The GetCpuInfosFile compiled file does not exist (${GetCpuInfosFileExec})")
+        if(NOT EXISTS ${GetARMCpuInfosFileExec})
+	        message(FATAL_ERROR "The GetARMCpuInfosFile compiled file does not exist (${GetARMCpuInfosFileExec})")
         endif()
 
-        exec_program("sde64 ${INASTEMP_ISDE_CPU_ARGS} -- ${GetCpuInfosFileExec}" ${CMAKE_CURRENT_BINARY_DIR}
+        exec_program("armie ${INASTEMP_ARMIE_CPU_ARGS} -- ${GetARMCpuInfosFileExec}" ${CMAKE_CURRENT_BINARY_DIR}
                 OUTPUT_VARIABLE run
                 RETURN_VALUE RUN_RESULT_VAR)
     endif() 
 else()
     # Simply try and run
     try_run(RUN_RESULT_VAR COMPILE_RESULT_VAR
-          ${CMAKE_CURRENT_BINARY_DIR} ${GetCpuInfosFile}
+          ${CMAKE_CURRENT_BINARY_DIR} ${GetARMCpuInfosFile}
           COMPILE_OUTPUT_VARIABLE comp
           RUN_OUTPUT_VARIABLE run)
 endif()
@@ -77,17 +77,17 @@ if(COMPILE_RESULT_VAR AND (RUN_RESULT_VAR EQUAL 0) )
 			# create cmake variable
 			set(CPU_INFO_${optionName} ${optionValue})
 		else()
-			message(WARNING "GetCpuInfosFile wrong format for ${optionNode}.")
+			message(WARNING "GetARMCpuInfosFile wrong format for ${optionNode}.")
 		endif()
 	endforeach()
 	# output the sentence from the binrary
     if($ENV{VERBOSE})
-    	message(STATUS "GetCpuInfosFile -- results : ${CPU_OPTIONS}")
+    	message(STATUS "GetARMCpuInfosFile -- results : ${CPU_OPTIONS}")
     endif()
 else()
-	message(WARNING "GetCpuInfosFile -- did not return correctly.")
-	message(WARNING "GetCpuInfosFile -- compilation output : ${comp}.")
-	message(WARNING "GetCpuInfosFile -- execution output : ${run}.")
+	message(WARNING "GetARMCpuInfosFile -- did not return correctly.")
+	message(WARNING "GetARMCpuInfosFile -- compilation output : ${comp}.")
+	message(WARNING "GetARMCpuInfosFile -- execution output : ${run}.")
 endif()
 
-endmacro(GetCpuInfos)
+endmacro(GetARMCpuInfos)
