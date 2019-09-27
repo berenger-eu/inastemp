@@ -241,9 +241,6 @@ public:
     }
 
     inline InaVecSVE exp() const {
-#ifdef __INTEL_COMPILER
-        return _mm256_exp_pd(vec);
-#else
         const svfloat64_t COEFF_LOG2E = svdup_f64(double(InaFastExp::CoeffLog2E()));
         const svfloat64_t COEFF_A     = svdup_f64(double(InaFastExp::CoeffA64()));
         const svfloat64_t COEFF_B     = svdup_f64(double(InaFastExp::CoeffB64()));
@@ -275,16 +272,9 @@ public:
 
         x = svadd_f64_z(svmul_f64_z(COEFF_A, x), COEFF_B);
 
-        __m128d valupper = _mm256_extractf128_pd(x, 1);
-        __m128d vallower = _mm256_castpd256_pd128(x);
+        svint32_t castedInteger = svcvt_f64_s64_z(x);
 
-        alignas(64) long long int allvalint[VecLength] = { _mm_cvtsd_si64(vallower),
-                                                           _mm_cvtsd_si64(_mm_shuffle_pd(vallower, vallower, 1)),
-                                                           _mm_cvtsd_si64(valupper),
-                                                           _mm_cvtsd_si64(_mm_shuffle_pd(valupper, valupper, 1)) };
-
-        return _mm256_castsi256_pd(_mm256_load_si256(reinterpret_cast<const svbool_t*>(allvalint)));
-#endif
+        return svreinterpret_s64_f64(castedInteger);
     }
 
     inline InaVecSVE expLowAcc() const {
@@ -311,19 +301,13 @@ public:
 
         x = svadd_f64_z(svmul_f64_z(COEFF_A, x), COEFF_B);
 
-        __m128d valupper = _mm256_extractf128_pd(x, 1);
-        __m128d vallower = _mm256_castpd256_pd128(x);
+        svint32_t castedInteger = svcvt_f64_s64_z(x);
 
-        alignas(64) long long int allvalint[VecLength] = { _mm_cvtsd_si64(vallower),
-                                                           _mm_cvtsd_si64(_mm_shuffle_pd(vallower, vallower, 1)),
-                                                           _mm_cvtsd_si64(valupper),
-                                                           _mm_cvtsd_si64(_mm_shuffle_pd(valupper, valupper, 1)) };
-
-        return _mm256_castsi256_pd(_mm256_load_si256(reinterpret_cast<const svbool_t*>(allvalint)));
+        return svreinterpret_s64_f64(castedInteger);
     }
 
     inline InaVecSVE rsqrt() const {
-        return svdiv_f64_z(svdup_f64(1), svsqrt_f64_z(svptrue_b64(),vec));
+        return svrsqrte_f64(svptrue_b64(),vec);
     }
 
     inline InaVecSVE abs() const {
@@ -331,74 +315,71 @@ public:
     }
 
     inline InaVecSVE floor() const {
-        return _mm256_floor_pd(vec);
+        svbool_t mask = (InaVecSVE(double(LLONG_MIN)) < vec && vec < InaVecSVE(double(LLONG_MAX)));
+        svint64_t n = svcvt_s64_f64_z(svptrue_b64(), vec);
+        svint64_t d = svcvt_f64_s64_z(svptrue_b64(), n);
+        svbool_t lower = svacgt_f64(svptrue_b64(), svdup_s64(0), d);
+        return svsel_f64(mask, svsel_f64(Lower, vec - svdup_f64(1), d), vec);
     }
 
     inline InaVecSVE signOf() const {
-        const svfloat64_t minus0 = _mm256_castsi256_pd(_mm256_set1_epi64x(static_cast<long long>(0x8000000000000000L)));
-        const svfloat64_t signs  = _mm256_and_pd(vec, minus0);
-        return _mm256_and_pd(_mm256_cmp_pd(svdup_f64(0), vec, _CMP_NEQ_OQ),
-                             _mm256_or_pd(signs, svdup_f64(1)));
+        return svsel_f64(svacgt_f64(svptrue_b64(), vec, svdup_f64(0)),
+                  svdup_f64(1), svsel_f64(svacgt_f64(svptrue_b64(), svdup_f64(0), vec),
+                                          svdup_f64(-1), svdup_f64(0)));
     }
 
     inline InaVecSVE isPositive() const {
-        const svfloat64_t greater = _mm256_cmp_pd(svdup_f64(0), vec, _CMP_LE_OQ);
-        const svfloat64_t ones    = svdup_f64(1);
-        return _mm256_and_pd(greater, ones);
+        return svsel_f64(svacge_f64(svptrue_b64(), vec, svdup_f64(0)),
+                         svdup_f64(1), svdup_f64(0));
     }
 
     inline InaVecSVE isNegative() const {
-        const svfloat64_t less = _mm256_cmp_pd(svdup_f64(0), vec, _CMP_GE_OQ);
-        const svfloat64_t ones = svdup_f64(1);
-        return _mm256_and_pd(less, ones);
+        return svsel_f64(svacgt_f64(svptrue_b64(), svdup_f64(0), vec),
+                         svdup_f64(1), svdup_f64(0));
     }
 
     inline InaVecSVE isPositiveStrict() const {
-        const svfloat64_t greater = _mm256_cmp_pd(svdup_f64(0), vec, _CMP_LT_OQ);
-        const svfloat64_t ones    = svdup_f64(1);
-        return _mm256_and_pd(greater, ones);
+        return svsel_f64(svacgt_f64(svptrue_b64(), vec, svdup_f64(0)),
+                         svdup_f64(1), svdup_f64(0));
     }
 
     inline InaVecSVE isNegativeStrict() const {
-        const svfloat64_t less = _mm256_cmp_pd(svdup_f64(0), vec, _CMP_GT_OQ);
-        const svfloat64_t ones = svdup_f64(1);
-        return _mm256_and_pd(less, ones);
+        return svsel_f64(svacge_f64(svptrue_b64(), svdup_f64(0), vec),
+                         svdup_f64(1), svdup_f64(0));
     }
 
     inline InaVecSVE isZero() const {
-        const svfloat64_t equalZero = _mm256_cmp_pd(svdup_f64(0), vec, _CMP_EQ_OQ);
-        const svfloat64_t ones      = svdup_f64(1);
-        return _mm256_and_pd(equalZero, ones);
+        return svsel_f64(svcmpeq_f64(svptrue_b64(), svdup_f64(0), vec),
+                         svdup_f64(1), svdup_f64(0));
     }
 
     inline InaVecSVE isNotZero() const {
-        const svfloat64_t equalZero = _mm256_cmp_pd(svdup_f64(0), vec, _CMP_NEQ_OQ);
-        const svfloat64_t ones      = svdup_f64(1);
-        return _mm256_and_pd(equalZero, ones);
+        return svsel_f64(svcmpne_f64(svptrue_b64(), svdup_f64(0), vec),
+                         svdup_f64(1), svdup_f64(0));
     }
 
     inline InaVecMaskSVE<double> isPositiveMask() const {
-        return _mm256_castpd_si256(_mm256_cmp_pd(svdup_f64(0), vec, _CMP_LE_OQ));
+        return svacge_f64(svptrue_b64(), vec, svdup_f64(0));
     }
 
     inline InaVecMaskSVE<double> isNegativeMask() const {
-        return _mm256_castpd_si256(_mm256_cmp_pd(svdup_f64(0), vec, _CMP_GE_OQ));
+        return svacgt_f64(svptrue_b64(), svdup_f64(0), vec);
     }
 
     inline InaVecMaskSVE<double> isPositiveStrictMask() const {
-        return _mm256_castpd_si256(_mm256_cmp_pd(svdup_f64(0), vec, _CMP_LT_OQ));
+        return svacgt_f64(svptrue_b64(), vec, svdup_f64(0));
     }
 
     inline InaVecMaskSVE<double> isNegativeStrictMask() const {
-        return _mm256_castpd_si256(_mm256_cmp_pd(svdup_f64(0), vec, _CMP_GT_OQ));
+        return svacge_f64(svptrue_b64(), svdup_f64(0), vec);
     }
 
     inline InaVecMaskSVE<double> isZeroMask() const {
-        return _mm256_castpd_si256(_mm256_cmp_pd(svdup_f64(0), vec, _CMP_EQ_OQ));
+        return svcmpeq_f64(svptrue_b64(), svdup_f64(0), vec);
     }
 
     inline InaVecMaskSVE<double> isNotZeroMask() const {
-        return _mm256_castpd_si256(_mm256_cmp_pd(svdup_f64(0), vec, _CMP_NEQ_OQ));
+        return svcmpne_f64(svptrue_b64(), svdup_f64(0), vec);
     }
 
     // Static basic methods
@@ -411,87 +392,75 @@ public:
     }
 
     inline static InaVecSVE Min(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_min_pd(inVec1.vec, inVec2.vec);
+        return svminp_f64_z(svptrue_b64(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecSVE Max(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_max_pd(inVec1.vec, inVec2.vec);
+        return svmaxp_f64_z(svptrue_b64(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecSVE IsLowerOrEqual(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        const svfloat64_t testResult = _mm256_cmp_pd(inVec1.vec, inVec2.vec, _CMP_LE_OQ);
-        const svfloat64_t ones       = svdup_f64(1);
-        return _mm256_and_pd(testResult, ones);
+        return svdup_f64_z(svacgt_f64(svptrue_b64(), inVec2.vec, inVec1.vec), svdup_f64(1));
     }
 
     inline static InaVecSVE IsLower(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        const svfloat64_t testResult = _mm256_cmp_pd(inVec1.vec, inVec2.vec, _CMP_LT_OQ);
-        const svfloat64_t ones       = svdup_f64(1);
-        return _mm256_and_pd(testResult, ones);
+        return svdup_f64_z(svacge_f64(svptrue_b64(), inVec2.vec, inVec1.vec), svdup_f64(1));
     }
 
     inline static InaVecSVE IsGreaterOrEqual(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        const svfloat64_t testResult = _mm256_cmp_pd(inVec1.vec, inVec2.vec, _CMP_GE_OQ);
-        const svfloat64_t ones       = svdup_f64(1);
-        return _mm256_and_pd(testResult, ones);
+        return svdup_f64_z(svacge_f64(svptrue_b64(), inVec1.vec, inVec2.vec), svdup_f64(1));
     }
 
     inline static InaVecSVE IsGreater(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        const svfloat64_t testResult = _mm256_cmp_pd(inVec1.vec, inVec2.vec, _CMP_GT_OQ);
-        const svfloat64_t ones       = svdup_f64(1);
-        return _mm256_and_pd(testResult, ones);
+        return svdup_f64_z(svacgt_f64(svptrue_b64(), inVec1.vec, inVec2.vec), svdup_f64(1));
     }
 
     inline static InaVecSVE IsEqual(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        const svfloat64_t testResult = _mm256_cmp_pd(inVec1.vec, inVec2.vec, _CMP_EQ_OQ);
-        const svfloat64_t ones       = svdup_f64(1);
-        return _mm256_and_pd(testResult, ones);
+        return svdup_f64_z(svcmpeq_f64(svptrue_b64(), inVec1.vec, inVec2.vec), svdup_f64(1));
     }
 
     inline static InaVecSVE IsNotEqual(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        const svfloat64_t testResult = _mm256_cmp_pd(inVec1.vec, inVec2.vec, _CMP_NEQ_OQ);
-        const svfloat64_t ones       = svdup_f64(1);
-        return _mm256_and_pd(testResult, ones);
+        return svdup_f64_z(svcmpne_f64(svptrue_b64(), inVec1.vec, inVec2.vec), svdup_f64(1));
     }
 
     inline static InaVecMaskSVE<double> IsLowerOrEqualMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_castpd_si256(_mm256_cmp_pd(inVec1.vec, inVec2.vec, _CMP_LE_OQ));
+        return svacgt_f64(svptrue_b64(), inVec2.vec, inVec1.vec);
     }
 
     inline static InaVecMaskSVE<double> IsLowerMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_castpd_si256(_mm256_cmp_pd(inVec1.vec, inVec2.vec, _CMP_LT_OQ));
+        return svacge_f64(svptrue_b64(), inVec2.vec, inVec1.vec);
     }
 
     inline static InaVecMaskSVE<double> IsGreaterOrEqualMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_castpd_si256(_mm256_cmp_pd(inVec1.vec, inVec2.vec, _CMP_GE_OQ));
+        return svacge_f64(svptrue_b64(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecMaskSVE<double> IsGreaterMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_castpd_si256(_mm256_cmp_pd(inVec1.vec, inVec2.vec, _CMP_GT_OQ));
+        return svacgt_f64(svptrue_b64(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecMaskSVE<double> IsEqualMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_castpd_si256(_mm256_cmp_pd(inVec1.vec, inVec2.vec, _CMP_EQ_OQ));
+        return svcmpeq_f64(svptrue_b64(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecMaskSVE<double> IsNotEqualMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_castpd_si256(_mm256_cmp_pd(inVec1.vec, inVec2.vec, _CMP_NEQ_OQ));
+        return svcmpne_f64(svptrue_b64(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecSVE BitsAnd(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_and_pd(inVec1.vec, inVec2.vec);
+        return svreinterpret_f64_s64(svand_b64(svptrue_b64(), svreinterpret_s64_f64(inVec1.vec), svreinterpret_s64_f64(inVec2.vec)));
     }
 
     inline static InaVecSVE BitsNotAnd(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_andnot_pd(inVec1.vec, inVec2.vec);
+        return svreinterpret_f64_s64(svbic_b64(svptrue_b64(), svreinterpret_s64_f64(inVec1.vec), svreinterpret_s64_f64(inVec2.vec)));
     }
 
     inline static InaVecSVE BitsOr(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_or_pd(inVec1.vec, inVec2.vec);
+        return svreinterpret_f64_s64(svorr_b64(svptrue_b64(), svreinterpret_s64_f64(inVec1.vec), svreinterpret_s64_f64(inVec2.vec)));
     }
 
     inline static InaVecSVE BitsXor(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_xor_pd(inVec1.vec, inVec2.vec);
+        return svreinterpret_f64_s64(sveor_b64(svptrue_b64(), svreinterpret_s64_f64(inVec1.vec), svreinterpret_s64_f64(inVec2.vec)));
     }
 
     inline static  const char* GetName() {
@@ -503,16 +472,15 @@ public:
     }
 
     inline static InaVecSVE IfElse(const InaVecMaskSVE<double>& inMask, const InaVecSVE& inIfTrue, const InaVecSVE& inIfFalse) {
-        return _mm256_or_pd(IfTrue(inMask, inIfTrue.vec).vec,
-                      IfFalse(inMask, inIfFalse.vec).vec);
+        return svsel_f64(inMask, inIfTrue.vec, inIfFalse.vec);
     }
 
     inline static InaVecSVE IfTrue(const InaVecMaskSVE<double>& inMask, const InaVecSVE& inIfTrue) {
-        return _mm256_and_pd(_mm256_castsi256_pd(inMask.getMask()), inIfTrue.vec);
+        return svsel_f64(inMask, inIfTrue.vec, svdup_f64(0));
     }
 
     inline static InaVecSVE IfFalse(const InaVecMaskSVE<double>& inMask, const InaVecSVE& inIfFalse) {
-        return _mm256_andnot_pd(_mm256_castsi256_pd(inMask.getMask()), inIfFalse.vec);
+        return svsel_f64(inMask, svdup_f64(0), inIfFalse.vec);
     }
 
     // Inner operators
@@ -537,8 +505,7 @@ public:
     }
 
     inline InaVecSVE<double> operator-() const {
-        const svfloat64_t minus0 = _mm256_castsi256_pd(_mm256_set1_epi64x(static_cast<long long>(0x8000000000000000L)));
-        return _mm256_xor_pd(vec, minus0);
+        return svneg_f64(svptrue_b64(), vec);
     }
 
     inline InaVecSVE<double> pow(std::size_t power) const{
@@ -550,17 +517,8 @@ public:
     inline static void MultiHorizontalSum(double sumRes[], const InaVecSVE<double>& inVec1,
                                           const InaVecSVE<double>& inVec2, const InaVecSVE<double>& inVec3,
                                           const InaVecSVE<double>& inVec4, Args ...args){
-        const svfloat64_t val_a01_b01_a23_b23 = _mm256_hadd_pd(inVec1.vec, inVec2.vec);
-        const svfloat64_t val_c01_d01_c23_d23 = _mm256_hadd_pd(inVec3.vec, inVec4.vec);
-
-        const svfloat64_t val_a01_b01_c23_d23 = _mm256_permute2f128_pd(val_a01_b01_a23_b23, val_c01_d01_c23_d23, 0x30);// 011.0000
-        const svfloat64_t val_a23_b23_d01_d23 = _mm256_permute2f128_pd(val_a01_b01_a23_b23, val_c01_d01_c23_d23, 0x21);// 010.0001
-
-        const svfloat64_t val_suma_sumb_sumc_sumd = val_a01_b01_c23_d23 + val_a23_b23_d01_d23;
-
-        svfloat64_t vecBuffer = svld1_f64_z(svptrue_b64(),sumRes);
-        vecBuffer += val_suma_sumb_sumc_sumd;
-        svst1_f64(svptrue_b64(),sumRes, vecBuffer);
+        MultiHorizontalSum(&sumRes[0], inVec1, inVec2 );
+        MultiHorizontalSum(&sumRes[2], inVec3, inVec4 );
 
         MultiHorizontalSum(&sumRes[4], args... );
     }
@@ -568,14 +526,8 @@ public:
     template <class ... Args>
     inline static void MultiHorizontalSum(double sumRes[], const InaVecSVE<double>& inVec1,
                                           const InaVecSVE<double>& inVec2, Args ...args){
-        const svfloat64_t val_a01_b01_a23_b23 = _mm256_hadd_pd(inVec1.vec, inVec2.vec);
-
-        __m128d valupper = _mm256_extractf128_pd(val_a01_b01_a23_b23, 1);
-        __m128d vallower = _mm256_castpd256_pd128(val_a01_b01_a23_b23);
-
-        __m128d vecBuffer = _mm_loadu_pd(sumRes);
-        vecBuffer += valupper+vallower;
-        _mm_storeu_pd(sumRes, vecBuffer);
+        MultiHorizontalSum(&sumRes[0], inVec1);
+        MultiHorizontalSum(&sumRes[1], inVec2);
 
         MultiHorizontalSum(&sumRes[2], args... );
     }

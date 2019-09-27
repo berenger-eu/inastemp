@@ -244,9 +244,6 @@ public:
     }
 
     inline InaVecSVE exp() const {
-#ifdef __INTEL_COMPILER
-        return _mm256_exp_ps(vec);
-#else
         const svfloat32_t COEFF_LOG2E = svdup_f32(float(InaFastExp::CoeffLog2E()));
         const svfloat32_t COEFF_A     = svdup_f32(float(InaFastExp::CoeffA32()));
         const svfloat32_t COEFF_B     = svdup_f32(float(InaFastExp::CoeffB32()));
@@ -268,10 +265,9 @@ public:
 
         x = svsub_f32_z(x,factor);
 
-        svbool_t castedInteger = _mm256_cvtps_epi32(svadd_f32_z(svmul_f32_z(COEFF_A, x), COEFF_B));
+        svint32_t castedInteger = svcvt_f32_s32_z(svadd_f32_z(svmul_f32_z(COEFF_A, x), COEFF_B));
 
-        return _mm256_castsi256_ps(castedInteger);
-#endif
+        return svreinterpret_s32_f32(castedInteger);
     }
 
     inline InaVecSVE expLowAcc() const {
@@ -294,9 +290,9 @@ public:
 
         x = svsub_f32_z(x,factor);
 
-        svbool_t castedInteger = _mm256_cvtps_epi32(svadd_f32_z(svmul_f32_z(COEFF_A, x), COEFF_B));
+        svint32_t castedInteger = svcvt_f32_s32_z(svadd_f32_z(svmul_f32_z(COEFF_A, x), COEFF_B));
 
-        return _mm256_castsi256_ps(castedInteger);
+        return svreinterpret_s32_f32(castedInteger);
     }
 
     inline InaVecSVE rsqrt() const {
