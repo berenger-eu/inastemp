@@ -26,6 +26,9 @@ class InaVecMaskSVE;
 template <class RealType>
 class InaVecSVE;
 
+// TODO svreinterpret
+// TODO svcvt
+
 // Mask type
 template <>
 class alignas(32) InaVecMaskSVE<float> {
@@ -199,29 +202,15 @@ public:
     }
 
     inline InaVecSVE& setFromIndirectArray(const float values[], const int inIndirection[]) {
-        vec = _mm256_set_ps(
-                    values[inIndirection[7]],
-                    values[inIndirection[6]],
-                    values[inIndirection[5]],
-                    values[inIndirection[4]],
-                    values[inIndirection[3]],
-                    values[inIndirection[2]],
-                    values[inIndirection[1]],
-                    values[inIndirection[0]]);
+        vec = svld1_gather_f32_index_z(svptrue_b32(), values, svld1_s32_u32(svptrue_b32(),inIndirection));
         return *this;
     }
 
     inline InaVecSVE& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
-        vec = _mm256_set_ps(
-                    inArray[inIndirection1[7] * inLeadingDimension + inIndirection2[7]],
-                    inArray[inIndirection1[6] * inLeadingDimension + inIndirection2[6]],
-                    inArray[inIndirection1[5] * inLeadingDimension + inIndirection2[5]],
-                    inArray[inIndirection1[4] * inLeadingDimension + inIndirection2[4]],
-                    inArray[inIndirection1[3] * inLeadingDimension + inIndirection2[3]],
-                    inArray[inIndirection1[2] * inLeadingDimension + inIndirection2[2]],
-                    inArray[inIndirection1[1] * inLeadingDimension + inIndirection2[1]],
-                    inArray[inIndirection1[0] * inLeadingDimension + inIndirection2[0]]);
+        vec = svld1_gather_f32_index_z(svptrue_b32(), inArray,
+                                       svld1_s32_u32(svptrue_b32(),inIndirection1)*svdup_s32(inLeadingDimension)
+                                       +svld1_s32_u32(svptrue_b32(),inIndirection2));
         return *this;
     }
 
@@ -311,88 +300,84 @@ public:
     }
 
     inline InaVecSVE rsqrt() const {
-        return svdup_f32(1) / svsqrt_f32_z(svptrue_b32(),vec); // _mm256_rsqrt_ps(val); not accurate enough
+        return svrsqrte_f32(svptrue_b32(),vec);
     }
 
     inline InaVecSVE abs() const {
-        const svfloat32_t minus0 = _mm256_castsi256_ps(_mm256_set1_epi32(static_cast<int>(0x80000000)));
-        return _mm256_andnot_ps(minus0, vec);
+        return svabs_f32_z(vec, svptrue_b32());
     }
 
     inline InaVecSVE floor() const {
-        return _mm256_floor_ps(vec);
+        svbool_t mask = (InaVecSVE(float(LLONG_MIN)) < vec && vec < InaVecSVE(float(LLONG_MAX)));
+        svint32_t n = svcvt_s32_f32_z(svptrue_b32(), vec);
+        svint32_t d = svcvt_f32_s32_z(svptrue_b32(), n);
+        svbool_t lower = svacgt_f32(svptrue_b32(), svdup_s32(0), d);
+        return svsel_f32(mask, svsel_f32(Lower, vec - svdup_f32(1), d), vec);
     }
 
     inline InaVecSVE signOf() const {
-        const svfloat32_t minus0 = _mm256_castsi256_ps(_mm256_set1_epi32(static_cast<int>(0x80000000)));
-        const svfloat32_t signs  = _mm256_and_ps(vec, minus0);
-        return _mm256_and_ps(_mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_NEQ_OQ),
-                             _mm256_or_ps(signs, svdup_f32(1)));
+        return svsel_f32(svacgt_f32(svptrue_b32(), vec, svdup_f32(0)),
+                  svdup_f32(1), svsel_f32(svacgt_f32(svptrue_b32(), svdup_f32(0), vec),
+                                          svdup_f32(-1), svdup_f32(0)));
     }
 
     inline InaVecSVE isPositive() const {
-        const svfloat32_t greater = _mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_LE_OQ);
-        const svfloat32_t ones    = svdup_f32(1);
-        return _mm256_and_ps(greater, ones);
+        return svsel_f32(svacge_f32(svptrue_b32(), vec, svdup_f32(0)),
+                         svdup_f32(1), svdup_f32(0));
     }
 
     inline InaVecSVE isNegative() const {
-        const svfloat32_t less = _mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_GE_OQ);
-        const svfloat32_t ones = svdup_f32(1);
-        return _mm256_and_ps(less, ones);
+        return svsel_f32(svacgt_f32(svptrue_b32(), svdup_f32(0), vec),
+                         svdup_f32(1), svdup_f32(0));
     }
 
     inline InaVecSVE isPositiveStrict() const {
-        const svfloat32_t greater = _mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_LT_OQ);
-        const svfloat32_t ones    = svdup_f32(1);
-        return _mm256_and_ps(greater, ones);
+        return svsel_f32(svacgt_f32(svptrue_b32(), vec, svdup_f32(0)),
+                         svdup_f32(1), svdup_f32(0));
     }
 
     inline InaVecSVE isNegativeStrict() const {
-        const svfloat32_t less = _mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_GT_OQ);
-        const svfloat32_t ones = svdup_f32(1);
-        return _mm256_and_ps(less, ones);
+        return svsel_f32(svacge_f32(svptrue_b32(), svdup_f32(0), vec),
+                         svdup_f32(1), svdup_f32(0));
     }
 
     inline InaVecSVE isZero() const {
-        const svfloat32_t equalZero = _mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_EQ_OQ);
-        const svfloat32_t ones      = svdup_f32(1);
-        return _mm256_and_ps(equalZero, ones);
+        return svsel_f32(svcmpeq_f32(svptrue_b32(), svdup_f32(0), vec),
+                         svdup_f32(1), svdup_f32(0));
     }
 
     inline InaVecSVE isNotZero() const {
-        const svfloat32_t equalZero = _mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_NEQ_OQ);
-        const svfloat32_t ones      = svdup_f32(1);
-        return _mm256_and_ps(equalZero, ones);
+        return svsel_f32(svcmpne_f32(svptrue_b32(), svdup_f32(0), vec),
+                         svdup_f32(1), svdup_f32(0));
     }
 
     inline InaVecMaskSVE<float> isPositiveMask() const {
-        return _mm256_castps_si256(_mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_LE_OQ));
+        return svacge_f32(svptrue_b32(), vec, svdup_f32(0));
     }
 
     inline InaVecMaskSVE<float> isNegativeMask() const {
-        return _mm256_castps_si256(_mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_GE_OQ));
+        return svacgt_f32(svptrue_b32(), svdup_f32(0), vec);
     }
 
     inline InaVecMaskSVE<float> isPositiveStrictMask() const {
-        return _mm256_castps_si256(_mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_LT_OQ));
+        return svacgt_f32(svptrue_b32(), vec, svdup_f32(0));
     }
 
     inline InaVecMaskSVE<float> isNegativeStrictMask() const {
-        return _mm256_castps_si256(_mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_GT_OQ));
+        return svacge_f32(svptrue_b32(), svdup_f32(0), vec);
     }
 
     inline InaVecMaskSVE<float> isZeroMask() const {
-        return _mm256_castps_si256(_mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_EQ_OQ));
+        return svcmpeq_f32(svptrue_b32(), svdup_f32(0), vec);
     }
 
     inline InaVecMaskSVE<float> isNotZeroMask() const {
-        return _mm256_castps_si256(_mm256_cmp_ps(_mm256_setzero_ps(), vec, _CMP_NEQ_OQ));
+        return svcmpne_f32(svptrue_b32(), svdup_f32(0), vec);
     }
 
     // Static basic methods
     inline static InaVecSVE GetZero() {
-        return InaVecSVE(_mm256_setzero_ps());
+        return InaVecSVE(svdup_f32(0));
     }
 
     inline static InaVecSVE GetOne() {
@@ -400,87 +385,75 @@ public:
     }
 
     inline static InaVecSVE Min(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_min_ps(inVec1.vec, inVec2.vec);
+        return svminp_f32_z(svptrue_b32(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecSVE Max(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_max_ps(inVec1.vec, inVec2.vec);
+        return svmaxp_f32_z(svptrue_b32(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecSVE IsLowerOrEqual(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        const svfloat32_t testResult = _mm256_cmp_ps(inVec1.vec, inVec2.vec, _CMP_LE_OQ);
-        const svfloat32_t ones       = svdup_f32(1);
-        return _mm256_and_ps(testResult, ones);
+        return svdup_f32_z(svacgt_f32(svptrue_b32(), inVec2.vec, inVec1.vec), svdup_f32(1));
     }
 
     inline static InaVecSVE IsLower(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        const svfloat32_t testResult = _mm256_cmp_ps(inVec1.vec, inVec2.vec, _CMP_LT_OQ);
-        const svfloat32_t ones       = svdup_f32(1);
-        return _mm256_and_ps(testResult, ones);
+        return svdup_f32_z(svacge_f32(svptrue_b32(), inVec2.vec, inVec1.vec), svdup_f32(1));
     }
 
     inline static InaVecSVE IsGreaterOrEqual(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        const svfloat32_t testResult = _mm256_cmp_ps(inVec1.vec, inVec2.vec, _CMP_GE_OQ);
-        const svfloat32_t ones       = svdup_f32(1);
-        return _mm256_and_ps(testResult, ones);
+        return svdup_f32_z(svacge_f32(svptrue_b32(), inVec1.vec, inVec2.vec), svdup_f32(1));
     }
 
     inline static InaVecSVE IsGreater(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        const svfloat32_t testResult = _mm256_cmp_ps(inVec1.vec, inVec2.vec, _CMP_GT_OQ);
-        const svfloat32_t ones       = svdup_f32(1);
-        return _mm256_and_ps(testResult, ones);
+        return svdup_f32_z(svacgt_f32(svptrue_b32(), inVec1.vec, inVec2.vec), svdup_f32(1));
     }
 
     inline static InaVecSVE IsEqual(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        const svfloat32_t testResult = _mm256_cmp_ps(inVec1.vec, inVec2.vec, _CMP_EQ_OQ);
-        const svfloat32_t ones       = svdup_f32(1);
-        return _mm256_and_ps(testResult, ones);
+        return svdup_f32_z(svcmpeq_f32(svptrue_b32(), inVec1.vec, inVec2.vec), svdup_f32(1));
     }
 
     inline static InaVecSVE IsNotEqual(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        const svfloat32_t testResult = _mm256_cmp_ps(inVec1.vec, inVec2.vec, _CMP_NEQ_OQ);
-        const svfloat32_t ones       = svdup_f32(1);
-        return _mm256_and_ps(testResult, ones);
+        return svdup_f32_z(svcmpne_f32(svptrue_b32(), inVec1.vec, inVec2.vec), svdup_f32(1));
     }
 
     inline static InaVecMaskSVE<float> IsLowerOrEqualMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_castps_si256(_mm256_cmp_ps(inVec1.vec, inVec2.vec, _CMP_LE_OQ));
+        return svacgt_f32(svptrue_b32(), inVec2.vec, inVec1.vec);
     }
 
     inline static InaVecMaskSVE<float> IsLowerMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_castps_si256(_mm256_cmp_ps(inVec1.vec, inVec2.vec, _CMP_LT_OQ));
+        return svacge_f32(svptrue_b32(), inVec2.vec, inVec1.vec);
     }
 
     inline static InaVecMaskSVE<float> IsGreaterOrEqualMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_castps_si256(_mm256_cmp_ps(inVec1.vec, inVec2.vec, _CMP_GE_OQ));
+        return svacge_f32(svptrue_b32(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecMaskSVE<float> IsGreaterMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_castps_si256(_mm256_cmp_ps(inVec1.vec, inVec2.vec, _CMP_GT_OQ));
+        return svacgt_f32(svptrue_b32(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecMaskSVE<float> IsEqualMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_castps_si256(_mm256_cmp_ps(inVec1.vec, inVec2.vec, _CMP_EQ_OQ));
+        return svcmpeq_f32(svptrue_b32(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecMaskSVE<float> IsNotEqualMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_castps_si256(_mm256_cmp_ps(inVec1.vec, inVec2.vec, _CMP_NEQ_OQ));
+        return svcmpne_f32(svptrue_b32(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecSVE BitsAnd(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_and_ps(inVec1.vec, inVec2.vec);
+        return svreinterpret_f32_s32(svand_b32(svptrue_b32(), svreinterpret_s32_f32(inVec1.vec), svreinterpret_s32_f32(inVec2.vec)));
     }
 
     inline static InaVecSVE BitsNotAnd(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_andnot_ps(inVec1.vec, inVec2.vec);
+        return svreinterpret_f32_s32(svbic_b32(svptrue_b32(), svreinterpret_s32_f32(inVec1.vec), svreinterpret_s32_f32(inVec2.vec)));
     }
 
     inline static InaVecSVE BitsOr(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_or_ps(inVec1.vec, inVec2.vec);
+        return svreinterpret_f32_s32(svorr_b32(svptrue_b32(), svreinterpret_s32_f32(inVec1.vec), svreinterpret_s32_f32(inVec2.vec)));
     }
 
     inline static InaVecSVE BitsXor(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return _mm256_xor_ps(inVec1.vec, inVec2.vec);
+        return svreinterpret_f32_s32(sveor_b32(svptrue_b32(), svreinterpret_s32_f32(inVec1.vec), svreinterpret_s32_f32(inVec2.vec)));
     }
 
     inline static  const char* GetName() {
@@ -492,16 +465,15 @@ public:
     }
 
     inline static InaVecSVE IfElse(const InaVecMaskSVE<float>& inMask, const InaVecSVE& inIfTrue, const InaVecSVE& inIfFalse) {
-        return _mm256_or_ps(IfTrue(inMask, inIfTrue.vec).vec,
-                      IfFalse(inMask, inIfFalse.vec).vec);
+        return svsel_f32(inMask, inIfTrue.vec, inIfFalse.vec);
     }
 
     inline static InaVecSVE IfTrue(const InaVecMaskSVE<float>& inMask, const InaVecSVE& inIfTrue) {
-        return _mm256_and_ps(_mm256_castsi256_ps(inMask.getMask()), inIfTrue.vec);
+        return svsel_f32(inMask, inIfTrue.vec, svdup_f32(0));
     }
 
     inline static InaVecSVE IfFalse(const InaVecMaskSVE<float>& inMask, const InaVecSVE& inIfFalse) {
-        return _mm256_andnot_ps(_mm256_castsi256_ps(inMask.getMask()), inIfFalse.vec);
+        return svsel_f32(inMask, svdup_f32(0), inIfFalse.vec);
     }
 
     // Inner operators
@@ -526,8 +498,7 @@ public:
     }
 
     inline InaVecSVE<float> operator-() const {
-        const svfloat32_t minus0 = _mm256_castsi256_ps(_mm256_set1_epi32(static_cast<int>(0x80000000)));
-        return _mm256_xor_ps(vec, minus0);
+        return svneg_f32(svptrue_b32(), vec);
     }
 
     inline InaVecSVE<float> pow(std::size_t power) const{
@@ -540,31 +511,9 @@ public:
                                           const InaVecSVE<float>& inVec2, const InaVecSVE<float>& inVec3,
                                           const InaVecSVE<float>& inVec4, const InaVecSVE<float>& inVec5,
                                           const InaVecSVE<float>& inVec6, const InaVecSVE<float>& inVec7,
-                                          const InaVecSVE<float>& inVec8, Args ...args){
-       const svfloat32_t val_a01_a23_b01_b23_a45_a67_b45_b67 = _mm256_hadd_ps(inVec1.vec, inVec2.vec);
-        const svfloat32_t val_c01_c23_d01_d23_c45_c67_d45_d67 = _mm256_hadd_ps(inVec3.vec, inVec4.vec);
-
-        const svfloat32_t val_e01_e23_f01_f23_e45_e67_f45_f67 = _mm256_hadd_ps(inVec5.vec, inVec6.vec);
-        const svfloat32_t val_g01_g23_h01_h23_g45_g67_h45_h67 = _mm256_hadd_ps(inVec7.vec, inVec8.vec);
-
-        const svfloat32_t val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567 = _mm256_hadd_ps(val_a01_a23_b01_b23_a45_a67_b45_b67,
-                                                           val_c01_c23_d01_d23_c45_c67_d45_d67);
-
-        const svfloat32_t val_e0123_f01b23_g0123_h01b23_e4567_f4567_g4567_h4567 = _mm256_hadd_ps(val_e01_e23_f01_f23_e45_e67_f45_f67,
-                                                           val_g01_g23_h01_h23_g45_g67_h45_h67);
-
-        const svfloat32_t val_a0123_b01b23_c0123_d01b23_e0123_f01b23_g0123_h01b23 =
-                                            _mm256_permute2f128_ps(val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567,
-                                                                   val_e0123_f01b23_g0123_h01b23_e4567_f4567_g4567_h4567, 0x20);// 010.0000
-        const svfloat32_t val_a4567_b4567_c4567_d4567_e4567_f4567_g4567_h4567 =
-                                             _mm256_permute2f128_ps(val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567,
-                                                                   val_e0123_f01b23_g0123_h01b23_e4567_f4567_g4567_h4567, 0x31);// 000.0001
-
-        const svfloat32_t sum_a_b_c_d_e_f_g_h = val_a0123_b01b23_c0123_d01b23_e0123_f01b23_g0123_h01b23 + val_a4567_b4567_c4567_d4567_e4567_f4567_g4567_h4567;
-
-        svfloat32_t vecBuffer = svld1_f32_z(svptrue_b32(),sumRes);
-        vecBuffer += sum_a_b_c_d_e_f_g_h;
-        svst1_f32(svptrue_b32(),sumRes, vecBuffer);
+                                          const InaVecSVE<float>& inVec8, Args ...args){       
+        MultiHorizontalSum(&sumRes[0], inVec1, inVec2, inVec3, inVec4 );
+        MultiHorizontalSum(&sumRes[4], inVec4, inVec5, inVec6, inVec7 );
 
         MultiHorizontalSum(&sumRes[8], args... );
     }
@@ -573,18 +522,8 @@ public:
     inline static void MultiHorizontalSum(float sumRes[], const InaVecSVE<float>& inVec1,
                                           const InaVecSVE<float>& inVec2, const InaVecSVE<float>& inVec3,
                                           const InaVecSVE<float>& inVec4, Args ...args){
-        const svfloat32_t val_a01_a23_b01_b23_a45_a67_b45_b67 = _mm256_hadd_ps(inVec1.vec, inVec2.vec);
-        const svfloat32_t val_c01_c23_d01_d23_c45_c67_d45_d67 = _mm256_hadd_ps(inVec3.vec, inVec4.vec);
-
-        const svfloat32_t val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567 = _mm256_hadd_ps(val_a01_a23_b01_b23_a45_a67_b45_b67,
-                                                           val_c01_c23_d01_d23_c45_c67_d45_d67);
-
-        __m128 valupper = _mm256_extractf128_ps(val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567, 1);
-        __m128 vallower = _mm256_castps256_ps128(val_a0123_b01b23_c0123_d01b23_a4567_b4567_c4567_d4567);
-
-        __m128 vecBuffer = _mm_loadu_ps(sumRes);
-        vecBuffer += valupper + vallower;
-        _mm_storeu_ps(sumRes, vecBuffer);
+        MultiHorizontalSum(&sumRes[0], inVec1, inVec2 );
+        MultiHorizontalSum(&sumRes[2], inVec3, inVec4 );
 
         MultiHorizontalSum(&sumRes[4], args... );
     }
@@ -593,25 +532,8 @@ public:
     inline static void MultiHorizontalSum(float sumRes[], const InaVecSVE<float>& inVec1,
                                           const InaVecSVE<float>& inVec2, Args ...args){
 
-        const svfloat32_t val_a01_a23_b01_b23_a45_a67_b45_b67 = _mm256_hadd_ps(inVec1.vec, inVec2.vec);
-
-        const __m128 valupper = _mm256_extractf128_ps(val_a01_a23_b01_b23_a45_a67_b45_b67, 1);
-        const __m128 vallower = _mm256_castps256_ps128(val_a01_a23_b01_b23_a45_a67_b45_b67);
-
-        const __m128 val_a0123_b0123_a4567_b4567 = _mm_hadd_ps(valupper, vallower);
-
-        const __m128 val_a4567_b4567_a0123_b0123 = _mm_shuffle_ps(val_a0123_b0123_a4567_b4567, val_a0123_b0123_a4567_b4567, 0x9E);// 10.01.11.10
-
-        const __m128 val_suma_x_sumb_x = _mm_add_ps(val_a0123_b0123_a4567_b4567, val_a4567_b4567_a0123_b0123);
-
-        alignas(Alignement) float buffer[VecLength] = {0};
-        buffer[0] = sumRes[0];
-        buffer[1] = sumRes[1];
-        __m128 vecBuffer = _mm_load_ps(buffer);
-        vecBuffer += val_suma_x_sumb_x;
-        _mm_store_ps(buffer, vecBuffer);
-        sumRes[0] = buffer[0];
-        sumRes[1] = buffer[1];
+        MultiHorizontalSum(&sumRes[0], inVec1);
+        MultiHorizontalSum(&sumRes[1], inVec2);
 
         MultiHorizontalSum(&sumRes[2], args... );
     }
