@@ -21,7 +21,7 @@ if(NOT EXISTS ${GetARMCpuInfosFile})
 	message(FATAL_ERROR "The GetARMCpuInfosFile does not exist (${GetARMCpuInfosFile})")
 endif()
 
-OPTION( INASTEMP_ARMIE_CPU  "Set to ON to run the CPU detection over sde64" OFF )
+OPTION( INASTEMP_ARMIE_CPU  "Set to ON to run the CPU detection over armie" OFF )
 
 # Compile and execute the file
 if(INASTEMP_ARMIE_CPU)

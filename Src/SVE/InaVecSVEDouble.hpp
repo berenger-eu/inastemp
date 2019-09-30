@@ -28,7 +28,7 @@ class InaVecSVE;
 
 // Mask type
 template <>
-class alignas(32) InaVecMaskSVE<double> {
+class InaVecMaskSVE<double> {
     svbool_t mask;
 public:
     // Classic constructors
@@ -128,7 +128,7 @@ inline bool operator!=(const InaVecMaskSVE<double>& inMask1, const InaVecMaskSVE
 
 // Vec type
 template <>
-class alignas(32) InaVecSVE<double> {
+class InaVecSVE<double> {
 protected:
     svfloat64_t vec;
 
@@ -137,7 +137,7 @@ public:
     using MaskType             = InaVecMaskSVE<double>;
     using RealType             = double;
     static const int VecLength = svcntd();
-    static const int Alignement= 32;
+    static const int Alignement= 1;
 
     inline InaVecSVE(){}
     inline InaVecSVE(const InaVecSVE&) = default;
@@ -222,7 +222,7 @@ public:
 
     // Acce to individual values
     inline double at(const int index) const {
-        alignas(Alignement) double allval[VecLength];
+        double allval[VecLength];
         svst1_f64(svptrue_b64(),allval, vec);
         return allval[index];
     }
