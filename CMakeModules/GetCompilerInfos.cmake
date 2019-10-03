@@ -68,7 +68,7 @@ elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ARM")
         set(SVE_FLAGS "${ARCH_NATIVE_FLAG}")
 
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        SET( ARCH_NATIVE_FLAG "-march=native+sve" CACHE STRING "Additional flag for the compiler capacities detection such as -mcpu=-march=armv8.2-a+sve for example"  )
+        SET( ARCH_NATIVE_FLAG "-march=native+sve" CACHE STRING "Additional flag for the compiler capacities detection such as -march=armv8.2-a+sve for example"  )
         set(SVE_FLAGS "${ARCH_NATIVE_FLAG}")
     else()
         SET( ARCH_NATIVE_FLAG "-march=native+sve" CACHE STRING "Additional flag for the compiler capacities detection such as -march=armv8.2-a+sve for example"  )
