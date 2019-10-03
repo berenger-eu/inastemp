@@ -18,6 +18,7 @@
 #include <arm_sve.h>
 #include <cmath>
 #include <initializer_list>
+#include <limits>
 
 // Forward declarations
 template <class RealType>
@@ -59,11 +60,11 @@ public:
 
   // Bool data type compatibility
   inline explicit InaVecMaskSVE(const bool inBool){
-      mask = (inBool? svptrue_b32() : svpfalse_b32());
+      mask = (inBool? svptrue_b32() : svpfalse());
   }
 
   inline InaVecMaskSVE& operator=(const bool inBool){
-      mask = (inBool? svptrue_b32() : svpfalse_b32());
+      mask = (inBool? svptrue_b32() : svpfalse());
       return (*this);
   }
 
@@ -188,29 +189,29 @@ public:
     }
 
     inline explicit InaVecSVE(const float ptr[])
-        : vec(svld1_f32_z(svptrue_b32(),ptr)){
+        : vec(svld1_f32(svptrue_b32(),ptr)){
     }
 
     inline InaVecSVE& setFromArray(const float ptr[]){
-        vec = svld1_f32_z(svptrue_b32(),ptr);
+        vec = svld1_f32(svptrue_b32(),ptr);
         return *this;
     }
 
     inline InaVecSVE& setFromAlignedArray(const float ptr[]){
-        vec = svld1_f32_z(svptrue_b32(),ptr);
+        vec = svld1_f32(svptrue_b32(),ptr);
         return *this;
     }
 
     inline InaVecSVE& setFromIndirectArray(const float values[], const int inIndirection[]) {
-        vec = svld1_gather_f32_index_z(svptrue_b32(), values, svld1_s32_u32(svptrue_b32(),inIndirection));
+        vec = svld1_gather_f32_index_z(svptrue_b32(), values, svld1_s32(svptrue_b32(),inIndirection));
         return *this;
     }
 
     inline InaVecSVE& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
         vec = svld1_gather_f32_index_z(svptrue_b32(), inArray,
-                                       svld1_s32_u32(svptrue_b32(),inIndirection1)*svdup_s32(inLeadingDimension)
-                                       +svld1_s32_u32(svptrue_b32(),inIndirection2));
+                                       svmul_f32_z(svptrue_b32(),svmul_f32_z(svptrue_b32(),svld1_s32(svptrue_b32(),inIndirection1),svdup_s32(inLeadingDimension)),
+                                       svld1_s32(svptrue_b32(),inIndirection2)));
         return *this;
     }
 
@@ -232,11 +233,11 @@ public:
 
     // Horizontal operation
     inline float horizontalSum() const {
-        return svadda_f32(svptrue_b32(),res);
+        return svadda_f32(svptrue_b32(),vec);
     }
 
     inline float horizontalMul() const {
-      return sfmla_f32(svptrue_b32(),res);
+      return sfmla_f32(svptrue_b32(),vec);
     }
 
     inline InaVecSVE sqrt() const {
@@ -254,20 +255,20 @@ public:
         const svfloat32_t COEFF_P5_E  = svdup_f32(float(InaFastExp::GetCoefficient6_1()));
         const svfloat32_t COEFF_P5_F  = svdup_f32(float(InaFastExp::GetCoefficient6_0()));
 
-        svfloat32_t x = svmul_f32_z(vec, COEFF_LOG2E);
+        svfloat32_t x = svmul_f32_z(svptrue_b32(), vec, COEFF_LOG2E);
 
-        const svfloat32_t fractional_part = svsub_f32_z(x, InaVecSVE(x).floor().vec);
+        const svfloat32_t fractional_part = svsub_f32_z(svptrue_b32(), x, InaVecSVE(x).floor().vec);
 
-        svfloat32_t factor = svadd_f32_z(svmul_f32_z(svadd_f32_z( svmul_f32_z(svadd_f32_z(
+        svfloat32_t factor = svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(), svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(),svadd_f32_z(
                          svmul_f32_z(svadd_f32_z( svmul_f32_z(svadd_f32_z(svmul_f32_z(
                          COEFF_P5_A, fractional_part), COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
                          COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part), COEFF_P5_F);
 
-        x = svsub_f32_z(x,factor);
+        x = svsub_f32_z(svptrue_b32(), x,factor);
 
-        svint32_t castedInteger = svcvt_f32_s32_z(svadd_f32_z(svmul_f32_z(COEFF_A, x), COEFF_B));
+        svint32_t castedInteger = svcvt_f32_s32_z(svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(), COEFF_A, x), COEFF_B));
 
-        return svreinterpret_s32_f32(castedInteger);
+        return svreinterpret_f32_s32(castedInteger);
     }
 
     inline InaVecSVE expLowAcc() const {
@@ -280,19 +281,19 @@ public:
 
         svfloat32_t x = svmul_f32_z(vec, COEFF_LOG2E);
 
-        const svfloat32_t fractional_part = svsub_f32_z(x, InaVecSVE(x).floor().vec);
+        const svfloat32_t fractional_part = svsub_f32_z(svptrue_b32(), x, InaVecSVE(x).floor().vec);
 
-        svfloat32_t factor = svadd_f32_z(svmul_f32_z(
-                         svadd_f32_z(svmul_f32_z(
+        svfloat32_t factor = svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(), 
+                         svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(), 
                                          COEFF_P5_D, fractional_part),
                                          COEFF_P5_E), fractional_part),
                                          COEFF_P5_F);
 
-        x = svsub_f32_z(x,factor);
+        x = svsub_f32_z(svptrue_b32(), x,factor);
 
-        svint32_t castedInteger = svcvt_f32_s32_z(svadd_f32_z(svmul_f32_z(COEFF_A, x), COEFF_B));
+        svint32_t castedInteger = svcvt_f32_s32_z(svadd_f32_z(svptrue_b32(), svmul_f32_z(COEFF_A, x), COEFF_B));
 
-        return svreinterpret_s32_f32(castedInteger);
+        return svreinterpret_f32_s32(castedInteger);
     }
 
     inline InaVecSVE rsqrt() const {
@@ -304,11 +305,11 @@ public:
     }
 
     inline InaVecSVE floor() const {
-        svbool_t mask = (InaVecSVE(float(LLONG_MIN)) < vec && vec < InaVecSVE(float(LLONG_MAX)));
+        svbool_t mask = (InaVecSVE(float(std::numeric_limits<int>::min())) < vec && vec < InaVecSVE(float(std::numeric_limits<int>::max())));
         svint32_t n = svcvt_s32_f32_z(svptrue_b32(), vec);
-        svint32_t d = svcvt_f32_s32_z(svptrue_b32(), n);
+        svfloat32_t d = svcvt_f32_s32_z(svptrue_b32(), n);
         svbool_t lower = svacgt_f32(svptrue_b32(), svdup_s32(0), d);
-        return svsel_f32(mask, svsel_f32(Lower, vec - svdup_f32(1), d), vec);
+        return svsel_f32(mask, svsel_f32(lower, vec - svdup_f32(1), d), vec);
     }
 
     inline InaVecSVE signOf() const {
@@ -474,22 +475,22 @@ public:
 
     // Inner operators
     inline InaVecSVE<float>& operator+=(const InaVecSVE<float>& inVec){
-        vec = svadd_f32_z(vec,inVec.vec);
+        vec = svadd_f32_z(svptrue_b32(), vec,inVec.vec);
         return *this;
     }
 
     inline InaVecSVE<float>& operator-=(const InaVecSVE<float>& inVec){
-        vec = svsub_f32_z(vec,inVec.vec);
+        vec = svsub_f32_z(svptrue_b32(), vec,inVec.vec);
         return *this;
     }
 
     inline InaVecSVE<float>& operator/=(const InaVecSVE<float>& inVec){
-        vec = svdiv_f32_z(vec,inVec.vec);
+        vec = svdiv_f32_z(svptrue_b32(), vec,inVec.vec);
         return *this;
     }
 
     inline InaVecSVE<float>& operator*=(const InaVecSVE<float>& inVec){
-        vec = svmul_f32_z(vec,inVec.vec);
+        vec = svmul_f32_z(svptrue_b32(), vec,inVec.vec);
         return *this;
     }
 
@@ -557,19 +558,19 @@ inline InaVecSVE<float> operator^(const InaVecSVE<float>& inVec1, const InaVecSV
 
 // Dual operators
 inline InaVecSVE<float> operator+(const InaVecSVE<float>& inVec1, const InaVecSVE<float>& inVec2){
-    return svadd_f32_z(inVec1.getVec(), inVec2.getVec());
+    return svadd_f32_z(svptrue_b32(), inVec1.getVec(), inVec2.getVec());
 }
 
 inline InaVecSVE<float> operator-(const InaVecSVE<float>& inVec1, const InaVecSVE<float>& inVec2){
-    return svsub_f32_z(inVec1.getVec(), inVec2.getVec());
+    return svsub_f32_z(svptrue_b32(), inVec1.getVec(), inVec2.getVec());
 }
 
 inline InaVecSVE<float> operator/(const InaVecSVE<float>& inVec1, const InaVecSVE<float>& inVec2){
-    return svdiv_f32_z(inVec1.getVec(), inVec2.getVec());
+    return svdiv_f32_z(svptrue_b32(), inVec1.getVec(), inVec2.getVec());
 }
 
 inline InaVecSVE<float> operator*(const InaVecSVE<float>& inVec1, const InaVecSVE<float>& inVec2){
-    return svmul_f32_z(inVec1.getVec(), inVec2.getVec());
+    return svmul_f32_z(svptrue_b32(), inVec1.getVec(), inVec2.getVec());
 }
 
 // Tests and comparions

@@ -18,6 +18,7 @@
 #include <arm_sve.h>
 #include <cmath>
 #include <initializer_list>
+#include <limits>
 
 // Forward declarations
 template <class RealType>
@@ -56,11 +57,11 @@ public:
 
     // Bool data type compatibility
     inline explicit InaVecMaskSVE(const bool inBool){
-        mask = (inBool? svptrue_b64() : svpfalse_b64());
+        mask = (inBool? svptrue_b64() : svpfalse());
     }
 
     inline InaVecMaskSVE& operator=(const bool inBool){
-        mask = (inBool? svptrue_b64() : svpfalse_b64());
+        mask = (inBool? svptrue_b64() : svpfalse());
         return (*this);
     }
 
@@ -185,16 +186,16 @@ public:
     }
 
     inline explicit InaVecSVE(const double ptr[])
-        : vec(svld1_f64_z(svptrue_b64(),ptr)){
+        : vec(svld1_f64(svptrue_b64(),ptr)){
     }
 
     inline InaVecSVE& setFromArray(const double ptr[]){
-        vec = svld1_f64_z(svptrue_b64(),ptr);
+        vec = svld1_f64(svptrue_b64(),ptr);
         return *this;
     }
 
     inline InaVecSVE& setFromAlignedArray(const double ptr[]){
-        vec = svld1_f64_z(svptrue_b64(),ptr);
+        vec = svld1_f64(svptrue_b64(),ptr);
         return *this;
     }
 
@@ -206,8 +207,8 @@ public:
     inline InaVecSVE& setFromIndirect2DArray(const double inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
         vec = svld1_gather_f64_index_z(svptrue_b64(), inArray,
-                                       svld1_s64_u64(svptrue_b64(),inIndirection1)*svdup_s64(inLeadingDimension)
-                                       +svld1_s64_u64(svptrue_b64(),inIndirection2));
+                                       svadd_f64( svmul_f64(svmul_f64(svld1_s64(svptrue_b64(),inIndirection1),svdup_s64(inLeadingDimension)),
+                                       svld1_s64(svptrue_b64(),inIndirection2)));
         return *this;
     }
 
@@ -229,11 +230,11 @@ public:
 
     // Horizontal operation
     inline double horizontalSum() const {
-      return svadda_f64(svptrue_b64(),res);
+      return svadda_f64(svptrue_b64(),vec);
     }
 
     inline double horizontalMul() const {
-      return sfmla_f64(svptrue_b64(),res);
+      return sfmla_f64(svptrue_b64(),vec);
     }
 
     inline InaVecSVE sqrt() const {
@@ -254,27 +255,27 @@ public:
         const svfloat64_t COEFF_P5_E  = svdup_f64(double(InaFastExp::GetCoefficient9_1()));
         const svfloat64_t COEFF_P5_F  = svdup_f64(double(InaFastExp::GetCoefficient9_0()));
 
-        svfloat64_t x = svmul_f64_z(vec, COEFF_LOG2E);
+        svfloat64_t x = svmul_f64(vec, COEFF_LOG2E);
 
-        const svfloat64_t fractional_part = svsub_f64_z(x, InaVecSVE(x).floor().vec);
+        const svfloat64_t fractional_part = svsub_f64(x, InaVecSVE(x).floor().vec);
 
-        svfloat64_t factor = svadd_f64_z(svmul_f64_z(svadd_f64_z(
-                         svmul_f64_z(svadd_f64_z( svmul_f64_z(svadd_f64_z(
-                         svmul_f64_z(svadd_f64_z( svmul_f64_z(svadd_f64_z(
-                         svmul_f64_z(svadd_f64_z( svmul_f64_z(svadd_f64_z(svmul_f64_z(
+        svfloat64_t factor = svadd_f64(svmul_f64(svadd_f64(
+                         svmul_f64(svadd_f64( svmul_f64(svadd_f64(
+                         svmul_f64(svadd_f64( svmul_f64(svadd_f64(
+                         svmul_f64(svadd_f64( svmul_f64(svadd_f64(svmul_f64(
                          COEFF_P5_X, fractional_part), COEFF_P5_Y), fractional_part),
                          COEFF_P5_Z),fractional_part), COEFF_P5_A), fractional_part),
                          COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
                          COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part),
                          COEFF_P5_F);
 
-        x = svsub_f64_z(x,factor);
+        x = svsub_f64(x,factor);
 
-        x = svadd_f64_z(svmul_f64_z(COEFF_A, x), COEFF_B);
+        x = svadd_f64(svmul_f64(COEFF_A, x), COEFF_B);
 
         svint32_t castedInteger = svcvt_f64_s64_z(x);
 
-        return svreinterpret_s64_f64(castedInteger);
+        return svreinterpret_f64_s64(castedInteger);
     }
 
     inline InaVecSVE expLowAcc() const {
@@ -286,24 +287,24 @@ public:
         const svfloat64_t COEFF_P5_E  = svdup_f64(double(InaFastExp::GetCoefficient4_1()));
         const svfloat64_t COEFF_P5_F  = svdup_f64(double(InaFastExp::GetCoefficient4_0()));
 
-        svfloat64_t x = svmul_f64_z(vec, COEFF_LOG2E);
+        svfloat64_t x = svmul_f64(vec, COEFF_LOG2E);
 
-        const svfloat64_t fractional_part = svsub_f64_z(x, InaVecSVE(x).floor().vec);
+        const svfloat64_t fractional_part = svsub_f64(x, InaVecSVE(x).floor().vec);
 
-        svfloat64_t factor = svadd_f64_z(svmul_f64_z(svadd_f64_z(
-                         svmul_f64_z(svadd_f64_z(svmul_f64_z(
+        svfloat64_t factor = svadd_f64(svmul_f64(svadd_f64(
+                         svmul_f64(svadd_f64(svmul_f64(
                                          COEFF_P5_C, fractional_part),
                                          COEFF_P5_D), fractional_part),
                                          COEFF_P5_E), fractional_part),
                                          COEFF_P5_F);
 
-        x = svsub_f64_z(x,factor);
+        x = svsub_f64(x,factor);
 
-        x = svadd_f64_z(svmul_f64_z(COEFF_A, x), COEFF_B);
+        x = svadd_f64(svmul_f64(COEFF_A, x), COEFF_B);
 
         svint32_t castedInteger = svcvt_f64_s64_z(x);
 
-        return svreinterpret_s64_f64(castedInteger);
+        return svreinterpret_f64_s64(castedInteger);
     }
 
     inline InaVecSVE rsqrt() const {
@@ -315,11 +316,11 @@ public:
     }
 
     inline InaVecSVE floor() const {
-        svbool_t mask = (InaVecSVE(double(LLONG_MIN)) < vec && vec < InaVecSVE(double(LLONG_MAX)));
+        svbool_t mask = (InaVecSVE(double(std::numeric_limits<long int>::min())) < vec && vec < InaVecSVE(double(std::numeric_limits<long int>::max())));
         svint64_t n = svcvt_s64_f64_z(svptrue_b64(), vec);
         svint64_t d = svcvt_f64_s64_z(svptrue_b64(), n);
         svbool_t lower = svacgt_f64(svptrue_b64(), svdup_s64(0), d);
-        return svsel_f64(mask, svsel_f64(Lower, vec - svdup_f64(1), d), vec);
+        return svsel_f64(mask, svsel_f64(lower, vec - svdup_f64(1), d), vec);
     }
 
     inline InaVecSVE signOf() const {
@@ -485,12 +486,12 @@ public:
 
     // Inner operators
     inline InaVecSVE<double>& operator+=(const InaVecSVE<double>& inVec){
-        vec = svadd_f64_z(vec,inVec.vec);
+        vec = svadd_f64(vec,inVec.vec);
         return *this;
     }
 
     inline InaVecSVE<double>& operator-=(const InaVecSVE<double>& inVec){
-        vec = svsub_f64_z(vec,inVec.vec);
+        vec = svsub_f64(vec,inVec.vec);
         return *this;
     }
 
@@ -500,7 +501,7 @@ public:
     }
 
     inline InaVecSVE<double>& operator*=(const InaVecSVE<double>& inVec){
-        vec = svmul_f64_z(vec,inVec.vec);
+        vec = svmul_f64(vec,inVec.vec);
         return *this;
     }
 
@@ -555,11 +556,11 @@ inline InaVecSVE<double> operator^(const InaVecSVE<double>& inVec1, const InaVec
 
 // Dual operators
 inline InaVecSVE<double> operator+(const InaVecSVE<double>& inVec1, const InaVecSVE<double>& inVec2){
-    return svadd_f64_z(inVec1.getVec(), inVec2.getVec());
+    return svadd_f64(inVec1.getVec(), inVec2.getVec());
 }
 
 inline InaVecSVE<double> operator-(const InaVecSVE<double>& inVec1, const InaVecSVE<double>& inVec2){
-    return svsub_f64_z(inVec1.getVec(), inVec2.getVec());
+    return svsub_f64(inVec1.getVec(), inVec2.getVec());
 }
 
 inline InaVecSVE<double> operator/(const InaVecSVE<double>& inVec1, const InaVecSVE<double>& inVec2){
@@ -567,7 +568,7 @@ inline InaVecSVE<double> operator/(const InaVecSVE<double>& inVec1, const InaVec
 }
 
 inline InaVecSVE<double> operator*(const InaVecSVE<double>& inVec1, const InaVecSVE<double>& inVec2){
-    return svmul_f64_z(inVec1.getVec(), inVec2.getVec());
+    return svmul_f64(inVec1.getVec(), inVec2.getVec());
 }
 
 // Tests and comparions
