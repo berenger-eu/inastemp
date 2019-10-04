@@ -98,8 +98,8 @@
 #define INASTEMP_USE_SVE
 #undef INASTEMP_STATIC_BEST_TYPE
 #define INASTEMP_STATIC_BEST_TYPE InaVecSVE
-#include "ALTIVEC/InaVecSVEFloat.hpp"
-#include "ALTIVEC/InaVecSVEDouble.hpp"
+#include "SVE/InaVecSVEFloat.hpp"
+#include "SVE/InaVecSVEDouble.hpp"
 #endif
 
 template < class RealType >

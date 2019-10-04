@@ -122,8 +122,9 @@ public:
     [[deprecated("Please use the method instead")]]
     static const int VecLength = 1;
     static const int Alignement= 1;
+    static const bool IsOfFixedSize = true;
 
-    static constexpr size_t GetVecLength(){
+    static constexpr int GetVecLength(){
         return 1;
     }
 

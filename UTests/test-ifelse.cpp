@@ -21,7 +21,7 @@ class TestAll : public UTester< TestAll< VecType > > {
 
     void TestBasic() {
         RealType inputVal[VecType::GetVecLength()];
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
             inputVal[idx] = RealType(idx);
         }
         const VecType inputVec(inputVal);
@@ -34,7 +34,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(1));
                 } else {
@@ -54,7 +54,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(-1));
                 } else {
@@ -78,7 +78,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(1));
                 } else if (1 <= inputVal[idx]) {
@@ -104,7 +104,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] != 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(1));
                 } else if (1 >= inputVal[idx]) {
@@ -131,7 +131,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 100) {
                     UASSERTEEQUAL(outputVal[idx], RealType(1));
                 } else if (1 >= inputVal[idx]) {
@@ -150,7 +150,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(-1));
                 } else {
@@ -166,7 +166,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] != 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(-1));
                 } else {
@@ -182,7 +182,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(-1));
                 } else {
@@ -197,7 +197,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] != 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(-1));
                 } else {
@@ -210,7 +210,7 @@ class TestAll : public UTester< TestAll< VecType > > {
 
     void TestOperator() {
         RealType inputVal[VecType::GetVecLength()];
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
             inputVal[idx] = RealType(idx);
         }
         const VecType inputVec(inputVal);
@@ -223,7 +223,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(1));
                 } else {
@@ -243,7 +243,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(-1));
                 } else {
@@ -267,7 +267,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(1));
                 } else if (1 <= inputVal[idx]) {
@@ -293,7 +293,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] != 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(1));
                 } else if (1 >= inputVal[idx]) {
@@ -319,7 +319,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 100) {
                     UASSERTEEQUAL(outputVal[idx], RealType(1));
                 } else if (1 >= inputVal[idx]) {
@@ -336,7 +336,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(-1));
                 } else {
@@ -350,7 +350,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] != 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(-1));
                 } else {
@@ -365,7 +365,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(-1));
                 } else {
@@ -379,7 +379,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] != 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(-1));
                 } else {
@@ -392,7 +392,7 @@ class TestAll : public UTester< TestAll< VecType > > {
 
     void TestOperatorNoRet() {
         RealType inputVal[VecType::GetVecLength()];
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
             inputVal[idx] = RealType(idx);
         }
         const VecType inputVec(inputVal);
@@ -403,7 +403,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(1));
                 } else {
@@ -417,7 +417,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(-1));
                 } else {
@@ -431,7 +431,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(1));
                 } else if (1 <= inputVal[idx]) {
@@ -447,7 +447,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] != 0) {
                     UASSERTEEQUAL(outputVal[idx], RealType(1));
                 } else if (1 >= inputVal[idx]) {
@@ -463,7 +463,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType outputVal[VecType::GetVecLength()];
             res0.storeInArray(outputVal);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
                 if (inputVal[idx] == 100) {
                     UASSERTEEQUAL(outputVal[idx], RealType(1));
                 } else if (1 >= inputVal[idx]) {
@@ -482,8 +482,11 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTETRUE((VecType(0.) == VecType(0.)).isAllFalse() == false);
             UASSERTETRUE((VecType(0.) == VecType(0.)).isAllTrue() == true);
 
-            RealType values10[VecType::GetVecLength()] = {0};
+            RealType values10[VecType::GetVecLength()];
             values10[0] = 1;
+            for (size_t idx = 1; idx < size_t(VecType::GetVecLength()); ++idx) {
+                values10[idx] = 0;
+            }
             VecType vecValues10(values10);
 
             UASSERTETRUE((vecValues10 == 100.) == (vecValues10 == 100.));

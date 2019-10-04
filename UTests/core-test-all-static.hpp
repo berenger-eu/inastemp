@@ -10,16 +10,20 @@
 
 #include <cmath>
 #include <cstring>
+#include <cassert>
 
+inline constexpr int MaxTestValues(const size_t inSizeOfOneValue){
+    return 2048/inSizeOfOneValue;
+}
 
 template <class VecType, int RemainingVec>
 struct MultiHorizontalSumTester{
     template <class ... Params>
     static void addToTest(typename VecType::RealType res[], typename VecType::RealType good_res[],
                           const int my_idx, Params... params){
-        std::array<typename VecType::RealType, VecType::GetVecLength()> values;
-        for(size_t idx = 0 ; idx < VecType::GetVecLength() ; ++idx){
-            values[idx] = typename VecType::RealType(VecType::GetVecLength()*my_idx+idx);
+        std::array<typename VecType::RealType, MaxTestValues(sizeof(typename VecType::RealType))> values;
+        for(size_t idx = 0 ; idx < size_t(VecType::GetVecLength()) ; ++idx){
+            values[idx] = typename VecType::RealType(size_t(VecType::GetVecLength()*my_idx)+idx);
         }
         VecType v(&values[0]);
 
@@ -48,8 +52,8 @@ class TestAll : public UTester< TestAll< VecType > > {
 
     void equalToVecType(const VecType vec,
                        const VecType inReal) {
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
-            UASSERTEEQUAL(vec.at(idx), inReal.at(idx));
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()); ++idx) {
+            UASSERTEEQUAL(vec.at(int(idx)), inReal.at(int(idx)));
         }
 
         RealType reals[VecType::GetVecLength()];
@@ -58,7 +62,7 @@ class TestAll : public UTester< TestAll< VecType > > {
         RealType realsReals[VecType::GetVecLength()];
         inReal.storeInArray( realsReals);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTEEQUAL(reals[idx], realsReals[idx]);
         }
 
@@ -68,28 +72,28 @@ class TestAll : public UTester< TestAll< VecType > > {
         alignas(512) RealType realsRealsalign[VecType::GetVecLength()];
         inReal.storeInArray( realsRealsalign);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTEEQUAL(realsalign[idx], realsRealsalign[idx]);
         }
     }
 
     void equalToScalar(const VecType vec,
                        const RealType inReal) {
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
-            UASSERTEEQUAL(vec.at(idx), inReal);
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+            UASSERTEEQUAL(vec.at(int(idx)), inReal);
         }
 
         RealType reals[VecType::GetVecLength()];
         vec.storeInArray( reals);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTEEQUAL(reals[idx], inReal);
         }
 
         alignas(512) RealType realsalign[VecType::GetVecLength()];
         vec.storeInAlignedArray( realsalign);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTEEQUAL(realsalign[idx], inReal);
         }
     }
@@ -103,21 +107,21 @@ class TestAll : public UTester< TestAll< VecType > > {
 
     void equalToArray(const VecType vec,
                       const RealType inReals[]) {
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
-            UASSERTEEQUAL(vec.at( idx), inReals[idx]);
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+            UASSERTEEQUAL(vec.at(int(idx)), inReals[idx]);
         }
 
         RealType reals[VecType::GetVecLength()];
         vec.storeInArray( reals);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTEEQUAL(reals[idx], inReals[idx]);
         }
 
         alignas(512) RealType realsalign[VecType::GetVecLength()];
         vec.storeInAlignedArray( realsalign);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTEEQUAL(realsalign[idx], inReals[idx]);
         }        
 
@@ -125,7 +129,7 @@ class TestAll : public UTester< TestAll< VecType > > {
         RealType* reals_forcena = reinterpret_cast<RealType*>(&reals_forcena_buffer[1]);
         vec.storeInArray( reals_forcena);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTEEQUAL(reals_forcena[idx], inReals[idx]);
         }
     }
@@ -148,63 +152,63 @@ class TestAll : public UTester< TestAll< VecType > > {
 
     void approxEqualToScalar(const VecType vec,
                              const RealType inReal) {
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
-            UASSERTETRUE(approxEqual(vec.at( idx), inReal));
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+            UASSERTETRUE(approxEqual(vec.at(int(idx)), inReal));
         }
 
         RealType reals[VecType::GetVecLength()];
         vec.storeInArray( reals);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(reals[idx], inReal));
         }
 
         alignas(512) RealType realsalign[VecType::GetVecLength()];
         vec.storeInAlignedArray( realsalign);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(realsalign[idx], inReal));
         }
     }
 
     void approxEqualToArray(const VecType vec,
                             const RealType inReals[]) {
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
-            UASSERTETRUE(approxEqual(vec.at( idx), inReals[idx]));
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+            UASSERTETRUE(approxEqual(vec.at(int(idx)), inReals[idx]));
         }
 
         RealType reals[VecType::GetVecLength()];
         vec.storeInArray( reals);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(reals[idx], inReals[idx]));
         }
 
         alignas(512) RealType realsalign[VecType::GetVecLength()];
         vec.storeInAlignedArray( realsalign);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(realsalign[idx], inReals[idx]));
         }
     }
 
     void approxLowAccEqualToArray(const VecType vec,
                             const RealType inReals[]) {
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
-            UASSERTETRUE(approxEqualLowAcc(vec.at( idx), inReals[idx]));
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+            UASSERTETRUE(approxEqualLowAcc(vec.at(int(idx)), inReals[idx]));
         }
 
         RealType reals[VecType::GetVecLength()];
         vec.storeInArray( reals);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqualLowAcc(reals[idx], inReals[idx]));
         }
 
         alignas(512) RealType realsalign[VecType::GetVecLength()];
         vec.storeInAlignedArray( realsalign);
 
-        for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqualLowAcc(realsalign[idx], inReals[idx]));
         }
     }
@@ -215,16 +219,14 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         {
             RealType reals[VecType::GetVecLength()];
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx] = 1;
             }
             equalToScalar(VecType(reals), 1);
         }
 
         {
-            static_assert(VecType::GetVecLength() < 64,
-                          "The unit test cannot test for std::initializer_list for"
-                          "data type with more than 64 values");
+            assert(VecType::GetVecLength() < 64);
             const RealType rv = 0;
             VecType vconstruct {{rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
@@ -247,7 +249,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             alignas(512) char buffer[VecType::GetVecLength()*sizeof(RealType)+1];
             RealType* realsna = reinterpret_cast<RealType*>(&buffer+1);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx] = RealType(idx+1);
                 realsna[idx] = RealType(idx+1);
             }
@@ -275,19 +277,19 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToArray(vec_al_fal, reals);
             equalToArray(vec_al_fal, realsna);
 
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
-                equalToScalar(vec_no_fal.at(idx), RealType(idx+1));
-                equalToScalar(vec_no_fna.at(idx), RealType(idx+1));
-                equalToScalar(vec_no_fal2.at(idx), RealType(idx+1));
-                equalToScalar(vec_no_fna2.at(idx), RealType(idx+1));
-                equalToScalar(vec_al_fal.at(idx), RealType(idx+1));
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+                equalToScalar(vec_no_fal.at(int(idx)), RealType(idx+1));
+                equalToScalar(vec_no_fna.at(int(idx)), RealType(idx+1));
+                equalToScalar(vec_no_fal2.at(int(idx)), RealType(idx+1));
+                equalToScalar(vec_no_fna2.at(int(idx)), RealType(idx+1));
+                equalToScalar(vec_al_fal.at(int(idx)), RealType(idx+1));
             }
         }
 
         {
             RealType real = 1;
             int indirect[VecType::GetVecLength()];
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 indirect[idx] = 0;
             }
             equalToScalar(VecType().setFromIndirectArray(&real, indirect), 1);
@@ -296,18 +298,18 @@ class TestAll : public UTester< TestAll< VecType > > {
         {
             RealType reals[VecType::GetVecLength()];
             int indirect[VecType::GetVecLength()];
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
-                indirect[idx] = idx;
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+                indirect[idx] = int(idx);
                 reals[idx]    = RealType(idx);
             }
             equalToArray(VecType().setFromIndirectArray(reals, indirect), reals);
         }
 
         {
-            for(int idxOffsetIn = 0 ; idxOffsetIn < (sizeof(RealType)*VecType::GetVecLength()) ; ++idxOffsetIn){
-                unsigned char* bufferIn[sizeof(RealType)*VecType::GetVecLength()*2] = {0};
+            for(size_t idxOffsetIn = 0 ; idxOffsetIn < sizeof(RealType)*size_t(VecType::GetVecLength()) ; ++idxOffsetIn){
+                unsigned char* bufferIn[sizeof(RealType)*VecType::GetVecLength()*2];
                 RealType* realsIn = reinterpret_cast<RealType*>(&bufferIn[idxOffsetIn]);
-                for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+                for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                     realsIn[idx]    = RealType(idx);
                 }
 
@@ -317,12 +319,12 @@ class TestAll : public UTester< TestAll< VecType > > {
                 vec.setFromArray(realsIn);
                 equalToArray(vec, realsIn);
 
-                for(size_t idxOffsetOut = 0 ; idxOffsetOut < (sizeof(RealType)*VecType::GetVecLength()) ; ++idxOffsetOut){
-                    unsigned char* bufferOut[sizeof(RealType)*VecType::GetVecLength()*2] = {0};
+                for(size_t idxOffsetOut = 0 ; idxOffsetOut < sizeof(RealType)*size_t(VecType::GetVecLength()) ; ++idxOffsetOut){
+                    unsigned char* bufferOut[sizeof(RealType)*VecType::GetVecLength()*2];
                     RealType* realsOut = reinterpret_cast<RealType*>(&bufferOut[idxOffsetOut]);
 
                     vec.storeInArray(realsOut);
-                    for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+                    for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                         UASSERTEEQUAL(realsOut[idx], realsIn[idx]);
                     }
                 }
@@ -332,7 +334,7 @@ class TestAll : public UTester< TestAll< VecType > > {
         {
             RealType reals[VecType::GetVecLength()];
             int indirect[VecType::GetVecLength()];
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 indirect[idx] = int(idx);
                 reals[idx]    = RealType(idx);
             }
@@ -341,7 +343,10 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         {
             RealType real                     = 1;
-            int indirect[VecType::GetVecLength()] = { 0 };
+            int indirect[VecType::GetVecLength()];
+            for (int idx = 0; idx < (VecType::GetVecLength()) ; ++idx) {
+                indirect[idx] = 0;
+            }
             equalToScalar(VecType().setFromIndirect2DArray(&real, indirect, 0, indirect), 1);
         }
 
@@ -349,11 +354,11 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType reals[VecType::GetVecLength() * 2];
             int indirect1[VecType::GetVecLength()];
             int indirect2[VecType::GetVecLength()];
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 indirect1[idx]                   = int(idx);
                 indirect2[idx]                   = 1;
                 reals[idx]                       = RealType(idx);
-                reals[idx + VecType::GetVecLength()] = RealType(idx * 2);
+                reals[idx + size_t(VecType::GetVecLength())] = RealType(idx * 2);
             }
             equalToArray(VecType().setFromIndirect2DArray(reals, indirect1, 0, indirect1), reals);
             equalToArray(VecType().setFromIndirect2DArray(reals, indirect2, VecType::GetVecLength(), indirect1), &reals[VecType::GetVecLength()]);
@@ -391,7 +396,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType reals[VecType::GetVecLength()];
             RealType sum = 0;
             RealType mul = 1;
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx] = RealType(idx);
                 sum += reals[idx];
                 mul *= reals[idx];
@@ -411,7 +416,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType expreslowacc[VecType::GetVecLength()];
             RealType sqrtres[VecType::GetVecLength()];
             RealType rsqrtres[VecType::GetVecLength()];
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx]    = RealType(idx + 1);
                 expres[idx]   = RealType(exp(reals[idx]));
                 expreslowacc[idx]   = RealType(exp(reals[idx]));
@@ -435,7 +440,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             alignas(512) RealType expreslowacc[VecType::GetVecLength()];
             alignas(512) RealType sqrtres[VecType::GetVecLength()];
             alignas(512) RealType rsqrtres[VecType::GetVecLength()];
-            for (size_t idx = 0; idx < VecType::GetVecLength(); ++idx) {
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx]    = RealType(idx + 1);
                 expres[idx]   = RealType(exp(reals[idx]));
                 expreslowacc[idx]   = RealType(exp(reals[idx]));

@@ -74,16 +74,16 @@ set(INASTEMP_VERSION  "${INASTEMP_MAJOR_VERSION}.${INASTEMP_MINOR_VERSION}.${INA
 #===========================================================================
 
 # Available from version 3.1
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if((${CMAKE_MAJOR_VERSION} STREQUAL 3 AND CMAKE_MINOR_VERSION LESS 6) OR (${CMAKE_MAJOR_VERSION} LESS 3) AND (CMAKE_CXX_COMPILER_ID STREQUAL "Intel"))
-    MESSAGE(WARNING " Main -- CMAKE_CXX_STANDARD does not work with Intel compiler for cmake version < 3.6, we add -std=c++11 flag by hand which might not be compatible with your project")
-    set(INASTEMP_CXX_FLAGS "-std=c++11")
+    MESSAGE(WARNING " Main -- CMAKE_CXX_STANDARD does not work with Intel compiler for cmake version < 3.6, we add -std=c++17 flag by hand which might not be compatible with your project")
+    set(INASTEMP_CXX_FLAGS "-std=c++17")
 elseif((${CMAKE_MAJOR_VERSION} STREQUAL 3 AND CMAKE_MINOR_VERSION LESS 1) OR (${CMAKE_MAJOR_VERSION} LESS 3))
-    MESSAGE(WARNING " Main -- CMAKE_CXX_STANDARD does not work for cmake version < 3.1, we insert -std=c++11 flag by hand which might not be compatible with your project")
-    set(INASTEMP_CXX_FLAGS "-std=c++11")
+    MESSAGE(WARNING " Main -- CMAKE_CXX_STANDARD does not work for cmake version < 3.1, we insert -std=c++17 flag by hand which might not be compatible with your project")
+    set(INASTEMP_CXX_FLAGS "-std=c++17")
 endif()
 
 if(NOT CUSTOM_SYSTEM_PROCESSOR)
@@ -257,9 +257,13 @@ if(NOT INASTEMP_AS_SUBPROJECT)
 
     set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -fpic -Wextra -Wnon-virtual-dtor -Wshadow -Wpointer-arith -Wcast-qual -Wconversion  -Wall -Wno-sign-conversion -pedantic -Woverloaded-virtual -Wpointer-arith -Wcast-qual -Wconversion -Wno-error")
 
-    if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
+    if(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
         # Builting functions are not correctly making variables/parameters used
         set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -Wno-unused-but-set-variable -Wno-unused-but-set-parameter")
+    endif()
+    if(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ARM")
+        # Builting functions are not correctly making variables/parameters used
+        set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -Wno-vla-extension")
     endif()
 
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
