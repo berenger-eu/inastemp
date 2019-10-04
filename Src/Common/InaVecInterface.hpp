@@ -95,11 +95,16 @@ public:
     using VecRawType           = typename VecType::VecRawType;
     using MaskType             = typename VecType::MaskType;
     using RealType             = typename VecType::RealType;
+    [[deprecated("Please use the method instead")]]
     static const int VecLength = VecType::VecLength;
     static const int Alignement= VecType::Alignement;
 
+    static constexpr size_t GetVecLength(){
+        return VecType::GetVecLength();
+    }
+
     //! Simple check - might not be true in far future
-    static_assert(sizeof(VecType) / sizeof(RealType) == VecLength,
+    static_assert(sizeof(VecType) / sizeof(RealType) == GetVecLength(),
                   "The number of values inside the vector must be"
                   "equal to size of vec divided by size of scalar");
 

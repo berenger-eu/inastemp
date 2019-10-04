@@ -833,7 +833,7 @@ template <class RealType, size_t PanelSizeK, size_t PanelSizeiA,
 void ScalarGemmIna(const RealType* __restrict__ A, const RealType* __restrict__ B,
                 RealType* __restrict__ C, const size_t size){
 
-    const int BlockSize = VecType::VecLength;
+    const size_t BlockSize = VecType::GetVecLength();
 
     static_assert(PanelSizeK >= BlockSize, "PanelSizeK must be greater than block");
     static_assert(PanelSizeiA >= BlockSize, "PanelSizeiA must be greater than block");
@@ -894,7 +894,7 @@ template <class RealType, size_t PanelSizeK, size_t PanelSizeiA,
 void ScalarGemmInaV2(const RealType* __restrict__ A, const RealType* __restrict__ B,
                 RealType* __restrict__ C, const size_t size){
 
-    const int BlockSize = VecType::VecLength;
+    const size_t BlockSize = VecType::GetVecLength();
 
     static_assert(PanelSizeK >= BlockSize, "PanelSizeK must be greater than block");
     static_assert(PanelSizeiA >= BlockSize, "PanelSizeiA must be greater than block");
@@ -1031,7 +1031,7 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
         InaTimer timer;
 
         for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
-            ScalarGemm<RealType, InaVecBestType<RealType>::VecLength>(A.get(), B.get(), CScalar.get(), matDim);
+            ScalarGemm<RealType, InaVecBestType<RealType>::GetVecLength()>(A.get(), B.get(), CScalar.get(), matDim);
         }
 
         timer.stop();
@@ -1053,7 +1053,7 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 
         for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
             ScalarGemmV2<RealType, PanelSizeK, PanelSizeA, PanelSizeB,
-                InaVecBestType<RealType>::VecLength>(A.get(), B.get(), CScalar.get(), matDim);
+                InaVecBestType<RealType>::GetVecLength()>(A.get(), B.get(), CScalar.get(), matDim);
         }
 
         timer.stop();
@@ -1077,7 +1077,7 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 
         for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
             InaVecSSE41_ScalarGemmInaV2<PanelSizeK, PanelSizeA, PanelSizeB,
-                InaVecSSE41<RealType>::VecLength>(A.get(), B.get(), CIna.get(), matDim);
+                InaVecSSE41<RealType>::GetVecLength()>(A.get(), B.get(), CIna.get(), matDim);
         }
 
         timer.stop();
@@ -1099,7 +1099,7 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 
         for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
             InaVecAVX_ScalarGemmInaV2<PanelSizeK, PanelSizeA, PanelSizeB,
-                InaVecAVX<RealType>::VecLength>(A.get(), B.get(), CIna.get(), matDim);
+                InaVecAVX<RealType>::GetVecLength()>(A.get(), B.get(), CIna.get(), matDim);
         }
 
 
@@ -1121,7 +1121,7 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 
         for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
             InaVecAVX512KNL_ScalarGemmInaV2<PanelSizeK, PanelSizeA, PanelSizeB,
-                InaVecAVX512KNL<RealType>::VecLength>(A.get(), B.get(), CIna.get(), matDim);
+                InaVecAVX512KNL<RealType>::GetVecLength()>(A.get(), B.get(), CIna.get(), matDim);
         }
 
         timer.stop();
@@ -1142,7 +1142,7 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 
         for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
             InaVecALTIVEC_ScalarGemmInaV2<PanelSizeK, PanelSizeA, PanelSizeB,
-                InaVecALTIVEC<RealType>::VecLength>(A.get(), B.get(), CIna.get(), matDim);
+                InaVecALTIVEC<RealType>::GetVecLength()>(A.get(), B.get(), CIna.get(), matDim);
         }
 
         timer.stop();

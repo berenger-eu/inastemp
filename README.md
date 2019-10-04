@@ -251,9 +251,9 @@ Taken from the pattern examples, we simply sum two arrays.
 ```cpp
 template < class VecType >
 void SumArrays(double* __restrict__ dest, const double* __restrict__ src1,
-               const double* __restrict__ src2, const int nbToProceed) {
+               const double* __restrict__ src2, const size_t nbToProceed) {
 
-    for (int idx = 0; idx < nbToProceed; idx += VecType::VecLength) {
+    for (size_t idx = 0; idx < nbToProceed; idx += VecType::GetVecLength()) {
         const VecType v1(&src1[idx]);
         const VecType v2(&src2[idx]);
         const VecType res = v1 + v2;
@@ -308,7 +308,7 @@ void VectorizedFunction(const int nbParticles, const double* __restrict__ positi
     const VecType VecConstantIfCut = constantIfCut;
     const VecType VecCutDistance = cutDistance;
 
-    for(int idxTarget = 0 ; idxTarget < nbParticles ; ++idxTarget){
+    for(size_t idxTarget = 0 ; idxTarget < nbParticles ; ++idxTarget){
 
         const VecType targetX = positionsX[idxTarget];
         const VecType targetY = positionsY[idxTarget];
@@ -317,9 +317,9 @@ void VectorizedFunction(const int nbParticles, const double* __restrict__ positi
         const VecType targetPhysicalValue = physicalValues[idxTarget];
         VecType targetPotential = VecType::GetZero();
 
-        const int lastToCompute = ((nbParticles-(idxTarget+1))/VecType::VecLength)*VecType::VecLength+(idxTarget+1);
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecType::GetVecLength())*VecType::GetVecLength()+(idxTarget+1);
 
-        for(int idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecType::VecLength){
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecType::GetVecLength()){
             const VecType dx = targetX - VecType(&positionsX[idxSource]);
             const VecType dy = targetY - VecType(&positionsY[idxSource]);
             const VecType dz = targetZ - VecType(&positionsZ[idxSource]);

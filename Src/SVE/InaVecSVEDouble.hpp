@@ -139,8 +139,8 @@ public:
     using RealType             = double;
     static const int Alignement= 1;
     
-    static int GetVecLength(){
-        return int(svcntd());
+    static size_t GetVecLength(){
+        return (svcntd());
     }
 
     inline InaVecSVE(){}

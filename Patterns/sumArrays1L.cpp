@@ -16,7 +16,7 @@ template < class VecType >
 void SumArrays(double* __restrict__ dest, const double* __restrict__ src1,
                const double* __restrict__ src2, const size_t nbToProceed) {
 
-    for (size_t idx = 0; idx < nbToProceed; idx += VecType::VecLength) {
+    for (size_t idx = 0; idx < nbToProceed; idx += VecType::GetVecLength()) {
         const VecType v1(&src1[idx]);
         const VecType v2(&src2[idx]);
         const VecType res = v1 + v2;
@@ -28,7 +28,7 @@ void SumArrays(double* __restrict__ dest, const double* __restrict__ src1,
 
 void Pattern1D(double* __restrict__ dest, const double* __restrict__ src1,
                const double* __restrict__ src2, const size_t nbToProceed) {
-    const size_t nbItemsVectorized = (nbToProceed / InaVecBestType<double>::VecLength) * InaVecBestType<double>::VecLength;
+    const size_t nbItemsVectorized = (nbToProceed / InaVecBestType<double>::GetVecLength()) * InaVecBestType<double>::GetVecLength();
     // First with the best vectorizer
     SumArrays< InaVecBestType<double> >(dest, src1, src2, nbItemsVectorized);
     // Do the rest with scalar
@@ -37,7 +37,7 @@ void Pattern1D(double* __restrict__ dest, const double* __restrict__ src1,
 }
 
 int main() {
-    std::cout << "The best vectorizer computes " << InaVecBestType<double>::VecLength << " double values together." << std::endl;
+    std::cout << "The best vectorizer computes " << InaVecBestType<double>::GetVecLength() << " double values together." << std::endl;
 
     // Test size
     const size_t Size = 10000;

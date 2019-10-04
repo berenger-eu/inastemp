@@ -158,8 +158,13 @@ public:
     using VecRawType           = __vector double;
     using MaskType             = InaVecMaskALTIVEC<double>;
     using RealType             = double;
+    [[deprecated("Please use the method instead")]]
     static const int VecLength = 2;
     static const int Alignement= 16;
+    
+    static constexpr size_t GetVecLength(){
+        return 2;
+    }
 
     inline InaVecALTIVEC(){}
     inline InaVecALTIVEC(const InaVecALTIVEC&) = default;

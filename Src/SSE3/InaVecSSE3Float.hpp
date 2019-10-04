@@ -138,8 +138,13 @@ public:
     using VecRawType           = __m128;
     using MaskType             = InaVecMaskSSE3<float>;
     using RealType             = float;
+    [[deprecated("Please use the method instead")]]
     static const int VecLength = 4;
     static const int Alignement= 16;
+
+    static constexpr size_t GetVecLength(){
+        return 4;
+    }
 
     inline InaVecSSE3(){}
     inline InaVecSSE3(const InaVecSSE3&) = default;
@@ -230,7 +235,7 @@ public:
 
     // Acce to individual values
     inline float at(const int index) const {
-        alignas(Alignement) float allval[VecLength];
+        alignas(Alignement) float allval[GetVecLength()];
         _mm_store_ps(allval, vec);
         return allval[index];
     }
@@ -319,7 +324,7 @@ public:
     }
 
     inline InaVecSSE3 floor() const {
-        alignas(Alignement) float allval[VecLength];
+        alignas(Alignement) float allval[GetVecLength()];
         _mm_store_ps(allval, vec);
         for (int idx = 0; idx < VecLength; ++idx) {
             allval[idx] = std::floor(allval[idx]);
@@ -562,7 +567,7 @@ public:
 
         const __m128 val_suma_x_sumb_x = _mm_add_ps(val_a01_a23_b01_b23, val_a23_a01_b23_b01);
 
-        alignas(Alignement) float buffer[VecLength] = {0};
+        alignas(Alignement) float buffer[GetVecLength()] = {0};
         buffer[0] = sumRes[0];
         buffer[2] = sumRes[1];
         __m128 vecBuffer = _mm_load_ps(buffer);

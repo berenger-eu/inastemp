@@ -151,8 +151,13 @@ public:
     using VecRawType           = __vector float;
     using MaskType             = InaVecMaskALTIVEC<float>;
     using RealType             = float;
+    [[deprecated("Please use the method instead")]]
     static const int VecLength = 4;
     static const int Alignement= 16;
+    
+    static constexpr size_t GetVecLength(){
+        return 4;
+    }
 
     inline InaVecALTIVEC(){}
     inline InaVecALTIVEC(const InaVecALTIVEC&) = default;

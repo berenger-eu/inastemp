@@ -118,8 +118,13 @@ public:
     using VecRawType           = float;
     using MaskType             = InaVecMaskSCALAR<float>;
     using RealType             = float;
+    [[deprecated("Please use the method instead")]]
     static const int VecLength = 1;
     static const int Alignement= 1;
+
+    static constexpr size_t GetVecLength(){
+        return 1;
+    }
 
     inline InaVecSCALAR(){}
     inline InaVecSCALAR(const InaVecSCALAR&) = default;
