@@ -74,7 +74,7 @@ public:
   }
 
   inline bool isAllTrue() const{
-      // true if all FF => !FF => 0 & FF => 0
+        // Could with svptest_any(svptrue_b64(), pg)
       return svcnt_b32_z(mask) == svcntw();
   }
 
@@ -140,8 +140,11 @@ public:
     using VecRawType           = svfloat32_t;
     using MaskType             = InaVecMaskSVE<float>;
     using RealType             = float;
-    static const int VecLength = svcntw();
-    static const int Alignement= 1;
+    static const int Alignement= 1;    
+    
+    static int GetVecLength(){
+        return int(svcntw());
+    }
 
     inline InaVecSVE(){}
     inline InaVecSVE(const InaVecSVE&) = default;
@@ -203,14 +206,14 @@ public:
     }
 
     inline InaVecSVE& setFromIndirectArray(const float values[], const int inIndirection[]) {
-        vec = svld1_gather_f32_index_z(svptrue_b32(), values, svld1_s32(svptrue_b32(),inIndirection));
+        vec = svld1_gather_s32index_f32(svptrue_b32(), values, svld1_s32(svptrue_b32(),inIndirection));
         return *this;
     }
 
     inline InaVecSVE& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
-        vec = svld1_gather_f32_index_z(svptrue_b32(), inArray,
-                                       svmul_f32_z(svptrue_b32(),svmul_f32_z(svptrue_b32(),svld1_s32(svptrue_b32(),inIndirection1),svdup_s32(inLeadingDimension)),
+        vec = svld1_gather_s32index_f32(svptrue_b32(), inArray,
+                                       svmul_s32_z(svptrue_b32(),svmul_s32_z(svptrue_b32(),svld1_s32(svptrue_b32(),inIndirection1),svdup_s32(inLeadingDimension)),
                                        svld1_s32(svptrue_b32(),inIndirection2)));
         return *this;
     }
@@ -226,9 +229,7 @@ public:
 
     // Acce to individual values
     inline float at(const int index) const {
-        float allval[VecLength];
-        svst1_f32(svptrue_b32(),allval, vec);
-        return allval[index];
+        return svlasta_f32(svwhilelt_b32(0, index),vec);
     }
 
     // Horizontal operation
@@ -259,14 +260,14 @@ public:
 
         const svfloat32_t fractional_part = svsub_f32_z(svptrue_b32(), x, InaVecSVE(x).floor().vec);
 
-        svfloat32_t factor = svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(), svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(),svadd_f32_z(
-                         svmul_f32_z(svadd_f32_z( svmul_f32_z(svadd_f32_z(svmul_f32_z(
+        svfloat32_t factor = svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(), svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(),svadd_f32_z(svptrue_b32(),
+                         svmul_f32_z(svptrue_b32(),svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(),svadd_f32_z(svptrue_b32(),svmul_f32_z(svptrue_b32(),
                          COEFF_P5_A, fractional_part), COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
                          COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part), COEFF_P5_F);
 
         x = svsub_f32_z(svptrue_b32(), x,factor);
 
-        svint32_t castedInteger = svcvt_f32_s32_z(svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(), COEFF_A, x), COEFF_B));
+        svint32_t castedInteger = svcvt_s32_f32_z(svptrue_b32(), svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(), COEFF_A, x), COEFF_B));
 
         return svreinterpret_f32_s32(castedInteger);
     }
@@ -291,7 +292,7 @@ public:
 
         x = svsub_f32_z(svptrue_b32(), x,factor);
 
-        svint32_t castedInteger = svcvt_f32_s32_z(svadd_f32_z(svptrue_b32(), svmul_f32_z(COEFF_A, x), COEFF_B));
+        svint32_t castedInteger = svcvt_s32_f32_z(svptrue_b32(), svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(), COEFF_A, x), COEFF_B));
 
         return svreinterpret_f32_s32(castedInteger);
     }
@@ -308,7 +309,7 @@ public:
         svbool_t mask = (InaVecSVE(float(std::numeric_limits<int>::min())) < vec && vec < InaVecSVE(float(std::numeric_limits<int>::max())));
         svint32_t n = svcvt_s32_f32_z(svptrue_b32(), vec);
         svfloat32_t d = svcvt_f32_s32_z(svptrue_b32(), n);
-        svbool_t lower = svacgt_f32(svptrue_b32(), svdup_s32(0), d);
+        svbool_t lower = svacgt_f32(svptrue_b32(), svdup_f32(0), d);
         return svsel_f32(mask, svsel_f32(lower, vec - svdup_f32(1), d), vec);
     }
 
@@ -510,7 +511,7 @@ public:
                                           const InaVecSVE<float>& inVec6, const InaVecSVE<float>& inVec7,
                                           const InaVecSVE<float>& inVec8, Args ...args){       
         MultiHorizontalSum(&sumRes[0], inVec1, inVec2, inVec3, inVec4 );
-        MultiHorizontalSum(&sumRes[4], inVec4, inVec5, inVec6, inVec7 );
+        MultiHorizontalSum(&sumRes[4], inVec5, inVec6, inVec7, inVec8 );
 
         MultiHorizontalSum(&sumRes[8], args... );
     }
