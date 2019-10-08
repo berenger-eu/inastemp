@@ -25,7 +25,7 @@ OPTION( INASTEMP_ARMIE_CPU  "Set to ON to run the CPU detection over armie" OFF 
 
 # Compile and execute the file
 if(INASTEMP_ARMIE_CPU)
-    SET( INASTEMP_ARMIE_CPU_ARGS "" CACHE STRING "Arguments for armie"  )
+    SET( INASTEMP_ARMIE_CPU_ARGS "-msve-vector-bits=256" CACHE STRING "Arguments for armie"  )
 
     if($ENV{VERBOSE})
     	message(STATUS "GetARMCpuInfosFile -- use armie")
@@ -53,6 +53,9 @@ if(INASTEMP_ARMIE_CPU)
         exec_program("armie ${INASTEMP_ARMIE_CPU_ARGS} -- ${GetARMCpuInfosFileExec}" ${CMAKE_CURRENT_BINARY_DIR}
                 OUTPUT_VARIABLE run
                 RETURN_VALUE RUN_RESULT_VAR)
+        
+        # TODO, should be true but armie is not working properly yet
+        set(run "SVE=TRUE")
     endif() 
 else()
     # Simply try and run

@@ -23,7 +23,7 @@ if(INASTEMP_BUILD_UTESTS)
     if(INASTEMP_ISDE_UTESTS)
         SET( INASTEMP_ISDE_UTESTS_ARGS "-knl" CACHE STRING "Arguments for sde64"  )
     elseif(INASTEMP_ARMIE_UTESTS)
-        SET( INASTEMP_ARMIE_UTESTS_ARGS "" CACHE STRING "Arguments for armie"  )
+        SET( INASTEMP_ARMIE_UTESTS_ARGS "-msve-vector-bits=256" CACHE STRING "Arguments for armie"  )
     endif()
 
     # Find all code files

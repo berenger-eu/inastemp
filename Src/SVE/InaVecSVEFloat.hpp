@@ -27,12 +27,11 @@ class InaVecMaskSVE;
 template <class RealType>
 class InaVecSVE;
 
-// TODO svreinterpret
-// TODO svcvt
 
 // Mask type
 template <>
 class InaVecMaskSVE<float> {
+    // Ugly trick
     // Should simply be svbool_t mask;
     unsigned char maskData[2048/sizeof(unsigned char)];
     svbool_t& mask;
@@ -98,7 +97,7 @@ public:
     }
 
     inline static InaVecMaskSVE NotAnd(const InaVecMaskSVE& inMask1, const InaVecMaskSVE& inMask2){
-        return svbic_z(svptrue_b32(), inMask1.mask,inMask2.mask);
+        return svbic_z(svptrue_b32(), inMask2.mask,inMask1.mask);
     }
 
     inline static InaVecMaskSVE Or(const InaVecMaskSVE& inMask1, const InaVecMaskSVE& inMask2){
@@ -143,6 +142,7 @@ inline bool operator!=(const InaVecMaskSVE<float>& inMask1, const InaVecMaskSVE<
 template <>
 class InaVecSVE<float> {
 protected:
+    // Ugly trick
     // Should simply be svfloat32_t vec;
     unsigned char vecData[2048/sizeof(unsigned char)];
     svfloat32_t& vec;
@@ -232,7 +232,7 @@ public:
     inline InaVecSVE& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
         vec = svld1_gather_s32index_f32(svptrue_b32(), inArray,
-                                       svmul_s32_z(svptrue_b32(),svmul_s32_z(svptrue_b32(),svld1_s32(svptrue_b32(),inIndirection1),svdup_s32(inLeadingDimension)),
+                                       svadd_s32_z(svptrue_b32(),svmul_s32_z(svptrue_b32(),svld1_s32(svptrue_b32(),inIndirection1),svdup_s32(inLeadingDimension)),
                                        svld1_s32(svptrue_b32(),inIndirection2)));
         return *this;
     }
@@ -257,7 +257,11 @@ public:
     }
 
     inline float horizontalMul() const {
-      return 0 ;// TODO return sfmla_f32(svptrue_b32(),vec);
+        float sum = at(0);
+        for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
+            sum *= at(idx);
+        }
+        return sum;
     }
 
     inline InaVecSVE sqrt() const {
@@ -317,7 +321,8 @@ public:
     }
 
     inline InaVecSVE rsqrt() const {
-        return svrsqrte_f32(vec);
+        // too low acc svrsqrte_f32(vec);
+        return  svdiv_f32_z(svptrue_b32(), svdup_f32(1), svsqrt_f32_z(svptrue_b32(),vec));
     }
 
     inline InaVecSVE abs() const {
@@ -325,38 +330,38 @@ public:
     }
 
     inline InaVecSVE floor() const {
-        svbool_t mask = svand_z(svptrue_b32(),
-                                svacge_f32(svptrue_b32(), svdup_f32(float(std::numeric_limits<int>::min())), vec),
-                                svacge_f32(svptrue_b32(), vec, svdup_f32(float(std::numeric_limits<int>::max()))));
-        svint32_t n = svcvt_s32_f32_z(svptrue_b32(), vec);
-        svfloat32_t d = svcvt_f32_s32_z(svptrue_b32(), n);
-        svbool_t lower = svacgt_f32(svptrue_b32(), svdup_f32(0), d);
-        return svsel_f32(mask, svsel_f32(lower,  svsub_f32_z(svptrue_b32(),vec, svdup_f32(1)), d), vec);
+        svbool_t maskInLongInt = svand_z(svptrue_b32(),
+                                svcmple_f32(svptrue_b32(), svdup_f32(float(std::numeric_limits<int>::min())), vec),
+                                svcmple_f32(svptrue_b32(), vec, svdup_f32(float(std::numeric_limits<int>::max()))));
+        svint32_t vecConvLongInt = svcvt_s32_f32_z(maskInLongInt, vec);
+        svfloat32_t vecConvLongIntDouble = svcvt_f32_s32_z(maskInLongInt, vecConvLongInt);
+        svbool_t maskTooLarge = svcmpgt_f32(svptrue_b32(), vecConvLongIntDouble, vec);
+        return svsel_f32(maskInLongInt, svsel_f32(maskTooLarge,  svsub_f32_z(svptrue_b32(), vecConvLongIntDouble, svdup_f32(1)), vecConvLongIntDouble), vec);
     }
 
     inline InaVecSVE signOf() const {
-        return svsel_f32(svacgt_f32(svptrue_b32(), vec, svdup_f32(0)),
-                  svdup_f32(1), svsel_f32(svacgt_f32(svptrue_b32(), svdup_f32(0), vec),
+        return svsel_f32(svcmplt_f32(svptrue_b32(), svdup_f32(0), vec),
+                  svdup_f32(1), svsel_f32(svcmpgt_f32(svptrue_b32(), svdup_f32(0), vec),
                                           svdup_f32(-1), svdup_f32(0)));
     }
 
     inline InaVecSVE isPositive() const {
-        return svsel_f32(svacge_f32(svptrue_b32(), vec, svdup_f32(0)),
+        return svsel_f32(svcmple_f32(svptrue_b32(), svdup_f32(0), vec),
                          svdup_f32(1), svdup_f32(0));
     }
 
     inline InaVecSVE isNegative() const {
-        return svsel_f32(svacgt_f32(svptrue_b32(), svdup_f32(0), vec),
+        return svsel_f32(svcmpge_f32(svptrue_b32(), svdup_f32(0), vec),
                          svdup_f32(1), svdup_f32(0));
     }
 
     inline InaVecSVE isPositiveStrict() const {
-        return svsel_f32(svacgt_f32(svptrue_b32(), vec, svdup_f32(0)),
+        return svsel_f32(svcmplt_f32(svptrue_b32(), svdup_f32(0), vec),
                          svdup_f32(1), svdup_f32(0));
     }
 
     inline InaVecSVE isNegativeStrict() const {
-        return svsel_f32(svacge_f32(svptrue_b32(), svdup_f32(0), vec),
+        return svsel_f32(svcmpgt_f32(svptrue_b32(), svdup_f32(0), vec),
                          svdup_f32(1), svdup_f32(0));
     }
 
@@ -371,19 +376,21 @@ public:
     }
 
     inline InaVecMaskSVE<float> isPositiveMask() const {
-        return svacge_f32(svptrue_b32(), vec, svdup_f32(0));
+        return svorr_z(svptrue_b32(), svcmpeq_f32(svptrue_b32(), svdup_f32(0), vec),
+                       svcmple_f32(svptrue_b32(), svdup_f32(0), vec));
     }
 
     inline InaVecMaskSVE<float> isNegativeMask() const {
-        return svacgt_f32(svptrue_b32(), svdup_f32(0), vec);
+        return svorr_z(svptrue_b32(), svcmpeq_f32(svptrue_b32(), svdup_f32(0), vec),
+                       svcmpge_f32(svptrue_b32(), svdup_f32(0), vec));
     }
 
     inline InaVecMaskSVE<float> isPositiveStrictMask() const {
-        return svacgt_f32(svptrue_b32(), vec, svdup_f32(0));
+        return svcmplt_f32(svptrue_b32(), svdup_f32(0), vec);
     }
 
     inline InaVecMaskSVE<float> isNegativeStrictMask() const {
-        return svacge_f32(svptrue_b32(), svdup_f32(0), vec);
+        return svcmpgt_f32(svptrue_b32(), svdup_f32(0), vec);
     }
 
     inline InaVecMaskSVE<float> isZeroMask() const {
@@ -412,19 +419,19 @@ public:
     }
 
     inline static InaVecSVE IsLowerOrEqual(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return svdup_f32_z(svacgt_f32(svptrue_b32(), inVec2.vec, inVec1.vec), 1);
+        return svdup_f32_z(svcmple_f32(svptrue_b32(), inVec1.vec, inVec2.vec), 1);
     }
 
     inline static InaVecSVE IsLower(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return svdup_f32_z(svacge_f32(svptrue_b32(), inVec2.vec, inVec1.vec), 1);
+        return svdup_f32_z(svcmplt_f32(svptrue_b32(), inVec1.vec, inVec2.vec), 1);
     }
 
     inline static InaVecSVE IsGreaterOrEqual(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return svdup_f32_z(svacge_f32(svptrue_b32(), inVec1.vec, inVec2.vec), 1);
+        return svdup_f32_z(svcmpge_f32(svptrue_b32(), inVec1.vec, inVec2.vec), 1);
     }
 
     inline static InaVecSVE IsGreater(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return svdup_f32_z(svacgt_f32(svptrue_b32(), inVec1.vec, inVec2.vec), 1);
+        return svdup_f32_z(svcmpgt_f32(svptrue_b32(), inVec1.vec, inVec2.vec), 1);
     }
 
     inline static InaVecSVE IsEqual(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
@@ -436,19 +443,19 @@ public:
     }
 
     inline static InaVecMaskSVE<float> IsLowerOrEqualMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return svacgt_f32(svptrue_b32(), inVec2.vec, inVec1.vec);
+        return svcmple_f32(svptrue_b32(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecMaskSVE<float> IsLowerMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return svacge_f32(svptrue_b32(), inVec2.vec, inVec1.vec);
+        return svcmplt_f32(svptrue_b32(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecMaskSVE<float> IsGreaterOrEqualMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return svacge_f32(svptrue_b32(), inVec1.vec, inVec2.vec);
+        return svcmpge_f32(svptrue_b32(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecMaskSVE<float> IsGreaterMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return svacgt_f32(svptrue_b32(), inVec1.vec, inVec2.vec);
+        return svcmpgt_f32(svptrue_b32(), inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecMaskSVE<float> IsEqualMask(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
@@ -464,7 +471,7 @@ public:
     }
 
     inline static InaVecSVE BitsNotAnd(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
-        return svreinterpret_f32_s32(svbic_s32_z(svptrue_b32(), svreinterpret_s32_f32(inVec1.vec), svreinterpret_s32_f32(inVec2.vec)));
+        return svreinterpret_f32_s32(svbic_s32_z(svptrue_b32(), svreinterpret_s32_f32(inVec2.vec), svreinterpret_s32_f32(inVec1.vec)));
     }
 
     inline static InaVecSVE BitsOr(const InaVecSVE& inVec1, const InaVecSVE& inVec2) {
