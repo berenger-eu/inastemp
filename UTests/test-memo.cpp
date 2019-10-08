@@ -21,7 +21,7 @@ class TestMemo : public UTester< TestMemo > {
         {
         
         }
-        for(long int size = 1 ; size < 10 ; ++size){
+        for(size_t size = 1 ; size < 10 ; ++size){
             {
                 char* vecChar = InaMemory::_new<alignement, char>(size);
                 UASSERTETRUE(vecChar != nullptr);

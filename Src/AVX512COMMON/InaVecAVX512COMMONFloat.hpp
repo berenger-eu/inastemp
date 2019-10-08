@@ -146,8 +146,14 @@ public:
     using VecRawType           = __m512;
     using MaskType             = InaVecMaskAVX512COMMON<float>;
     using RealType             = float;
+    [[deprecated("Please use the method instead")]]
     static const int VecLength = 16;
     static const int Alignement= 64;
+    static const bool IsOfFixedSize = true;
+
+    static constexpr int GetVecLength(){
+        return 16;
+    }
 
     inline InaVecAVX512COMMON(){}
     inline InaVecAVX512COMMON(const InaVecAVX512COMMON&) = default;
@@ -262,7 +268,7 @@ public:
 
     // Acce to individual values
     inline float at(const int index) const {
-        alignas(Alignement) float allval[VecLength];
+        alignas(Alignement) float allval[GetVecLength()];
         _mm512_store_ps(allval, vec);
         return allval[index];
     }
@@ -681,7 +687,7 @@ public:
 
         const __m128 val_suma_x_sumb_x = _mm_add_ps(val_a0123_b0123_a4567_b4567, val_a4567_b4567_a0123_b0123);
 
-        alignas(Alignement) float buffer[VecLength] = {0};
+        alignas(Alignement) float buffer[GetVecLength()] = {0};
         buffer[0] = sumRes[0];
         buffer[1] = sumRes[1];
         __m128 vecBuffer = _mm_load_ps(buffer);

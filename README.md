@@ -19,7 +19,7 @@ See the `LICENSE` file or [https://opensource.org/licenses/MIT] for details.
 - Target audience and use cases
 The library requires basic C++ knowledge about classes, templates, etc.
 It is not mandatory to really know what is vectorization all about, but it certainly helps.
-For example, the increment of loops is usually tied to the underlying size of the vector which means that one should understand why and where the increment is not equal to 1.
+For example, the increment of loops is usually tied to the underlying size of the vector, which means that one should understand why and where the increment is not equal to 1.
 A good way to use Inastemp would be to have a software engineer managing the inclusion and hiding the small complexities of the template process,
 and to have the scientists work with basic simple functions templatized against a vector type.
 
@@ -57,6 +57,8 @@ Template C++ source-code                           Compiled Template C++ code
     - SSE3, SSSE3, SSE4.1, SSE4.2, AVX, AVX2, AVX512-KNL, AVX512-SKL
 - The following Powere PC SIMD types are currently supported:
     - Power-8 Altivec/VMX
+- The following ARM PC SIMD types are currently supported:
+    - SVE
 - arithmetic operators `*/+-` are provided
 - CPU capacities are detected automatically during the CMake stage
 - The compiler capacities are detected automatically during the CMake stage
@@ -91,6 +93,12 @@ simply include `Src/InastempStaticConfig.h` before anything else.
 In such case, only the instruction sets that are enable by the compiler will be enable in Inastemp.
 For example, compiling using Gcc and `-mAVX` will turn on AVX.
 
+### CMake variables - CPU type detection
+
+The CMake file will look at the variable `${CMAKE_SYSTEM_PROCESSOR}` to detect the type of CPU.
+If for any reason, this variable is not correct, one can override it with `${CUSTOM_SYSTEM_PROCESSOR}`.
+For example, it is expected that the variable is set to `ARM` or `aarch64` for ARM based processor, but if that is not the case, then simply override the CMake value (`cmake .. -DCUSTOM_SYSTEM_PROCESSOR=ARM`).
+
 ### CMake variables - Hardware detection (X86)
 
 There are two hardware detections:
@@ -123,11 +131,25 @@ In this case, one can ask Inastemp to check any hardware (passing the appropriat
 
 ### CMake variables - Hardware detection (Power PC)
 
-Inastemp perform the following test to enable the VMX classes (and to disable all the X86 classes):
+Inastemp performs the following test to enable the VMX classes (and to disable all the X86/ARM classes):
 ```
 if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
 ```
-If the detection looks incorrect, please check the value returned by `${CMAKE_SYSTEM_PROCESSOR}` and open an issue on our gitlab.
+If the detection looks incorrect, please override it with the CMake variable `${CUSTOM_SYSTEM_PROCESSOR}`.
+
+### CMake variables - Hardware detection (ARM)
+
+Inastemp performs the following test to enable the SVE classes (and to disable all the PowerPC/X86 classes):
+```
+elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ARM" OR ${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "aarch64")
+```
+If the detection looks incorrect, please override it with the CMake variable `${CUSTOM_SYSTEM_PROCESSOR}`.
+
+Then, the configuration stage will try to compile a tiny example to see if the compiler can work with SVE.
+In this aim, it will pass `-march=native+sve` to the compiler.
+If you want to compile for another processor, override `${ARCH_NATIVE_FLAG}` using `-march=armv8.2-a+sve` for example.
+
+Then the configuration system will look if the CPU is able to execute some SVE, the answer is currently always yes (because the ARM emulator says always no, so we override the value, but that will change in the future).
 
 ### Using Inastemp as a sub-project with CMake
 
@@ -157,7 +179,7 @@ The inclusion of Inastemp as a subproject does not modify the variables of the u
 This is why we use the variables `${INASTEMP_CXX_FLAGS}` explicitly to transfer the hardware specific flags.
 
 When Inastemp detects it is included as a subproject, it turns the variable `INASTEMP_AS_SUBPROJECT` to `ON` and minimizes the additional flags.
-As a result, the variable `INASTEMP_CXX_FLAGS` will contain a flag for `C++11` and `-funroll-loops` (from `INASTEMP_EXTRA_CXX_FLAGS`), plus the flags needed for the target instructions.
+As a result, the variable `INASTEMP_CXX_FLAGS` will contain a flag for `C++17` and `-funroll-loops` (from `INASTEMP_EXTRA_CXX_FLAGS`), plus the flags needed for the target instructions.
 Such that, if one wants to compile only some files with these specific flags, it must use `INASTEMP_CXX_FLAGS` carefully.
 
 ### Compilers support
@@ -171,6 +193,10 @@ Earlier versions may work as well.
 It was also tested on IBM POWER 8 NVL/4023GHz (Openpower) using the following compilers:
 - Gcc 6.2.0
 
+It was also tested on Arm (ThunderX2CN99) using the following compilers:
+- Armclang++ 19.0 (build number 69) (based on LLVM 7.0.2)
+  - Results validated on emulator armie 19.2-11
+
 - Intel special flags
 We pass `-diag-disable 2304 -diag-disable 10121 -diag-disable 10120` to intel compiler to remove the implicit conversion warnings between Inastemp classes.
 In fact, we voluntarily want implicit conversion because it helps us to factorize and reduce the number of lines drastically.
@@ -180,8 +206,9 @@ However, it looks like such options do not work for several compiler versions, a
 
 ### Multiple hardwares compilation
 
-Inastemp is not designed to compile a binary targeting multiple hardwares (like having an execution path for the different possibilities).
+Inastemp is not designed to compile a binary targeting multiple hardware (like having an execution path for the different possibilities).
 If such need appears, let us know and we might enable it in a next release.
+But everything is here to do so, simply a modification of the compilation system is needed.
 
 ## Best practices
 
@@ -242,6 +269,14 @@ export PATH=/PATH-TO-SDE-BIN/:$PATH
 sudo update-alternatives --install /usr/bin/sde64 sde64 /PATH-TO-SDE-BIN/sde64 1
 ```
 
+## Arm Instruction Emulator (armie)
+
+When using armie, Inastemp looks for `armie`, therefore you must update your path or put a symbolic link:
+```bash
+// Most system:
+export PATH=/PATH-TO-ARMIE-BIN/:$PATH
+// On ubuntu if sde is not installed in the system folder, I used
+sudo update-alternatives --install /usr/bin/armie armie /PATH-TO-ARMIE-BIN/armie 1
 
 ## Simple Examples
 
@@ -251,9 +286,9 @@ Taken from the pattern examples, we simply sum two arrays.
 ```cpp
 template < class VecType >
 void SumArrays(double* __restrict__ dest, const double* __restrict__ src1,
-               const double* __restrict__ src2, const int nbToProceed) {
+               const double* __restrict__ src2, const size_t nbToProceed) {
 
-    for (int idx = 0; idx < nbToProceed; idx += VecType::VecLength) {
+    for (size_t idx = 0; idx < nbToProceed; idx += VecType::GetVecLength()) {
         const VecType v1(&src1[idx]);
         const VecType v2(&src2[idx]);
         const VecType res = v1 + v2;
@@ -308,7 +343,7 @@ void VectorizedFunction(const int nbParticles, const double* __restrict__ positi
     const VecType VecConstantIfCut = constantIfCut;
     const VecType VecCutDistance = cutDistance;
 
-    for(int idxTarget = 0 ; idxTarget < nbParticles ; ++idxTarget){
+    for(size_t idxTarget = 0 ; idxTarget < nbParticles ; ++idxTarget){
 
         const VecType targetX = positionsX[idxTarget];
         const VecType targetY = positionsY[idxTarget];
@@ -317,9 +352,9 @@ void VectorizedFunction(const int nbParticles, const double* __restrict__ positi
         const VecType targetPhysicalValue = physicalValues[idxTarget];
         VecType targetPotential = VecType::GetZero();
 
-        const int lastToCompute = ((nbParticles-(idxTarget+1))/VecType::VecLength)*VecType::VecLength+(idxTarget+1);
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecType::GetVecLength())*VecType::GetVecLength()+(idxTarget+1);
 
-        for(int idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecType::VecLength){
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecType::GetVecLength()){
             const VecType dx = targetX - VecType(&positionsX[idxSource]);
             const VecType dy = targetY - VecType(&positionsY[idxSource]);
             const VecType dz = targetZ - VecType(&positionsZ[idxSource]);
@@ -568,5 +603,7 @@ SDE ERROR:  TID: 0 executed instruction with an unaligned memory reference to ad
 ```
 
 # Authors
-- Berenger Bramas (berenger.bramas@mpcdf.mpg.de)
+- Berenger Bramas (berenger.bramas@inria.fr)
 - Logo Credit to D.M.
+
+

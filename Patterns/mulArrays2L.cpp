@@ -9,7 +9,7 @@
 #include <iostream>
 #include <memory>
 
-// Here we illustrate how to compute pair-wise interactions.
+// Here we illustrate how to compute pair-wise size_teractions.
 // We compute Sum(a[i] * b[j]) for all i,j possible
 
 
@@ -22,7 +22,7 @@ double MulArrays(const double* __restrict__ src1, const size_t nbToProceed1,
     for (size_t idx1 = 0; idx1 < nbToProceed1; ++idx1) {
         const VecType v1(src1[idx1]);
 
-        for (size_t idx2 = 0; idx2 < nbToProceed2; idx2 += VecType::VecLength) {
+        for (size_t idx2 = 0; idx2 < nbToProceed2; idx2 += size_t(VecType::GetVecLength())) {
             const VecType v2(&src2[idx2]);
             sum += v1 * v2;
             // In one line:
@@ -34,7 +34,8 @@ double MulArrays(const double* __restrict__ src1, const size_t nbToProceed1,
 
 double Pattern2D(const double* __restrict__ src1, const size_t nbToProceed1,
                  const double* __restrict__ src2, const size_t nbToProceed2) {
-    const size_t nbItemsVectorized2 = (nbToProceed2 / InaVecBestType<double>::VecLength) * InaVecBestType<double>::VecLength;
+    const size_t nbItemsVectorized2 = (nbToProceed2 / size_t(InaVecBestType<double>::GetVecLength()))
+            * size_t(InaVecBestType<double>::GetVecLength());
     // First with the best vectorizer
     double res = MulArrays< InaVecBestType<double> >(src1, nbToProceed1, src2, nbItemsVectorized2);
     // Do the rest with scalar
@@ -44,7 +45,7 @@ double Pattern2D(const double* __restrict__ src1, const size_t nbToProceed1,
 }
 
 int main() {
-    std::cout << "The best vectorizer computes " << InaVecBestType<double>::VecLength << " double values together." << std::endl;
+    std::cout << "The best vectorizer computes " << InaVecBestType<double>::GetVecLength() << " double values together." << std::endl;
 
     // Test size
     const size_t Size = 10000;

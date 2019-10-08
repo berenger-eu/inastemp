@@ -141,8 +141,14 @@ public:
     using VecRawType           = __m512d;
     using MaskType             = InaVecMaskAVX512COMMON<double>;
     using RealType             = double;
+    [[deprecated("Please use the method instead")]]
     static const int VecLength = 8;
     static const int Alignement= 64;
+    static const bool IsOfFixedSize = true;
+
+    static constexpr int GetVecLength(){
+        return 8;
+    }
 
     inline InaVecAVX512COMMON(){}
     inline InaVecAVX512COMMON(const InaVecAVX512COMMON&) = default;
@@ -241,7 +247,7 @@ public:
 
     // Acce to individual values
     inline double at(const int index) const {
-        alignas(Alignement) double allval[VecLength];
+        alignas(Alignement) double allval[GetVecLength()];
         _mm512_store_pd(allval, vec);
         return allval[index];
     }
@@ -317,10 +323,10 @@ public:
 
          x = _mm512_add_pd(_mm512_mul_pd(COEFF_A, x), COEFF_B);
 
-         alignas(64) double allvalreal[VecLength];
+         alignas(64) double allvalreal[GetVecLength()];
          _mm512_store_pd(allvalreal, x);
 
-         alignas(64) long long int allvalint[VecLength] = { static_cast<long long int>(allvalreal[0]), static_cast<long long int>(allvalreal[1]),
+         alignas(64) long long int allvalint[GetVecLength()] = { static_cast<long long int>(allvalreal[0]), static_cast<long long int>(allvalreal[1]),
                                                             static_cast<long long int>(allvalreal[2]), static_cast<long long int>(allvalreal[3]),
                                                             static_cast<long long int>(allvalreal[4]), static_cast<long long int>(allvalreal[5]),
                                                             static_cast<long long int>(allvalreal[6]), static_cast<long long int>(allvalreal[7]) };
@@ -352,10 +358,10 @@ public:
 
         x = _mm512_add_pd(_mm512_mul_pd(COEFF_A, x), COEFF_B);
 
-        alignas(64) double allvalreal[VecLength];
+        alignas(64) double allvalreal[GetVecLength()];
         _mm512_store_pd(allvalreal, x);
 
-        alignas(64) long long int allvalint[VecLength] = { static_cast<long long int>(allvalreal[0]), static_cast<long long int>(allvalreal[1]),
+        alignas(64) long long int allvalint[GetVecLength()] = { static_cast<long long int>(allvalreal[0]), static_cast<long long int>(allvalreal[1]),
                                                            static_cast<long long int>(allvalreal[2]), static_cast<long long int>(allvalreal[3]),
                                                            static_cast<long long int>(allvalreal[4]), static_cast<long long int>(allvalreal[5]),
                                                            static_cast<long long int>(allvalreal[6]), static_cast<long long int>(allvalreal[7]) };

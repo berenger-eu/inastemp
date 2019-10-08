@@ -87,13 +87,12 @@ public:
     using VecRawType           = typename VecType::VecRawType;
     using MaskType             = typename VecType::MaskType;
     using RealType             = typename VecType::RealType;
-    static const int VecLength = VecType::VecLength;
     static const int Alignement= VecType::Alignement;
+    static const bool IsOfFixedSize = VecType::IsOfFixedSize;
 
-    //! Simple check - might not be true in far future
-    static_assert(sizeof(VecType) / sizeof(RealType) == VecLength,
-                  "The number of values inside the vector must be"
-                  "equal to size of vec divided by size of scalar");
+    static int GetVecLength(){
+        return VecType::GetVecLength();
+    }
 
     using VecType::VecType;
 
@@ -212,33 +211,33 @@ public:
     //! Sum all the values from inVec
     //! @code return inVec[0] + ... + inVec[last-val-idx]
     inline RealType horizontalSum() const {
-        FlopsStats.incAddOp(VecLength-1);
+        FlopsStats.incAddOp(size_t(GetVecLength())-1);
         return Parent::horizontalSum();
     }
 
     //! Multiply all the values from inVec
     //! @code return inVec[0] * ... * inVec[last-val-idx]
     inline RealType horizontalMul() const {
-        FlopsStats.incMulOp(VecLength-1);
+        FlopsStats.incMulOp(size_t(GetVecLength())-1);
         return Parent::horizontalMul();
     }
 
     //! Apply Sqrt to all values from inVec
     //! @code idx in [0:last-val-idx] => resVec[idx] = Sqrt(inVec[idx])
     inline VecType sqrt() const {
-        FlopsStats.incSqrt((1)*VecLength);
+        FlopsStats.incSqrt((1)*size_t(GetVecLength()));
         return Parent::sqrt();
     }
 
     //! Apply exponential to all values from inVec
     //! @code idx in [0:last-val-idx] => resVec[idx] = Exp(inVec[idx])
     inline VecType exp() const {
-        FlopsStats.incAddOp((1+5)*VecLength);
-        FlopsStats.incMulOp((1+1+5)*VecLength);
-        FlopsStats.incSubOp((1+1)*VecLength);
+        FlopsStats.incAddOp((1+5)*size_t(GetVecLength()));
+        FlopsStats.incMulOp((1+1+5)*size_t(GetVecLength()));
+        FlopsStats.incSubOp((1+1)*size_t(GetVecLength()));
         if(std::is_same<double,typename VecType::RealType>::value){
-            FlopsStats.incAddOp((3)*VecLength);
-            FlopsStats.incMulOp((3)*VecLength);
+            FlopsStats.incAddOp((3)*size_t(GetVecLength()));
+            FlopsStats.incMulOp((3)*size_t(GetVecLength()));
         }
         return Parent::exp();
     }
@@ -246,12 +245,12 @@ public:
     //! Apply exponential to all values from inVec with low accuracy
     //! @code idx in [0:last-val-idx] => resVec[idx] = ExpLowExp(inVec[idx])
     inline VecType expLowAcc() const {
-        FlopsStats.incAddOp((1+2)*VecLength);
-        FlopsStats.incMulOp((1+1+2)*VecLength);
-        FlopsStats.incSubOp((1+1)*VecLength);
+        FlopsStats.incAddOp((1+2)*size_t(GetVecLength()));
+        FlopsStats.incMulOp((1+1+2)*size_t(GetVecLength()));
+        FlopsStats.incSubOp((1+1)*size_t(GetVecLength()));
         if(std::is_same<double,typename VecType::RealType>::value){
-            FlopsStats.incAddOp((1)*VecLength);
-            FlopsStats.incMulOp((1)*VecLength);
+            FlopsStats.incAddOp((1)*size_t(GetVecLength()));
+            FlopsStats.incMulOp((1)*size_t(GetVecLength()));
         }
         return Parent::expLowAcc();
     }
@@ -259,7 +258,7 @@ public:
     //! Apply 1/Sqrt to all values from inVec
     //! @code idx in [0:last-val-idx] => resVec[idx] = 1/Sqrt(inVec[idx])
     inline VecType rsqrt() const {
-        FlopsStats.incRsqrt((1)*VecLength);
+        FlopsStats.incRsqrt((1)*size_t(GetVecLength()));
         return Parent::rsqrt();
     }
 
@@ -510,32 +509,32 @@ public:
 
     // Inner operators
     inline VecType& operator+=(const VecType& inVec){
-        FlopsStats.incAddOp(VecLength);
+        FlopsStats.incAddOp(size_t(GetVecLength()));
         this->Parent::operator +=(inVec);
         return *this;
     }
 
     inline VecType& operator-=(const VecType& inVec){
-        FlopsStats.incSubOp(VecLength);
+        FlopsStats.incSubOp(size_t(GetVecLength()));
         this->Parent::operator -=(inVec);
         return *this;
     }
 
     inline VecType& operator/=(const VecType& inVec){
-        FlopsStats.incDivOp(VecLength);
+        FlopsStats.incDivOp(size_t(GetVecLength()));
         this->Parent::operator /=(inVec);
         return *this;
     }
 
     inline VecType& operator*=(const VecType& inVec){
-        FlopsStats.incMulOp(VecLength);
+        FlopsStats.incMulOp(size_t(GetVecLength()));
         this->Parent::operator *=(inVec);
         return *this;
     }
 
 
     inline VecType pow(size_t power) const{
-        FlopsStats.incMulOp(InaUtils::FastPowNbMul(power)*VecLength);
+        FlopsStats.incMulOp(InaUtils::FastPowNbMul(power)*size_t(GetVecLength()));
         return this->Parent::pow(power);
     }
 
@@ -556,8 +555,8 @@ public:
     // Multiple sum
     template <class ... Args>
     inline static void MultiHorizontalSum(RealType sumRes[], Args ...args){
-        const int nbVecs = sizeof...(args);
-        FlopsStats.incAddOp((VecLength-1)*nbVecs);
+        const size_t nbVecs = sizeof...(args);
+        FlopsStats.incAddOp((size_t(GetVecLength())-1)*nbVecs);
         Parent::MultiHorizontalSum(sumRes, args...);
     }
 };
@@ -581,25 +580,25 @@ inline InaVecFLOPS<VecType> operator^(const InaVecFLOPS<VecType>& inVec1, const 
 // Dual operators
 template <class VecType>
 inline InaVecFLOPS<VecType> operator+(const InaVecFLOPS<VecType>& inVec1, const InaVecFLOPS<VecType>& inVec2){
-    InaVecFLOPS<VecType>::FlopsStats.incAddOp(InaVecFLOPS<VecType>::VecLength);
+    InaVecFLOPS<VecType>::FlopsStats.incAddOp(size_t(InaVecFLOPS<VecType>::GetVecLength()));
     return static_cast<const VecType&>(inVec1) + static_cast<const VecType&>(inVec2);
 }
 
 template <class VecType>
 inline InaVecFLOPS<VecType> operator-(const InaVecFLOPS<VecType>& inVec1, const InaVecFLOPS<VecType>& inVec2){
-    InaVecFLOPS<VecType>::FlopsStats.incSubOp(InaVecFLOPS<VecType>::VecLength);
+    InaVecFLOPS<VecType>::FlopsStats.incSubOp(size_t(InaVecFLOPS<VecType>::GetVecLength()));
     return static_cast<const VecType&>(inVec1) - static_cast<const VecType&>(inVec2);
 }
 
 template <class VecType>
 inline InaVecFLOPS<VecType> operator/(const InaVecFLOPS<VecType>& inVec1, const InaVecFLOPS<VecType>& inVec2){
-    InaVecFLOPS<VecType>::FlopsStats.incDivOp(InaVecFLOPS<VecType>::VecLength);
+    InaVecFLOPS<VecType>::FlopsStats.incDivOp(size_t(InaVecFLOPS<VecType>::GetVecLength()));
     return static_cast<const VecType&>(inVec1) / static_cast<const VecType&>(inVec2);
 }
 
 template <class VecType>
 inline InaVecFLOPS<VecType> operator*(const InaVecFLOPS<VecType>& inVec1, const InaVecFLOPS<VecType>& inVec2){
-    InaVecFLOPS<VecType>::FlopsStats.incMulOp(InaVecFLOPS<VecType>::VecLength);
+    InaVecFLOPS<VecType>::FlopsStats.incMulOp(size_t(InaVecFLOPS<VecType>::GetVecLength()));
     return static_cast<const VecType&>(inVec1) * static_cast<const VecType&>(inVec2);
 }
 

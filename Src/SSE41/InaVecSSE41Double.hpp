@@ -66,7 +66,7 @@ public:
 
         x = _mm_add_pd(_mm_mul_pd(COEFF_A, x), COEFF_B);
 
-        alignas(64) long int allvalint[VecLength] = { _mm_cvtsd_si64(x),
+        alignas(64) long int allvalint[GetVecLength()] = { _mm_cvtsd_si64(x),
                                                       _mm_cvtsd_si64(_mm_shuffle_pd(x, x, 1)) };
 
         return _mm_castsi128_pd(_mm_set_epi64x(allvalint[1], allvalint[0]));
@@ -97,7 +97,7 @@ public:
 
         x = _mm_add_pd(_mm_mul_pd(COEFF_A, x), COEFF_B);
 
-        alignas(64) long int allvalint[VecLength] = { _mm_cvtsd_si64(x),
+        alignas(64) long int allvalint[GetVecLength()] = { _mm_cvtsd_si64(x),
                                                       _mm_cvtsd_si64(_mm_shuffle_pd(x, x, 1)) };
 
         return _mm_castsi128_pd(_mm_set_epi64x(allvalint[1], allvalint[0]));

@@ -19,88 +19,88 @@ class FlopsTestAll : public UTester< FlopsTestAll< VecType > > {
     using MaskType = typename VecType::MaskType;
 
     void TestBasic() {
-        UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , VecType::VecLength * size_t(0));
-        UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , VecType::VecLength * size_t(0));
-        UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , VecType::VecLength * size_t(0));
-        UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , VecType::VecLength * size_t(0));
-        UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , VecType::VecLength * size_t(0));
-        UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , VecType::VecLength * size_t(0));
+        UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(VecType::GetVecLength()) * size_t(0));
+        UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(VecType::GetVecLength()) * size_t(0));
+        UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(VecType::GetVecLength()) * size_t(0));
+        UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(VecType::GetVecLength()) * size_t(0));
+        UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(VecType::GetVecLength()) * size_t(0));
+        UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(VecType::GetVecLength()) * size_t(0));
 
 
         VecType a = 1;
         {
             VecType res = a + a;
-            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , VecType::VecLength * size_t(1));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , VecType::VecLength * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(VecType::GetVecLength()) * size_t(1));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(VecType::GetVecLength()) * size_t(0));
 
             res += a;
-            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , VecType::VecLength * size_t(2));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , VecType::VecLength * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(VecType::GetVecLength()) * size_t(2));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(VecType::GetVecLength()) * size_t(0));
         }
 
         VecType::ResetFlopsStats();
         {
             VecType res = a * a;
-            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , VecType::VecLength * size_t(1));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , VecType::VecLength * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(VecType::GetVecLength()) * size_t(1));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(VecType::GetVecLength()) * size_t(0));
 
             res *= a;
-            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , VecType::VecLength * size_t(2));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , VecType::VecLength * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(VecType::GetVecLength()) * size_t(2));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(VecType::GetVecLength()) * size_t(0));
         }
 
         VecType::ResetFlopsStats();
         {
             VecType res = a / a;
-            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , VecType::VecLength * size_t(1));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , VecType::VecLength * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(VecType::GetVecLength()) * size_t(1));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(VecType::GetVecLength()) * size_t(0));
 
             res /= a;
-            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , VecType::VecLength * size_t(2));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , VecType::VecLength * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(VecType::GetVecLength()) * size_t(2));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(VecType::GetVecLength()) * size_t(0));
         }
 
         VecType::ResetFlopsStats();
         {
             VecType res = a - a;
-            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , VecType::VecLength * size_t(1));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , VecType::VecLength * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(VecType::GetVecLength()) * size_t(1));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(VecType::GetVecLength()) * size_t(0));
 
             res -= a;
-            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , VecType::VecLength * size_t(2));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , VecType::VecLength * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(VecType::GetVecLength()) * size_t(2));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(VecType::GetVecLength()) * size_t(0));
         }
 
         
@@ -108,21 +108,21 @@ class FlopsTestAll : public UTester< FlopsTestAll< VecType > > {
         {
             VecType res = (a*a) + (a/a) - (a+a) * (a-a) / a;
 
-            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , VecType::VecLength * size_t(2));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , VecType::VecLength * size_t(2));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , VecType::VecLength * size_t(2));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , VecType::VecLength * size_t(2));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , VecType::VecLength * size_t(0)); 
+            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(VecType::GetVecLength()) * size_t(2));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(VecType::GetVecLength()) * size_t(2));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(VecType::GetVecLength()) * size_t(2));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(VecType::GetVecLength()) * size_t(2));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(VecType::GetVecLength()) * size_t(0));
 
             res = VecType(0.);      
 
-            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , VecType::VecLength * size_t(2));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , VecType::VecLength * size_t(2));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , VecType::VecLength * size_t(2));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , VecType::VecLength * size_t(2));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , VecType::VecLength * size_t(0));
-            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , VecType::VecLength * size_t(0)); 
+            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(VecType::GetVecLength()) * size_t(2));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(VecType::GetVecLength()) * size_t(2));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(VecType::GetVecLength()) * size_t(2));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(VecType::GetVecLength()) * size_t(2));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(VecType::GetVecLength()) * size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(VecType::GetVecLength()) * size_t(0));
         }
     }
 

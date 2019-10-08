@@ -148,8 +148,14 @@ public:
     using VecRawType           = __m256d;
     using MaskType             = InaVecMaskAVX<double>;
     using RealType             = double;
+    [[deprecated("Please use the method instead")]]
     static const int VecLength = 4;
     static const int Alignement= 32;
+    static const bool IsOfFixedSize = true;
+    
+    static constexpr int GetVecLength(){
+        return 4;
+    }
 
     inline InaVecAVX(){}
     inline InaVecAVX(const InaVecAVX&) = default;
@@ -240,7 +246,7 @@ public:
 
     // Acce to individual values
     inline double at(const int index) const {
-        alignas(Alignement) double allval[VecLength];
+        alignas(Alignement) double allval[GetVecLength()];
         _mm256_store_pd(allval, vec);
         return allval[index];
     }
@@ -304,7 +310,7 @@ public:
         __m128d valupper = _mm256_extractf128_pd(x, 1);
         __m128d vallower = _mm256_castpd256_pd128(x);
 
-        alignas(64) long long int allvalint[VecLength] = { _mm_cvtsd_si64(vallower),
+        alignas(64) long long int allvalint[GetVecLength()] = { _mm_cvtsd_si64(vallower),
                                                            _mm_cvtsd_si64(_mm_shuffle_pd(vallower, vallower, 1)),
                                                            _mm_cvtsd_si64(valupper),
                                                            _mm_cvtsd_si64(_mm_shuffle_pd(valupper, valupper, 1)) };
@@ -340,7 +346,7 @@ public:
         __m128d valupper = _mm256_extractf128_pd(x, 1);
         __m128d vallower = _mm256_castpd256_pd128(x);
 
-        alignas(64) long long int allvalint[VecLength] = { _mm_cvtsd_si64(vallower),
+        alignas(64) long long int allvalint[GetVecLength()] = { _mm_cvtsd_si64(vallower),
                                                            _mm_cvtsd_si64(_mm_shuffle_pd(vallower, vallower, 1)),
                                                            _mm_cvtsd_si64(valupper),
                                                            _mm_cvtsd_si64(_mm_shuffle_pd(valupper, valupper, 1)) };

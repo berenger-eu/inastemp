@@ -33,6 +33,8 @@
 #cmakedefine INASTEMP_USE_ALTIVEC
 #cmakedefine INASTEMP_USE_XL
 
+#cmakedefine INASTEMP_USE_SVE
+
 // Inform about best one
 #define INASTEMP_@INASTEMP_BESTTYPE@_IS_BEST
 #define INASTEMP_BEST_TYPE @INASTEMP_BESTTYPE@

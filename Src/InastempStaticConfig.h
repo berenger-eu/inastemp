@@ -94,6 +94,14 @@
 #include "ALTIVEC/InaVecALTIVECDouble.hpp"
 #endif
 
+#ifdef __ARM_FEATURE_SVE
+#define INASTEMP_USE_SVE
+#undef INASTEMP_STATIC_BEST_TYPE
+#define INASTEMP_STATIC_BEST_TYPE InaVecSVE
+#include "SVE/InaVecSVEFloat.hpp"
+#include "SVE/InaVecSVEDouble.hpp"
+#endif
+
 template < class RealType >
 using InaVecBestType = INASTEMP_STATIC_BEST_TYPE< RealType >;
 

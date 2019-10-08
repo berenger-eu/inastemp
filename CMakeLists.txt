@@ -74,19 +74,28 @@ set(INASTEMP_VERSION  "${INASTEMP_MAJOR_VERSION}.${INASTEMP_MINOR_VERSION}.${INA
 #===========================================================================
 
 # Available from version 3.1
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if((${CMAKE_MAJOR_VERSION} STREQUAL 3 AND CMAKE_MINOR_VERSION LESS 6) OR (${CMAKE_MAJOR_VERSION} LESS 3) AND (CMAKE_CXX_COMPILER_ID STREQUAL "Intel"))
-    MESSAGE(WARNING " Main -- CMAKE_CXX_STANDARD does not work with Intel compiler for cmake version < 3.6, we add -std=c++11 flag by hand which might not be compatible with your project")
-    set(INASTEMP_CXX_FLAGS "-std=c++11")
+    MESSAGE(WARNING " Main -- CMAKE_CXX_STANDARD does not work with Intel compiler for cmake version < 3.6, we add -std=c++17 flag by hand which might not be compatible with your project")
+    set(INASTEMP_CXX_FLAGS "-std=c++17")
 elseif((${CMAKE_MAJOR_VERSION} STREQUAL 3 AND CMAKE_MINOR_VERSION LESS 1) OR (${CMAKE_MAJOR_VERSION} LESS 3))
-    MESSAGE(WARNING " Main -- CMAKE_CXX_STANDARD does not work for cmake version < 3.1, we insert -std=c++11 flag by hand which might not be compatible with your project")
-    set(INASTEMP_CXX_FLAGS "-std=c++11")
+    MESSAGE(WARNING " Main -- CMAKE_CXX_STANDARD does not work for cmake version < 3.1, we insert -std=c++17 flag by hand which might not be compatible with your project")
+    set(INASTEMP_CXX_FLAGS "-std=c++17")
 endif()
 
-if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
+if(NOT CUSTOM_SYSTEM_PROCESSOR)
+    set(CUSTOM_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
+endif()
+
+if($ENV{VERBOSE})
+    MESSAGE(STATUS "Main -- CMAKE_SYSTEM_PROCESSOR = ${CMAKE_SYSTEM_PROCESSOR}")
+    MESSAGE(STATUS "Main -- CUSTOM_SYSTEM_PROCESSOR = ${CUSTOM_SYSTEM_PROCESSOR}")
+endif()
+
+if(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
     if($ENV{VERBOSE})
         MESSAGE(STATUS "Main -- compile for ppc64le architecture")
     endif()
@@ -100,13 +109,32 @@ if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
     set(ALTIVEC_CPU_RULES "")
 
     set(INASTEMP_USE_SCALAR ON)
+elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ARM" OR ${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "aarch64")
+    if($ENV{VERBOSE})
+        MESSAGE(STATUS "Main -- compile for arm architecture")
+    endif()
+    set(CUSTOM_SYSTEM_PROCESSOR "ARM")
+    
+    #  Ask CPU capacities
+    include(GetARMCpuInfos)
+    GetARMCpuInfos()
+
+    #  Ask compiler capacities
+    include(GetCompilerInfos)
+    GetCompilerInfos()
+
+    # All types from worse to best (ADD-NEW-HERE)
+    set(ALL_TYPES "SVE")
+    set(SVE_CPU_RULES "")
+
+    set(INASTEMP_USE_SCALAR ON)
 else()
     if($ENV{VERBOSE})
         MESSAGE(STATUS "Main -- compile for x86 architecture")
     endif()
     #  Ask CPU capacities
-    include(GetCpuInfos)
-    GetCpuInfos()
+    include(GetX86CpuInfos)
+    GetX86CpuInfos()
 
     #  Ask compiler capacities
     include(GetCompilerInfos)
@@ -229,9 +257,13 @@ if(NOT INASTEMP_AS_SUBPROJECT)
 
     set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -fpic -Wextra -Wnon-virtual-dtor -Wshadow -Wpointer-arith -Wcast-qual -Wconversion  -Wall -Wno-sign-conversion -pedantic -Woverloaded-virtual -Wpointer-arith -Wcast-qual -Wconversion -Wno-error")
 
-    if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
+    if(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
         # Builting functions are not correctly making variables/parameters used
         set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -Wno-unused-but-set-variable -Wno-unused-but-set-parameter")
+    endif()
+    if(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ARM")
+        # Builting functions are not correctly making variables/parameters used
+        set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -Wno-vla-extension")
     endif()
 
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)

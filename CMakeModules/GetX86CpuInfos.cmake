@@ -2,7 +2,7 @@
 # Inastemp - Berenger Bramas MPCDF - 2016
 # Under MIT Licence, please you must read the LICENCE file.
 ###########################################################################
-# This goes with the getCpuInfos.cpp
+# This goes with the getX86CpuInfos.cpp
 # This will create one CMAKE value per output option from the cpp file.
 # For example the output of the CPP file can be:
 # SSE3=TRUE;AVX=FALSE
@@ -12,13 +12,13 @@
 #
 # The binary should return 0 on success.
 ###########################################################################################
-macro(GetCpuInfos)
+macro(GetX86CpuInfos)
 # The original CPP file
-set(GetCpuInfosFile "${PROJECT_SOURCE_DIR}/CMakeModules/getCpuInfos.cpp")
+set(GetX86CpuInfosFile "${PROJECT_SOURCE_DIR}/CMakeModules/getX86CpuInfos.cpp")
 
 # Fatal error if the file does not exist
-if(NOT EXISTS ${GetCpuInfosFile})
-	message(FATAL_ERROR "The GetCpuInfosFile does not exist (${GetCpuInfosFile})")
+if(NOT EXISTS ${GetX86CpuInfosFile})
+	message(FATAL_ERROR "The GetX86CpuInfosFile does not exist (${GetX86CpuInfosFile})")
 endif()
 
 OPTION( INASTEMP_ISDE_CPU  "Set to ON to run the CPU detection over sde64" OFF )
@@ -28,36 +28,36 @@ if(INASTEMP_ISDE_CPU)
     SET( INASTEMP_ISDE_CPU_ARGS "-knl" CACHE STRING "Arguments for sde64"  )
 
     if($ENV{VERBOSE})
-    	message(STATUS "GetCpuInfosFile -- use intel SDE")
-    	message(STATUS "GetCpuInfosFile -- INASTEMP_ISDE_CPU_ARGS = ${INASTEMP_ISDE_CPU_ARGS}")
+    	message(STATUS "GetX86CpuInfosFile -- use intel SDE")
+    	message(STATUS "GetX86CpuInfosFile -- INASTEMP_ISDE_CPU_ARGS = ${INASTEMP_ISDE_CPU_ARGS}")
     endif()
     
     get_filename_component(
-		GetCpuInfosFileExec ${GetCpuInfosFile}
+		GetX86CpuInfosFileExec ${GetX86CpuInfosFile}
 		NAME_WE
 	)
 
-    set(GetCpuInfosFileExec "${CMAKE_CURRENT_BINARY_DIR}/${GetCpuInfosFileExec}")
+    set(GetX86CpuInfosFileExec "${CMAKE_CURRENT_BINARY_DIR}/${GetX86CpuInfosFileExec}")
 
     try_compile(COMPILE_RESULT_VAR
-            ${CMAKE_CURRENT_BINARY_DIR}/GetCpuInfos
-            ${GetCpuInfosFile}
+            ${CMAKE_CURRENT_BINARY_DIR}/GetX86CpuInfos
+            ${GetX86CpuInfosFile}
             OUTPUT_VARIABLE comp
-            COPY_FILE ${GetCpuInfosFileExec})
+            COPY_FILE ${GetX86CpuInfosFileExec})
 
     if(COMPILE_RESULT_VAR)
-        if(NOT EXISTS ${GetCpuInfosFileExec})
-	        message(FATAL_ERROR "The GetCpuInfosFile compiled file does not exist (${GetCpuInfosFileExec})")
+        if(NOT EXISTS ${GetX86CpuInfosFileExec})
+	        message(FATAL_ERROR "The GetX86CpuInfosFile compiled file does not exist (${GetX86CpuInfosFileExec})")
         endif()
 
-        exec_program("sde64 ${INASTEMP_ISDE_CPU_ARGS} -- ${GetCpuInfosFileExec}" ${CMAKE_CURRENT_BINARY_DIR}
+        exec_program("sde64 ${INASTEMP_ISDE_CPU_ARGS} -- ${GetX86CpuInfosFileExec}" ${CMAKE_CURRENT_BINARY_DIR}
                 OUTPUT_VARIABLE run
                 RETURN_VALUE RUN_RESULT_VAR)
     endif() 
 else()
     # Simply try and run
     try_run(RUN_RESULT_VAR COMPILE_RESULT_VAR
-          ${CMAKE_CURRENT_BINARY_DIR} ${GetCpuInfosFile}
+          ${CMAKE_CURRENT_BINARY_DIR} ${GetX86CpuInfosFile}
           COMPILE_OUTPUT_VARIABLE comp
           RUN_OUTPUT_VARIABLE run)
 endif()
@@ -77,17 +77,17 @@ if(COMPILE_RESULT_VAR AND (RUN_RESULT_VAR EQUAL 0) )
 			# create cmake variable
 			set(CPU_INFO_${optionName} ${optionValue})
 		else()
-			message(WARNING "GetCpuInfosFile wrong format for ${optionNode}.")
+			message(WARNING "GetX86CpuInfosFile wrong format for ${optionNode}.")
 		endif()
 	endforeach()
 	# output the sentence from the binrary
     if($ENV{VERBOSE})
-    	message(STATUS "GetCpuInfosFile -- results : ${CPU_OPTIONS}")
+    	message(STATUS "GetX86CpuInfosFile -- results : ${CPU_OPTIONS}")
     endif()
 else()
-	message(WARNING "GetCpuInfosFile -- did not return correctly.")
-	message(WARNING "GetCpuInfosFile -- compilation output : ${comp}.")
-	message(WARNING "GetCpuInfosFile -- execution output : ${run}.")
+	message(WARNING "GetX86CpuInfosFile -- did not return correctly.")
+	message(WARNING "GetX86CpuInfosFile -- compilation output : ${comp}.")
+	message(WARNING "GetX86CpuInfosFile -- execution output : ${run}.")
 endif()
 
-endmacro(GetCpuInfos)
+endmacro(GetX86CpuInfos)

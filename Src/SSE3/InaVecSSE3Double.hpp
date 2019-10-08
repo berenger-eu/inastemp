@@ -138,8 +138,14 @@ public:
     using VecRawType           = __m128d;
     using MaskType             = InaVecMaskSSE3<double>;
     using RealType             = double;
+     [[deprecated("Please use the method instead")]]
     static const int VecLength = 2;
     static const int Alignement= 16;
+    static const bool IsOfFixedSize = true;
+
+    static constexpr int GetVecLength(){
+        return 2;
+    }
 
     inline InaVecSSE3(){}
     inline InaVecSSE3(const InaVecSSE3&) = default;
@@ -226,7 +232,7 @@ public:
 
     // Acce to individual values
     inline double at(const int index) const {
-        alignas(Alignement) double allval[VecLength];
+        alignas(Alignement) double allval[GetVecLength()];
         _mm_store_pd(allval, vec);
         return allval[index];
     }
@@ -281,7 +287,7 @@ public:
 
         x = _mm_add_pd(_mm_mul_pd(COEFF_A, x), COEFF_B);
 
-        alignas(64) long int allvalint[VecLength] = { _mm_cvtsd_si64(x),
+        alignas(64) long int allvalint[GetVecLength()] = { _mm_cvtsd_si64(x),
                                                       _mm_cvtsd_si64(_mm_shuffle_pd(x, x, 1)) };
 
         return _mm_castsi128_pd(_mm_set_epi64x(allvalint[1], allvalint[0]));
@@ -312,7 +318,7 @@ public:
 
         x = _mm_add_pd(_mm_mul_pd(COEFF_A, x), COEFF_B);
 
-        alignas(64) long int allvalint[VecLength] = { _mm_cvtsd_si64(x),
+        alignas(64) long int allvalint[GetVecLength()] = { _mm_cvtsd_si64(x),
                                                       _mm_cvtsd_si64(_mm_shuffle_pd(x, x, 1)) };
 
         return _mm_castsi128_pd(_mm_set_epi64x(allvalint[1], allvalint[0]));
@@ -328,7 +334,7 @@ public:
     }
 
     inline InaVecSSE3 floor() const {
-        alignas(Alignement) double allval[VecLength];
+        alignas(Alignement) double allval[GetVecLength()];
         _mm_store_pd(allval, vec);
         for (int idx = 0; idx < VecLength; ++idx) {
             allval[idx] = std::floor(allval[idx]);

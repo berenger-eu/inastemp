@@ -95,13 +95,12 @@ public:
     using VecRawType           = typename VecType::VecRawType;
     using MaskType             = typename VecType::MaskType;
     using RealType             = typename VecType::RealType;
-    static const int VecLength = VecType::VecLength;
     static const int Alignement= VecType::Alignement;
+    static const bool IsOfFixedSize = VecType::IsOfFixedSize;
 
-    //! Simple check - might not be true in far future
-    static_assert(sizeof(VecType) / sizeof(RealType) == VecLength,
-                  "The number of values inside the vector must be"
-                  "equal to size of vec divided by size of scalar");
+    static int GetVecLength(){
+        return VecType::GetVecLength();
+    }
 
     using VecType::VecType;
 

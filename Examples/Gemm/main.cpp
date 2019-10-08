@@ -36,6 +36,29 @@ void CopyMat(RealType* __restrict__ dest, const size_t leadingDest,
     }
 }
 
+template <class RealType>
+void CopyMat(RealType* __restrict__ dest, const size_t leadingDest,
+             const RealType* __restrict__ src, const size_t leadingSrc,
+             const size_t BlockSize){
+
+    for(size_t idxl = 0 ; idxl < leadingDest ; ++idxl){
+        for(size_t idxb = 0 ; idxb < BlockSize ; ++idxb){
+            dest[idxb*leadingDest + idxl] = src[idxb*leadingSrc+idxl];
+        }
+    }
+}
+
+template <class RealType>
+void CopyMatT(RealType* __restrict__ dest, const size_t leadingDest, const size_t lengthCopy,
+             const RealType* __restrict__ src, const size_t leadingSrc,
+              const size_t BlockSize){
+
+    for(size_t idxl = 0 ; idxl < lengthCopy ; ++idxl){
+        for(size_t idxb = 0 ; idxb < BlockSize ; ++idxb){
+            dest[idxl*leadingDest + idxb] = src[idxb*leadingSrc+idxl];
+        }
+    }
+}
 template <class RealType, size_t BlockSize>
 void CopyMatT(RealType* __restrict__ dest, const size_t leadingDest, const size_t lengthCopy,
              const RealType* __restrict__ src, const size_t leadingSrc){
@@ -91,6 +114,32 @@ void ScalarGemmNoBlock(const RealType* __restrict__ A, const RealType* __restric
 ///
 ///////////////////////////////////////////////////////////////////////////////////
 
+template <class RealType>
+void ScalarGemm(const RealType* __restrict__ A, const RealType* __restrict__ B,
+                RealType* __restrict__ C, const size_t size,
+                const size_t BlockSize){
+
+    for(size_t j_outer = 0 ; j_outer < size ; j_outer += BlockSize){
+        for(size_t i_outer = 0 ; i_outer < size ; i_outer += BlockSize){
+            for(size_t k = 0 ; k < size ; ++k){
+
+                const RealType* __restrict__ ptrA = &A[k*size + i_outer];
+                const RealType* __restrict__ ptrB = &B[j_outer*size + i_outer];
+                RealType* __restrict__ ptrC = &C[k*size + j_outer];
+
+                for(size_t idxBlockCol = 0 ; idxBlockCol < BlockSize ; ++idxBlockCol){
+                    RealType v = 0;
+                    for(size_t idxVal = 0 ; idxVal < BlockSize ; ++idxVal){
+                        v += ptrA[idxVal] * ptrB[idxBlockCol*size + idxVal];
+                    }
+                    ptrC[idxBlockCol] += v;
+                }
+            }
+        }
+    }
+}
+
+
 template <class RealType, size_t BlockSize>
 void ScalarGemm(const RealType* __restrict__ A, const RealType* __restrict__ B,
                 RealType* __restrict__ C, const size_t size){
@@ -115,12 +164,64 @@ void ScalarGemm(const RealType* __restrict__ A, const RealType* __restrict__ B,
     }
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////////
 ///
 /// Scalar with a blocking scheme more close Goto-blas
 ///
 ///////////////////////////////////////////////////////////////////////////////////
+
+template <class RealType, size_t PanelSizeK, size_t PanelSizeiA,
+          size_t PanelSizejB>
+void ScalarGemmV2(const RealType* __restrict__ A, const RealType* __restrict__ B,
+                RealType* __restrict__ C, const size_t size,
+                  const size_t BlockSize){
+
+    assert(PanelSizeK >= BlockSize);// "PanelSizeK must be greater than block"
+    assert(PanelSizeiA >= BlockSize);// "PanelSizeiA must be greater than block"
+    assert(PanelSizejB >= BlockSize);// "PanelSizejB must be greater than block"
+    assert((PanelSizeK/BlockSize)*BlockSize == PanelSizeK);// "PanelSizeK must be a multiple of block"
+    assert((PanelSizeiA/BlockSize)*BlockSize == PanelSizeiA);// "PanelSizeiA must be a multiple of block"
+    assert((PanelSizejB/BlockSize)*BlockSize == PanelSizejB);// "PanelSizejB must be a multiple of block"
+    // Restrict to a multiple of panelsize for simplcity
+    assert((size/PanelSizeK)*PanelSizeK == size);
+    assert((size/PanelSizeiA)*PanelSizeiA == size);
+    assert((size/PanelSizejB)*PanelSizejB == size);
+
+    for(size_t ip = 0 ; ip < size ; ip += PanelSizeiA){
+        for(size_t jp = 0 ; jp < size ; jp += PanelSizejB){
+
+            for(size_t kp = 0 ; kp < size ; kp += PanelSizeK){
+
+                alignas(64) RealType panelA[PanelSizeiA*PanelSizeK];
+                alignas(64) RealType panelB[PanelSizeK*BlockSize];
+
+                for(size_t jb = 0 ; jb < PanelSizejB ; jb += BlockSize){
+
+                    CopyMat<RealType>(panelB, PanelSizeK, &B[jp*size + kp], size, BlockSize);
+
+                    for(size_t ib = 0 ; ib < PanelSizeiA ; ib += BlockSize){
+
+                        if(jb == 0){
+                            CopyMat<RealType>(&panelA[PanelSizeK*ib], PanelSizeK, &A[(ib+ip)*size + kp], size, BlockSize);
+                        }
+
+                        for(size_t idxRow = 0 ; idxRow < BlockSize ; ++idxRow){
+                            for(size_t idxCol = 0 ; idxCol < BlockSize ; ++idxCol){
+                                RealType sum = 0;
+                                for(size_t idxK = 0 ; idxK < PanelSizeK ; ++idxK){
+                                    sum += panelA[(idxRow+ib)*PanelSizeK+ idxK]
+                                            * panelB[idxCol*PanelSizeK+ idxK];
+                                }
+                                C[(jp+jb+idxCol)*size + ip + ib + idxRow] += sum;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 template <class RealType, size_t PanelSizeK, size_t PanelSizeiA,
           size_t PanelSizejB, size_t BlockSize>
@@ -172,7 +273,6 @@ void ScalarGemmV2(const RealType* __restrict__ A, const RealType* __restrict__ B
         }
     }
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////
 ///
@@ -833,7 +933,7 @@ template <class RealType, size_t PanelSizeK, size_t PanelSizeiA,
 void ScalarGemmIna(const RealType* __restrict__ A, const RealType* __restrict__ B,
                 RealType* __restrict__ C, const size_t size){
 
-    const int BlockSize = VecType::VecLength;
+    const size_t BlockSize = VecType::GetVecLength();
 
     static_assert(PanelSizeK >= BlockSize, "PanelSizeK must be greater than block");
     static_assert(PanelSizeiA >= BlockSize, "PanelSizeiA must be greater than block");
@@ -894,7 +994,7 @@ template <class RealType, size_t PanelSizeK, size_t PanelSizeiA,
 void ScalarGemmInaV2(const RealType* __restrict__ A, const RealType* __restrict__ B,
                 RealType* __restrict__ C, const size_t size){
 
-    const int BlockSize = VecType::VecLength;
+    const size_t BlockSize = VecType::GetVecLength();
 
     static_assert(PanelSizeK >= BlockSize, "PanelSizeK must be greater than block");
     static_assert(PanelSizeiA >= BlockSize, "PanelSizeiA must be greater than block");
@@ -1031,7 +1131,12 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
         InaTimer timer;
 
         for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
-            ScalarGemm<RealType, InaVecBestType<RealType>::VecLength>(A.get(), B.get(), CScalar.get(), matDim);
+            if constexpr (InaVecBestType<RealType>::IsOfFixedSize){
+                ScalarGemm<RealType, InaVecBestType<RealType>::GetVecLength()>(A.get(), B.get(), CScalar.get(), matDim);
+            }
+            else{
+                ScalarGemm<RealType>(A.get(), B.get(), CScalar.get(), matDim, size_t(InaVecBestType<RealType>::GetVecLength()));
+            }
         }
 
         timer.stop();
@@ -1052,8 +1157,14 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
         InaTimer timer;
 
         for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
-            ScalarGemmV2<RealType, PanelSizeK, PanelSizeA, PanelSizeB,
-                InaVecBestType<RealType>::VecLength>(A.get(), B.get(), CScalar.get(), matDim);
+            if constexpr (InaVecBestType<RealType>::IsOfFixedSize){
+                ScalarGemmV2<RealType, PanelSizeK, PanelSizeA, PanelSizeB,
+                    InaVecBestType<RealType>::GetVecLength()>(A.get(), B.get(), CScalar.get(), matDim);
+            }
+            else{
+                ScalarGemmV2<RealType, PanelSizeK, PanelSizeA, PanelSizeB>
+                    (A.get(), B.get(), CScalar.get(), matDim, size_t(InaVecBestType<RealType>::GetVecLength()));
+            }
         }
 
         timer.stop();
@@ -1077,7 +1188,7 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 
         for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
             InaVecSSE41_ScalarGemmInaV2<PanelSizeK, PanelSizeA, PanelSizeB,
-                InaVecSSE41<RealType>::VecLength>(A.get(), B.get(), CIna.get(), matDim);
+                InaVecSSE41<RealType>::GetVecLength()>(A.get(), B.get(), CIna.get(), matDim);
         }
 
         timer.stop();
@@ -1099,7 +1210,7 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 
         for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
             InaVecAVX_ScalarGemmInaV2<PanelSizeK, PanelSizeA, PanelSizeB,
-                InaVecAVX<RealType>::VecLength>(A.get(), B.get(), CIna.get(), matDim);
+                InaVecAVX<RealType>::GetVecLength()>(A.get(), B.get(), CIna.get(), matDim);
         }
 
 
@@ -1121,7 +1232,7 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 
         for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
             InaVecAVX512KNL_ScalarGemmInaV2<PanelSizeK, PanelSizeA, PanelSizeB,
-                InaVecAVX512KNL<RealType>::VecLength>(A.get(), B.get(), CIna.get(), matDim);
+                InaVecAVX512KNL<RealType>::GetVecLength()>(A.get(), B.get(), CIna.get(), matDim);
         }
 
         timer.stop();
@@ -1142,7 +1253,7 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 
         for(size_t idxLoop = 0 ; idxLoop < NbOverLoop ; ++idxLoop){
             InaVecALTIVEC_ScalarGemmInaV2<PanelSizeK, PanelSizeA, PanelSizeB,
-                InaVecALTIVEC<RealType>::VecLength>(A.get(), B.get(), CIna.get(), matDim);
+                InaVecALTIVEC<RealType>::GetVecLength()>(A.get(), B.get(), CIna.get(), matDim);
         }
 
         timer.stop();
