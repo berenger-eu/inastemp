@@ -76,6 +76,12 @@ elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ARM")
     endif()
 
     set(ALL_TYPES "SVE")
+elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "AURORA")
+    SET( ARCH_NATIVE_FLAG "-target ve -fno-vectorize -fno-slp-vectorize -fno-crash-diagnostics" CACHE STRING "Additional flag for the compiler capacities detection such as -target ve -v for example"  )
+    set(SXA_FLAGS "${ARCH_NATIVE_FLAG}")
+
+    set(ALL_TYPES "SXA")
+else()
 else()
     # X86
     SET( ARCH_NATIVE_FLAG "-march=native -mtune=native" CACHE STRING "Additional flag for the compiler capacities detection"  )

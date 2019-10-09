@@ -128,6 +128,20 @@ elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ARM" OR ${CUSTOM_SYSTEM_PROCESSOR} S
     set(SVE_CPU_RULES "")
 
     set(INASTEMP_USE_SCALAR ON)
+elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "AURORA")
+    if($ENV{VERBOSE})
+        MESSAGE(STATUS "Main -- compile for Nec AURORA architecture")
+    endif()
+    
+    #  Ask compiler capacities
+    include(GetCompilerInfos)
+    GetCompilerInfos()
+
+    # All types from worse to best (ADD-NEW-HERE)
+    set(ALL_TYPES "SXA")
+    set(SXA_CPU_RULES "")
+
+    set(INASTEMP_USE_SCALAR ON)
 else()
     if($ENV{VERBOSE})
         MESSAGE(STATUS "Main -- compile for x86 architecture")
