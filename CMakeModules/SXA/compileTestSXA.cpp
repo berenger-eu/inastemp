@@ -10,8 +10,8 @@ To compile:
 
 
 int main(){
-    __vr vec = _ve_vbrd_vs_f64(4);
-    __vr res = _ve_vfmuld_vvv(vec, vec);
+    __vr vec = _vel_pvbrd_vsl(4,256);
+    __vr res = _vel_vfmuld_vvvl(vec, vec, 256);
     __vr resand = _vel_vand_vvvl(res, res, 10);
     
     return 0;

@@ -82,7 +82,6 @@ elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "AURORA")
 
     set(ALL_TYPES "SXA")
 else()
-else()
     # X86
     SET( ARCH_NATIVE_FLAG "-march=native -mtune=native" CACHE STRING "Additional flag for the compiler capacities detection"  )
 
