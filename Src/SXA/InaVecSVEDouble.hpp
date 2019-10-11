@@ -31,17 +31,15 @@ class InaVecSXA;
 // Mask type
 template <>
 class InaVecMaskSXA<double> {
-    __vm mask;
+    __vm256 mask;
 
 public:
     // Classic constructors
     inline InaVecMaskSXA() {
-        _ve_lvl(256);
-        mask = _vel_vbrdw_vsl(0,256)
+        mask = _vel_xorm_mmm(mask,mask);
     }
 
     inline InaVecMaskSXA(const InaVecMaskSXA& inMask){
-        _ve_lvl(256);
         mask = inMask.mask;
     }
 
@@ -71,51 +69,51 @@ public:
 
     // Bool data type compatibility
     inline explicit InaVecMaskSXA(const bool inBool) : InaVecMaskSXA() {
-        mask = (inBool? _vel_vbrdw_vsl(0xFFFFFFFFU,256) : _vel_vbrdw_vsl(0,256));
+        mask = (inBool? _vel_vfmklat_ml(0xFFFFFFFFU) : _vel_vfmklat_ml(0));
     }
 
     inline InaVecMaskSXA& operator=(const bool inBool){
-        mask = (inBool? _vel_vbrdw_vsl(0xFFFFFFFFU,256) : _vel_vbrdw_vsl(0,256));
+        mask = (inBool? _vel_vfmklat_ml(0xFFFFFFFFU) : _vel_vfmklat_ml(0));
         return (*this);
     }
 
     // Binary methods
     inline InaVecMaskSXA Not() const{
-        return _vel_vxor_vvvl(mask, _vel_vbrdw_vsl(0xFFFFFFFFU,256), 256);
+        return _vel_negm_mm(mask);
     }
 
     inline bool isAllTrue() const{
-        return _vel_lvsl_svs(_vel_vrand_vvl(mask, 256), 0) == 0xFFFFFFFFFFFFFFFFUL;
+        return _vel_pcvm_sml(mask, 256) == 256*8*8;
     }
 
     inline bool isAllFalse() const{
         // true if all zero
-        return _vel_lvsl_svs(_vel_vror_vvl(mask, 256),0) == 0xFFFFFFFFFFFFFFFFUL == 0;
+        return _vel_pcvm_sml(mask, 256) == 0;
     }
 
     // Double args methods
     inline static InaVecMaskSXA And(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_vand_vvvl(inMask1.mask,inMask2.mask, 256);
+        return _vel_andm_mmm(inMask1.mask,inMask2.mask);
     }
 
     inline static InaVecMaskSXA NotAnd(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_vand_vvvl(_vel_vxor_vvvl(inMask1.mask, _vel_vbrdw_vsl(0xFFFFFFFFU,256), 256),inMask2.mask, 256);
+        return _vel_andm_mmm(_vel_xorm_mmm(inMask1.mask, _vel_vfmklat_ml(0xFFFFFFFFU), 256),inMask2.mask, 256);
     }
 
     inline static InaVecMaskSXA Or(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_vor_vvvl(inMask1.mask,inMask2.mask, 256);
+        return _vel_orm_mmm(inMask1.mask,inMask2.mask);
     }
 
     inline static InaVecMaskSXA Xor(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_vxor_vvvl(inMask1.mask,inMask2.mask, 256);
+        return _vel_xorm_mmm(inMask1.mask,inMask2.mask);
     }
 
     inline static bool IsEqual(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_lvsl_svs(_vel_vror_vvl(_vel_vcmpul_vvvl(inMask1.mask,inMask2.mask, 256),256), 0) == 0;
+        return _vel_lvsl_svs(_vel_vror_vvl(_vel_vfcmpd_vvvl(inMask1.mask,inMask2.mask, 256),256), 0) == 0;
     }
 
     inline static bool IsNotEqual(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_lvsl_svs(_vel_vror_vvl(_vel_vcmpul_vvvl(inMask1.mask,inMask2.mask, 256),256), 0) != 0;
+        return _vel_lvsl_svs(_vel_vror_vvl(_vel_vfcmpd_vvvl(inMask1.mask,inMask2.mask, 256),256), 0) != 0;
     }
 };
 
@@ -351,73 +349,65 @@ public:
     }
 
     inline InaVecSXA floor() const {
-        __vr maskInLongInt = svand_z(
-                                svcmple_f64( _vel_vbrdd_vsvl(double(std::numeric_limits<long int>::min())), vec),
-                                svcmple_f64( vec, _vel_vbrdd_vsvl(double(std::numeric_limits<long int>::max()))));
-        __vr vecConvLongInt = _vel_vcvtldrz_vvl(maskInLongInt, vec);
-        __vr vecConvLongIntDouble = _vel_vcvtdl_vvl(maskInLongInt, vecConvLongInt);
-        __vr maskNegative = _vel_vcmpsl_vsvl( 0, vec, 256);
-        return svsel_f64(maskInLongInt, svsel_f64(maskNegative,  _vel_vfsubd_vvvl( vecConvLongIntDouble, _vel_vbrdd_vsvl(1)), vecConvLongIntDouble), vec);
+        __vm256 maskInLongInt = _vel_andm_mmm(
+                                _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( _vel_vbrdd_vsvl(double(std::numeric_limits<long int>::min())), vec), 256),
+                                _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( vec, _vel_vbrdd_vsvl(double(std::numeric_limits<long int>::max()))), 256));
+        __vr vecConvLongInt = _vel_vcvtldrz_vvl(vec, 256);
+        __vr vecConvLongIntDouble = _vel_vcvtdl_vvl(vec, 256);
+        __vm256 maskNegative = _vel_vfmklgt_mvl(_vel_vcmpsl_vsvl( vec, 0, 256), 256);
+        return _vel_vmrg_vvvml(maskInLongInt, _vel_vmrg_vvvml(maskNegative,  _vel_vfsubd_vvvl( vecConvLongIntDouble, _vel_vbrdd_vsvl(1)), vecConvLongIntDouble), vec);
     }
 
     inline InaVecSXA signOf() const {
-        return _vel_vcmpul_vvvl(vec, _vel_vbrdd_vsvl(0), vec);
+        return _vel_vfcmpd_vvvl(vec, _vel_vbrdd_vsvl(0), vec);
     }
 
     inline InaVecSXA isPositive() const {
-        return svsel_f64(svcmple_f64( _vel_vbrdd_vsvl(0), vec),
-                         _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
+        return _vel_vmrg_vvvml(isPositiveMask(), _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
     }
 
     inline InaVecSXA isNegative() const {
-        return svsel_f64(svcmpge_f64( _vel_vbrdd_vsvl(0), vec),
-                         _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
+        return _vel_vmrg_vvvml(isNegativeMask(), _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
     }
 
     inline InaVecSXA isPositiveStrict() const {
-        return svsel_f64(svcmplt_f64( _vel_vbrdd_vsvl(0), vec),
-                         _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
+        return _vel_vmrg_vvvml(isPositiveStrictMask(), _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
     }
 
     inline InaVecSXA isNegativeStrict() const {
-        return svsel_f64(svcmpgt_f64( _vel_vbrdd_vsvl(0), vec),
-                         _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
+        return _vel_vmrg_vvvml(isNegativeStrictMask(), _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
     }
 
     inline InaVecSXA isZero() const {
-        return svsel_f64(svcmpeq_f64( _vel_vbrdd_vsvl(0), vec),
-                         _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
+        return _vel_vmrg_vvvml(isZeroMask(), _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
     }
 
     inline InaVecSXA isNotZero() const {
-        return svsel_f64(svcmpne_f64( _vel_vbrdd_vsvl(0), vec),
-                         _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
+        return _vel_vmrg_vvvml(isNotZeroMask(), _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
     }
 
     inline InaVecMaskSXA<double> isPositiveMask() const {
-        return svorr_z( svcmpeq_f64( _vel_vbrdd_vsvl(0), vec),
-                       svcmple_f64( _vel_vbrdd_vsvl(0), vec));
+        return _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( _vel_vbrdd_vsvl(0-std::numeric_limits<double>::epsilon()), vec), 256);
     }
 
     inline InaVecMaskSXA<double> isNegativeMask() const {
-        return svorr_z( svcmpeq_f64( _vel_vbrdd_vsvl(0), vec),
-                       svcmpge_f64( _vel_vbrdd_vsvl(0), vec));
+        return _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( vecl, _vel_vbrdd_vsvl(0+std::numeric_limits<double>::epsilon())), 256);
     }
 
     inline InaVecMaskSXA<double> isPositiveStrictMask() const {
-        return svcmplt_f64( _vel_vbrdd_vsvl(0), vec);
+        return _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( _vel_vbrdd_vsvl(0-std::numeric_limits<double>::epsilon()), vec), 256);
     }
 
     inline InaVecMaskSXA<double> isNegativeStrictMask() const {
-        return svcmpgt_f64( _vel_vbrdd_vsvl(0), vec);
+        return _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( vecl, _vel_vbrdd_vsvl(0+std::numeric_limits<double>::epsilon())), 256);
     }
 
     inline InaVecMaskSXA<double> isZeroMask() const {
-        return svcmpeq_f64( _vel_vbrdd_vsvl(0), vec);
+        return _vel_negm_mm(_vel_vfmklgt_mvl(_vel_vand_vvvl( _vel_pvbrd_vsl(~0UL), vec), 256));
     }
 
     inline InaVecMaskSXA<double> isNotZeroMask() const {
-        return svcmpne_f64( _vel_vbrdd_vsvl(0), vec);
+        return _vel_vfmklgt_mvl(_vel_vand_vvvl( _vel_pvbrd_vsl(~0UL), vec), 256);
     }
 
     // Static basic methods
@@ -430,75 +420,75 @@ public:
     }
 
     inline static InaVecSXA Min(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return svmin_f64_z( inVec1.vec, inVec2.vec);
+        return _vel_vminswsx_vvvl( inVec1.vec, inVec2.vec, 256);
     }
 
     inline static InaVecSXA Max(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return svmax_f64_z( inVec1.vec, inVec2.vec);
+        return _vel_vmaxswsx_vvvl( inVec1.vec, inVec2.vec, 256);
     }
 
     inline static InaVecSXA IsLowerOrEqual(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vbrdd_vsvl_z(svcmple_f64( inVec1.vec, inVec2.vec), 1);
+        return _vel_vmrg_vvvml(IsLowerOrEqualMask(), _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
     }
 
     inline static InaVecSXA IsLower(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vbrdd_vsvl_z(svcmplt_f64( inVec1.vec, inVec2.vec), 1);
+        return _vel_vmrg_vvvml(IsLowerMask(), _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
     }
 
     inline static InaVecSXA IsGreaterOrEqual(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vbrdd_vsvl_z(svcmpge_f64( inVec1.vec, inVec2.vec), 1);
+        return _vel_vmrg_vvvml(IsGreaterOrEqualMask(), _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
     }
 
     inline static InaVecSXA IsGreater(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vbrdd_vsvl_z(svcmpgt_f64( inVec1.vec, inVec2.vec), 1);
+        return _vel_vmrg_vvvml(IsGreaterMask(), _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
     }
 
     inline static InaVecSXA IsEqual(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vbrdd_vsvl_z(svcmpeq_f64( inVec1.vec, inVec2.vec), 1);
+        return _vel_vmrg_vvvml(IsEqualMask(), _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
     }
 
     inline static InaVecSXA IsNotEqual(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vbrdd_vsvl_z(svcmpne_f64( inVec1.vec, inVec2.vec), 1);
+        return _vel_vmrg_vvvml(IsNotEqualMask(), _vel_vbrdd_vsvl(1), _vel_vbrdd_vsvl(0));
     }
 
     inline static InaVecMaskSXA<double> IsLowerOrEqualMask(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return svcmple_f64( inVec1.vec, inVec2.vec);
+        return _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( _vel_vsub_vvvl(inVec1.mask, _vel_vbrdd_vsvl(std::numeric_limits<double>::epsilon()), inVec2.mask), 256);
     }
 
     inline static InaVecMaskSXA<double> IsLowerMask(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return svcmplt_f64( inVec1.vec, inVec2.vec);
+        return _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( inVec1.mask, inVec2.mask), 256);
     }
 
     inline static InaVecMaskSXA<double> IsGreaterOrEqualMask(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return svcmpge_f64( inVec1.vec, inVec2.vec);
+        return _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( inVec2.mask, inVec1.mask), 256);
     }
 
     inline static InaVecMaskSXA<double> IsGreaterMask(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return svcmpgt_f64( inVec1.vec, inVec2.vec);
+        return _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( _vel_vsub_vvvl(inVec2.mask, _vel_vbrdd_vsvl(std::numeric_limits<double>::epsilon()), inVec1.mask), 256);
     }
 
     inline static InaVecMaskSXA<double> IsEqualMask(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return svcmpeq_f64( inVec1.vec, inVec2.vec);
+        return  InaVecMaskSXA<double>::And(IsGreaterOrEqualMask(), IsLowerOrEqualMask()));
     }
 
     inline static InaVecMaskSXA<double> IsNotEqualMask(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return svcmpne_f64( inVec1.vec, inVec2.vec);
+        return  InaVecMaskSXA<double>::Xor(IsGreaterOrEqualMask(), IsLowerOrEqualMask()));
     }
 
     inline static InaVecSXA BitsAnd(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return svreinterpret_f64_u64(svand_u64_z( svreinterpret_u64_f64(inVec1.vec), svreinterpret_u64_f64(inVec2.vec)));
+        return _vel_vand_vvvl(inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecSXA BitsNotAnd(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return svreinterpret_f64_u64(svbic_u64_z( svreinterpret_u64_f64(inVec2.vec), svreinterpret_u64_f64(inVec1.vec)));
+        return _vel_vand_vvvl(_vel_vxor_vvvl(inVec1.vec, _vel_pvbrd_vsl(~0UL)), inVec2.vec);
     }
 
     inline static InaVecSXA BitsOr(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return svreinterpret_f64_u64(svorr_u64_z( svreinterpret_u64_f64(inVec1.vec), svreinterpret_u64_f64(inVec2.vec)));
+        return _vel_vor_vvvl(inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecSXA BitsXor(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return svreinterpret_f64_u64(sveor_u64_z( svreinterpret_u64_f64(inVec1.vec), svreinterpret_u64_f64(inVec2.vec)));
+        return _vel_vxor_vvvl(inVec1.vec, inVec2.vec);
     }
 
     inline static  const char* GetName() {
@@ -510,15 +500,15 @@ public:
     }
 
     inline static InaVecSXA IfElse(const InaVecMaskSXA<double>& inMask, const InaVecSXA& inIfTrue, const InaVecSXA& inIfFalse) {
-        return svsel_f64(__vr(inMask), inIfTrue.vec, inIfFalse.vec);
+        return _vel_vmrg_vvvml(__vm256(inMask), inIfTrue.vec, inIfFalse.vec);
     }
 
     inline static InaVecSXA IfTrue(const InaVecMaskSXA<double>& inMask, const InaVecSXA& inIfTrue) {
-        return svsel_f64(__vr(inMask), inIfTrue.vec, _vel_vbrdd_vsvl(0));
+        return _vel_vmrg_vvvml(__vm256(inMask), inIfTrue.vec, _vel_vbrdd_vsvl(0));
     }
 
     inline static InaVecSXA IfFalse(const InaVecMaskSXA<double>& inMask, const InaVecSXA& inIfFalse) {
-        return svsel_f64(__vr(inMask), _vel_vbrdd_vsvl(0), inIfFalse.vec);
+        return _vel_vmrg_vvvml(__vm256(inMask), _vel_vbrdd_vsvl(0), inIfFalse.vec);
     }
 
     // Inner operators
