@@ -10,7 +10,7 @@
 #include "InaFastExp.hpp"
 
 #include <velintrin.h>
-#include <cmath> TODO
+#include <cmath>
 #include <initializer_list>
 #include <limits>
 
@@ -143,7 +143,7 @@ public:
     using MaskType             = InaVecMaskSXA<double>;
     using RealType             = double;
     static const int Alignement= 1;
-    static const bool IsOfFixedSize = false;
+    static const bool IsOfFixedSize = true;
 
     static constexpr int GetVecLength(){
         return 256;
@@ -337,7 +337,7 @@ public:
     }
 
     inline InaVecSXA abs() const {
-      return _vel_vand_vvvl( vec, _vel_pvbrd_vsl(0x7FFFFFFFFFFFFFFFL, 256), 256);
+      return _vel_vand_vvvl( vec, _vel_pvbrd_vsl(0x7FFFFFFFFFFFFFFFUL, 256), 256);
     }
 
     inline InaVecSXA floor() const {
@@ -534,7 +534,7 @@ public:
         return _vel_vxor_vvvl(vec, _vel_pvbrd_vsl(0x8000000000000000UL, 256), 256);
     }
 
-    inline InaVecSXA<double> pow(std::size_t power) const{ TODO
+    inline InaVecSXA<double> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecSXA<double>>(*this, power);
     }
 
