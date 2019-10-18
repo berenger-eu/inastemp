@@ -23,6 +23,8 @@ class alignas(32) InaVecAVX2<double> : public InaVecAVX<double> {
     using Parent = InaVecAVX<double>;
 
 public:
+    using Parent::GetVecLength;
+
     using InaVecAVX<double>::InaVecAVX;
 
     inline InaVecAVX2(){}

@@ -24,6 +24,8 @@ class alignas(16) InaVecSSE41<float> : public InaVecSSSE3<float> {
     using Parent = InaVecSSSE3<float>;
 
 public:
+    using Parent::GetVecLength;
+
     using InaVecSSSE3<float>::InaVecSSSE3;
 
     inline InaVecSSE41(){}
