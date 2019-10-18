@@ -1,5 +1,9 @@
 # Inastemp - Intrinsics as template
 
+[![pipeline status](https://gitlab.inria.fr/bramas/inastemp/badges/master/pipeline.svg)](https://gitlab.inria.fr/bramas/inastemp/commits/master)
+
+[![coverage report](https://gitlab.inria.fr/bramas/inastemp/badges/master/coverage.svg)](https://gitlab.inria.fr/bramas/inastemp/commits/master)
+
 Version : 0.1 (29/06/2016)
 
 [TOC]
