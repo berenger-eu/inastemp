@@ -30,16 +30,6 @@ inastempclangsde:
   tags:
     - medium
 
-inastempgcc48:
-  script:
-    - mkdir build
-    - cd build
-    - VERBOSE=1 CC=gcc-4.8 CXX=g++-4.8 cmake ..
-    - make
-    - make test
-  tags:
-    - medium
-
 inastempsdep4p:
   script:
     - mkdir build
