@@ -90,9 +90,7 @@ public:
     static const int Alignement= VecType::Alignement;
     static const bool IsOfFixedSize = VecType::IsOfFixedSize;
 
-    static int GetVecLength(){
-        return VecType::GetVecLength();
-    }
+    using VecType::GetVecLength;
 
     using VecType::VecType;
 

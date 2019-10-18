@@ -226,23 +226,14 @@ list(GET ALL_USED_TYPES -1 INASTEMP_BESTTYPE )
 if(${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX )
     # For test coverage
     option(INASTEMP_WITH_PROF "Enable profiling and coverage report analysis" OFF)
-
-    if(INASTEMP_WITH_PROF)
-        set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
-        list(APPEND INASTEMP_LIBRARIES "-fprofile-arcs")
-
-        add_custom_target(lcov_clean
-                   COMMAND lcov --directory "${CMAKE_BINARY_DIR}" --zerocounters
-                   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
-
-        add_custom_target(lcov_capture
-                   COMMAND lcov --directory "${CMAKE_BINARY_DIR}" --capture --output-file "${CMAKE_BINARY_DIR}/app.info"
-                   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
-
-        add_custom_target(lcov_html
-                   COMMAND genhtml --output-directory "${CMAKE_BINARY_DIR}/coverage" --demangle-cpp --sort --title "Complexes" --function-coverage --branch-coverage --legend "${CMAKE_BINARY_DIR}/app.info"
-                   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
-
+    
+    if( USE_COVERAGE )
+        message(STATUS "Use code coverage")
+        set(CMAKE_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -g -O0 --coverage")
+        list(APPEND INASTEMP_LIBRARIES gcov)
+        # Then one can use these commande:
+        # lcov --directory CMakeFiles/ -c -o coverage-rapport.info
+        # genhtml -o ./coverage -t "Coverage example" coverage-rapport.info
         message(STATUS "INASTEMP_WITH_PROF has been turned to ${INASTEMP_WITH_PROF}")
     endif()
 endif()

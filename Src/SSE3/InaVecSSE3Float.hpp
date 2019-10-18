@@ -327,7 +327,7 @@ public:
     inline InaVecSSE3 floor() const {
         alignas(Alignement) float allval[GetVecLength()];
         _mm_store_ps(allval, vec);
-        for (int idx = 0; idx < VecLength; ++idx) {
+        for (int idx = 0; idx < GetVecLength(); ++idx) {
             allval[idx] = std::floor(allval[idx]);
         }
         return _mm_loadu_ps(allval);

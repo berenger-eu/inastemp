@@ -354,6 +354,7 @@ inline void InaVecALTIVEC_exp(const double inVal[], double outVal[]) {
 template <class VecType>
 void GenericExpInavec(const size_t NbOverLoop, const size_t NbExp){
     using RealType = typename VecType::RealType;
+    const int VecLength = InaVecSSE41<RealType>::GetVecLength();
     // Note : we increase the length of the vector to avoid checking the loop size
     std::unique_ptr< RealType[] > resIna(new RealType[NbExp + VecType::GetVecLength()]);
     InaTimer timer;
@@ -425,16 +426,16 @@ void compareExpTime(const size_t NbOverLoop, const size_t NbExp){
 
     {
         // Raw SIMD
-        const int GetVecLength() = InaVecSSE41<RealType>::GetVecLength();
+        const int VecLength = InaVecSSE41<RealType>::GetVecLength();
         // Note : we increase the length of the vector to avoid checking the loop size
-        std::unique_ptr< RealType[] > resSimd(new RealType[NbExp + GetVecLength()]);
+        std::unique_ptr< RealType[] > resSimd(new RealType[NbExp + VecLength]);
         InaTimer timer;
 
         for (size_t idxLoop = 0; idxLoop < NbOverLoop; ++idxLoop) {
-            for (size_t idx = 0; idx < NbExp; idx += GetVecLength()) {
-                alignas(64) RealType bufferX[GetVecLength()];
+            for (size_t idx = 0; idx < NbExp; idx += VecLength) {
+                alignas(64) RealType bufferX[VecLength];
                 // Copy value into a buffer since we do it on the fly
-                for (size_t idxX = 0; idxX < GetVecLength(); ++idxX) {
+                for (size_t idxX = 0; idxX < VecLength; ++idxX) {
                     bufferX[idxX] = static_cast<RealType>((idx + idxX) % 200);
                 }
                 InaVecSSE41_exp(bufferX, &resSimd[idx]);
@@ -454,16 +455,16 @@ void compareExpTime(const size_t NbOverLoop, const size_t NbExp){
 
     {
         // Raw SIMD
-        const int GetVecLength() = InaVecAVX<RealType>::GetVecLength();
+        const int VecLength = InaVecAVX<RealType>::GetVecLength();
         // Note : we increase the length of the vector to avoid checking the loop size
-        std::unique_ptr< RealType[] > resSimd(new RealType[NbExp + GetVecLength()]);
+        std::unique_ptr< RealType[] > resSimd(new RealType[NbExp + VecLength]);
         InaTimer timer;
 
         for (size_t idxLoop = 0; idxLoop < NbOverLoop; ++idxLoop) {
-            for (size_t idx = 0; idx < NbExp; idx += GetVecLength()) {
-                alignas(64) RealType bufferX[GetVecLength()];
+            for (size_t idx = 0; idx < NbExp; idx += VecLength) {
+                alignas(64) RealType bufferX[VecLength];
                 // Copy value into a buffer since we do it on the fly
-                for (size_t idxX = 0; idxX < GetVecLength(); ++idxX) {
+                for (size_t idxX = 0; idxX < VecLength; ++idxX) {
                     bufferX[idxX] = static_cast<RealType>((idx + idxX) % 200);
                 }
                 InaVecAVX_exp(bufferX, &resSimd[idx]);
@@ -483,16 +484,16 @@ void compareExpTime(const size_t NbOverLoop, const size_t NbExp){
 
     {
         // Raw SIMD
-        const int GetVecLength() = InaVecAVX512KNL<RealType>::GetVecLength();
+        const int VecLength = InaVecAVX512KNL<RealType>::GetVecLength();
         // Note : we increase the length of the vector to avoid checking the loop size
-        std::unique_ptr< RealType[] > resSimd(new RealType[NbExp + GetVecLength()]);
+        std::unique_ptr< RealType[] > resSimd(new RealType[NbExp + VecLength]);
         InaTimer timer;
 
         for (size_t idxLoop = 0; idxLoop < NbOverLoop; ++idxLoop) {
-            for (size_t idx = 0; idx < NbExp; idx += GetVecLength()) {
-                alignas(64) RealType bufferX[GetVecLength()];
+            for (size_t idx = 0; idx < NbExp; idx += VecLength) {
+                alignas(64) RealType bufferX[VecLength];
                 // Copy value into a buffer since we do it on the fly
-                for (size_t idxX = 0; idxX < GetVecLength(); ++idxX) {
+                for (size_t idxX = 0; idxX < VecLength; ++idxX) {
                     bufferX[idxX] = static_cast<RealType>((idx + idxX) % 200);
                 }
                 InaVecAVX512KNL_exp(bufferX, &resSimd[idx]);
@@ -511,16 +512,16 @@ void compareExpTime(const size_t NbOverLoop, const size_t NbExp){
 
     {
         // Raw SIMD
-        const int GetVecLength() = InaVecALTIVEC<RealType>::GetVecLength();
+        const int VecLength = InaVecALTIVEC<RealType>::GetVecLength();
         // Note : we increase the length of the vector to avoid checking the loop size
-        std::unique_ptr< RealType[] > resSimd(new RealType[NbExp + GetVecLength()]);
+        std::unique_ptr< RealType[] > resSimd(new RealType[NbExp + VecLength]);
         InaTimer timer;
 
         for (size_t idxLoop = 0; idxLoop < NbOverLoop; ++idxLoop) {
-            for (size_t idx = 0; idx < NbExp; idx += GetVecLength()) {
-                alignas(64) RealType bufferX[GetVecLength()];
+            for (size_t idx = 0; idx < NbExp; idx += VecLength) {
+                alignas(64) RealType bufferX[VecLength];
                 // Copy value into a buffer since we do it on the fly
-                for (size_t idxX = 0; idxX < GetVecLength(); ++idxX) {
+                for (size_t idxX = 0; idxX < VecLength; ++idxX) {
                     bufferX[idxX] = static_cast<RealType>((idx + idxX) % 200);
                 }
                 InaVecALTIVEC_exp(bufferX, &resSimd[idx]);

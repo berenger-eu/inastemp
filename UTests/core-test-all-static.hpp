@@ -12,7 +12,7 @@
 #include <cstring>
 #include <cassert>
 
-inline constexpr int MaxTestValues(const size_t inSizeOfOneValue){
+inline constexpr size_t MaxTestValues(const size_t inSizeOfOneValue){
     return 2048/inSizeOfOneValue;
 }
 
