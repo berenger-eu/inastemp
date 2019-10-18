@@ -354,7 +354,7 @@ inline void InaVecALTIVEC_exp(const double inVal[], double outVal[]) {
 template <class VecType>
 void GenericExpInavec(const size_t NbOverLoop, const size_t NbExp){
     using RealType = typename VecType::RealType;
-    const int VecLength = InaVecSSE41<RealType>::GetVecLength();
+    const int VecLength = VecType::GetVecLength();
     // Note : we increase the length of the vector to avoid checking the loop size
     std::unique_ptr< RealType[] > resIna(new RealType[NbExp + VecLength]);
     InaTimer timer;
