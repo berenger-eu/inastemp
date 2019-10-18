@@ -98,9 +98,16 @@ public:
     static const int Alignement= VecType::Alignement;
     static const bool IsOfFixedSize = VecType::IsOfFixedSize;
 
-    static int GetVecLength(){
+    using VecType::GetVecLength;
+    /*template <typename ReT = typename std::enable_if< VecType::IsOfFixedSize , int >::type>
+    static constexpr ReT GetVecLength(){
         return VecType::GetVecLength();
     }
+
+    template <typename ReT = typename std::enable_if< !VecType::IsOfFixedSize , int >::type>
+    static ReT GetVecLength(){
+        return VecType::GetVecLength();
+    }*/
 
     using VecType::VecType;
 

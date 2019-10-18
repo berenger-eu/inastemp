@@ -115,7 +115,7 @@ void HandVectorizedFunctionALTIVEC(const size_t nbParticles, const double* __res
                         const double* __restrict__ physicalValues, double* __restrict__ potentials,
                         const double cutDistance, const double constantIfCut){
 
-    const size_t GetVecLength() = 2;
+    const size_t VecLength = 2;
 
     const __vector double VecOne = vec_splats(1.);
     const __vector double VecConstantIfCut = vec_splats(constantIfCut);
@@ -130,9 +130,9 @@ void HandVectorizedFunctionALTIVEC(const size_t nbParticles, const double* __res
         const __vector double targetPhysicalValue = vec_splats(physicalValues[idxTarget]);
         __vector double targetPotential = vec_splats(0.);
 
-        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/GetVecLength())*GetVecLength()+(idxTarget+1);
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
-        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += GetVecLength()){
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
             const __vector double dx = targetX - vec_xl(0, &positionsX[idxSource]);
             const __vector double dy = targetY - vec_xl(0, &positionsY[idxSource]);
             const __vector double dz = targetZ - vec_xl(0, &positionsZ[idxSource]);
@@ -185,7 +185,7 @@ void HandVectorizedFunctionALTIVEC(const size_t nbParticles, const float* __rest
                         const float* __restrict__ physicalValues, float* __restrict__ potentials,
                         const float cutDistance, const float constantIfCut){
 
-    const size_t GetVecLength() = 4;
+    const size_t VecLength = 4;
 
     const __vector float VecOne = vec_splats(1.f);
     const __vector float VecConstantIfCut = vec_splats(constantIfCut);
@@ -200,9 +200,9 @@ void HandVectorizedFunctionALTIVEC(const size_t nbParticles, const float* __rest
         const __vector float targetPhysicalValue = vec_splats(physicalValues[idxTarget]);
         __vector float targetPotential = vec_splats(0.f);
 
-        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/GetVecLength())*GetVecLength()+(idxTarget+1);
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
-        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += GetVecLength()){
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
             const __vector float dx = targetX - vec_xl(0, &positionsX[idxSource]);
             const __vector float dy = targetY - vec_xl(0, &positionsY[idxSource]);
             const __vector float dz = targetZ - vec_xl(0, &positionsZ[idxSource]);
@@ -262,7 +262,7 @@ void HandVectorizedFunctionAVX512KNL(const size_t nbParticles, const double* __r
                         const double* __restrict__ physicalValues, double* __restrict__ potentials,
                         const double cutDistance, const double constantIfCut){
 
-    const size_t GetVecLength() = 8; // sizeof(__m512d)/sizeof(double)
+    const size_t VecLength = 8; // sizeof(__m512d)/sizeof(double)
 
     const __m512d VecOne = _mm512_set1_pd(1);
     const __m512d VecConstantIfCut = _mm512_set1_pd(constantIfCut);
@@ -277,9 +277,9 @@ void HandVectorizedFunctionAVX512KNL(const size_t nbParticles, const double* __r
         const __m512d targetPhysicalValue = _mm512_set1_pd(physicalValues[idxTarget]);
         __m512d targetPotential = _mm512_setzero_pd();
 
-        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/GetVecLength())*GetVecLength()+(idxTarget+1);
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
-        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += GetVecLength()){
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
             const __m512d dx = _mm512_sub_pd(targetX , _mm512_loadu_pd(&positionsX[idxSource]));
             const __m512d dy = _mm512_sub_pd(targetY , _mm512_loadu_pd(&positionsY[idxSource]));
             const __m512d dz = _mm512_sub_pd(targetZ , _mm512_loadu_pd(&positionsZ[idxSource]));
@@ -332,7 +332,7 @@ void HandVectorizedFunctionAVX512KNL(const size_t nbParticles, const float* __re
                         const float* __restrict__ physicalValues, float* __restrict__ potentials,
                         const float cutDistance, const float constantIfCut){
 
-    const size_t GetVecLength() = 16; // sizeof(__m512)/sizeof(float)
+    const size_t VecLength = 16; // sizeof(__m512)/sizeof(float)
 
     const __m512 VecOne = _mm512_set1_ps(1);
     const __m512 VecConstantIfCut = _mm512_set1_ps(constantIfCut);
@@ -347,9 +347,9 @@ void HandVectorizedFunctionAVX512KNL(const size_t nbParticles, const float* __re
         const __m512 targetPhysicalValue = _mm512_set1_ps(physicalValues[idxTarget]);
         __m512 targetPotential = _mm512_setzero_ps();
 
-        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/GetVecLength())*GetVecLength()+(idxTarget+1);
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
-        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += GetVecLength()){
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
             const __m512 dx = _mm512_sub_ps(targetX , _mm512_loadu_ps(&positionsX[idxSource]));
             const __m512 dy = _mm512_sub_ps(targetY , _mm512_loadu_ps(&positionsY[idxSource]));
             const __m512 dz = _mm512_sub_ps(targetZ , _mm512_loadu_ps(&positionsZ[idxSource]));
@@ -409,7 +409,7 @@ void HandVectorizedFunctionAVX(const size_t nbParticles, const double* __restric
                         const double* __restrict__ physicalValues, double* __restrict__ potentials,
                         const double cutDistance, const double constantIfCut){
 
-    const size_t GetVecLength() = 4; // sizeof(__m256d)/sizeof(double)
+    const size_t VecLength = 4; // sizeof(__m256d)/sizeof(double)
 
     const __m256d VecOne = _mm256_set1_pd(1);
     const __m256d VecConstantIfCut = _mm256_set1_pd(constantIfCut);
@@ -424,9 +424,9 @@ void HandVectorizedFunctionAVX(const size_t nbParticles, const double* __restric
         const __m256d targetPhysicalValue = _mm256_set1_pd(physicalValues[idxTarget]);
         __m256d targetPotential = _mm256_setzero_pd();
 
-        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/GetVecLength())*GetVecLength()+(idxTarget+1);
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
-        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += GetVecLength()){
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
             const __m256d dx = _mm256_sub_pd(targetX , _mm256_loadu_pd(&positionsX[idxSource]));
             const __m256d dy = _mm256_sub_pd(targetY , _mm256_loadu_pd(&positionsY[idxSource]));
             const __m256d dz = _mm256_sub_pd(targetZ , _mm256_loadu_pd(&positionsZ[idxSource]));
@@ -476,7 +476,7 @@ void HandVectorizedFunctionAVX(const size_t nbParticles, const float* __restrict
                         const float* __restrict__ physicalValues, float* __restrict__ potentials,
                         const float cutDistance, const float constantIfCut){
 
-    const size_t GetVecLength() = 8; // sizeof(__m256)/sizeof(float)
+    const size_t VecLength = 8; // sizeof(__m256)/sizeof(float)
 
     const __m256 VecOne = _mm256_set1_ps(1);
     const __m256 VecConstantIfCut = _mm256_set1_ps(constantIfCut);
@@ -491,9 +491,9 @@ void HandVectorizedFunctionAVX(const size_t nbParticles, const float* __restrict
         const __m256 targetPhysicalValue = _mm256_set1_ps(physicalValues[idxTarget]);
         __m256 targetPotential = _mm256_setzero_ps();
 
-        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/GetVecLength())*GetVecLength()+(idxTarget+1);
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
-        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += GetVecLength()){
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
             const __m256 dx = _mm256_sub_ps(targetX , _mm256_loadu_ps(&positionsX[idxSource]));
             const __m256 dy = _mm256_sub_ps(targetY , _mm256_loadu_ps(&positionsY[idxSource]));
             const __m256 dz = _mm256_sub_ps(targetZ , _mm256_loadu_ps(&positionsZ[idxSource]));
@@ -552,7 +552,7 @@ void HandVectorizedFunctionSSE3(const size_t nbParticles, const double* __restri
                         const double* __restrict__ physicalValues, double* __restrict__ potentials,
                         const double cutDistance, const double constantIfCut){
 
-    const size_t GetVecLength() = 2; // sizeof(__m128)/sizeof(double)
+    const size_t VecLength = 2; // sizeof(__m128)/sizeof(double)
 
     const __m128d VecOne = _mm_set1_pd(1);
     const __m128d VecConstantIfCut = _mm_set1_pd(constantIfCut);
@@ -567,9 +567,9 @@ void HandVectorizedFunctionSSE3(const size_t nbParticles, const double* __restri
         const __m128d targetPhysicalValue = _mm_set1_pd(physicalValues[idxTarget]);
         __m128d targetPotential = _mm_setzero_pd();
 
-        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/GetVecLength())*GetVecLength()+(idxTarget+1);
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
-        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += GetVecLength()){
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
             const __m128d dx = _mm_sub_pd(targetX , _mm_loadu_pd(&positionsX[idxSource]));
             const __m128d dy = _mm_sub_pd(targetY , _mm_loadu_pd(&positionsY[idxSource]));
             const __m128d dz = _mm_sub_pd(targetZ , _mm_loadu_pd(&positionsZ[idxSource]));
@@ -618,7 +618,7 @@ void HandVectorizedFunctionSSE3(const size_t nbParticles, const float* __restric
                         const float* __restrict__ physicalValues, float* __restrict__ potentials,
                         const float cutDistance, const float constantIfCut){
 
-    const size_t GetVecLength() = 4; // sizeof(__m128)/sizeof(float)
+    const size_t VecLength = 4; // sizeof(__m128)/sizeof(float)
 
     const __m128 VecOne = _mm_set1_ps(1);
     const __m128 VecConstantIfCut = _mm_set1_ps(constantIfCut);
@@ -633,9 +633,9 @@ void HandVectorizedFunctionSSE3(const size_t nbParticles, const float* __restric
         const __m128 targetPhysicalValue = _mm_set1_ps(physicalValues[idxTarget]);
         __m128 targetPotential = _mm_setzero_ps();
 
-        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/GetVecLength())*GetVecLength()+(idxTarget+1);
+        const size_t lastToCompute = ((nbParticles-(idxTarget+1))/VecLength)*VecLength+(idxTarget+1);
 
-        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += GetVecLength()){
+        for(size_t idxSource = idxTarget+1 ; idxSource < lastToCompute ; idxSource += VecLength){
             const __m128 dx = _mm_sub_ps(targetX , _mm_loadu_ps(&positionsX[idxSource]));
             const __m128 dy = _mm_sub_ps(targetY , _mm_loadu_ps(&positionsY[idxSource]));
             const __m128 dz = _mm_sub_ps(targetZ , _mm_loadu_ps(&positionsZ[idxSource]));
