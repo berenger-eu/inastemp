@@ -189,7 +189,7 @@ Such that, if one wants to compile only some files with these specific flags, it
 ### Compilers support
 
 Inastemp was developed and tested using the following compilers on the x86_64 architecture.
-- Gcc 6.1 (earlier versions if AVX512/KNL/SKL are not used, like 4.9)
+- Gcc 6.1 (earlier versions if AVX512/KNL/SKL are not used, but C++17 should be supported)
 - Clang 3.5
 - Intel 16.0
 Earlier versions may work as well.
