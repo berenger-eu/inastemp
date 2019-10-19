@@ -220,6 +220,16 @@ public:
         return Parent::horizontalMul();
     }
 
+    //! Return the smallest value in the vector
+    inline RealType minInVec() const {
+        return Parent::minInVec();
+    }
+
+    //! Return the greatest value in the vector
+    inline RealType maxInVec() const {
+        return Parent::maxInVec();
+    }
+
     //! Apply Sqrt to all values from inVec
     //! @code idx in [0:last-val-idx] => resVec[idx] = Sqrt(inVec[idx])
     inline VecType sqrt() const {

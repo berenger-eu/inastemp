@@ -354,16 +354,16 @@ inline void InaVecALTIVEC_exp(const double inVal[], double outVal[]) {
 template <class VecType>
 void GenericExpInavec(const size_t NbOverLoop, const size_t NbExp){
     using RealType = typename VecType::RealType;
-    const int VecLength = InaVecSSE41<RealType>::GetVecLength();
+    const int VecLength = VecType::GetVecLength();
     // Note : we increase the length of the vector to avoid checking the loop size
-    std::unique_ptr< RealType[] > resIna(new RealType[NbExp + VecType::GetVecLength()]);
+    std::unique_ptr< RealType[] > resIna(new RealType[NbExp + VecLength]);
     InaTimer timer;
 
     for (size_t idxLoop = 0; idxLoop < NbOverLoop; ++idxLoop) {
-        for (size_t idx = 0; idx < NbExp; idx += VecType::GetVecLength()) {
-            alignas(64) RealType bufferX[VecType::GetVecLength()];
+        for (size_t idx = 0; idx < NbExp; idx += VecLength) {
+            alignas(64) RealType bufferX[VecLength];
             // Copy value into a buffer since we do it on the fly
-            for (size_t idxX = 0; idxX < VecType::GetVecLength(); ++idxX) {
+            for (size_t idxX = 0; idxX < VecLength; ++idxX) {
                 bufferX[idxX] = static_cast<RealType>((idx + idxX) % 200);
             }
             VecType().setFromAlignedArray(bufferX).exp().storeInArray(&resIna[idx]);
@@ -395,8 +395,9 @@ void compareExpTime(const size_t NbOverLoop, const size_t NbExp){
         std::cout << "Scalar for " << NbExp * NbOverLoop
                   << " exp took " << timer.getElapsed() << "s (" << timer.getElapsed()/double(NbExp * NbOverLoop) << "s per exp)\n";
                 // Ensure that optimization compute for real
-                volatile RealType tmp;
+        volatile RealType tmp;
         tmp = resScalar[0];
+        (void)tmp;
     }
     std::cout << "\n";
     /////////////////////////////////////////////////////////////
@@ -415,8 +416,9 @@ void compareExpTime(const size_t NbOverLoop, const size_t NbExp){
         std::cout << "Inastemp Scalar for " << NbExp * NbOverLoop
                   << " exp took " << timer.getElapsed() << "s (" << timer.getElapsed()/double(NbExp * NbOverLoop) << "s per exp)\n";
 		// Ensure that optimization compute for real        
-		volatile RealType tmp;
+        volatile RealType tmp;
         tmp = resScalar[0];
+        (void)tmp;
     }
     std::cout << "\n";
     /////////////////////////////////////////////////////////////

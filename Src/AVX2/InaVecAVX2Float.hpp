@@ -24,6 +24,8 @@ class alignas(32) InaVecAVX2<float> : public InaVecAVX<float> {
     using Parent = InaVecAVX<float>;
 
 public:
+    using Parent::GetVecLength;
+
     using InaVecAVX<float>::InaVecAVX;
 
     inline InaVecAVX2(){}

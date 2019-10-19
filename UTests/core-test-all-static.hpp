@@ -1016,6 +1016,41 @@ class TestAll : public UTester< TestAll< VecType > > {
                 UASSERTEEQUAL(good_res[idx], res[idx]);
             }
         }
+
+
+        {
+            RealType reals[VecType::GetVecLength()];
+            for (size_t idx1 = 0; idx1 < size_t(VecType::GetVecLength()) ; ++idx1) {
+                {
+                    for (size_t idx2 = 0; idx2 < size_t(VecType::GetVecLength()) ; ++idx2) {
+                        reals[idx2] = (idx1 == idx2 ? 10 : 0);
+                    }
+                    VecType vec(reals);
+                    if(VecType::GetVecLength() == 1){
+                        UASSERTEEQUAL(vec.minInVec(), RealType(10));
+                        UASSERTEEQUAL(vec.maxInVec(), RealType(10));
+                    }
+                    else{
+                        UASSERTEEQUAL(vec.minInVec(), RealType(0));
+                        UASSERTEEQUAL(vec.maxInVec(), RealType(10));
+                    }
+                }
+                {
+                    for (size_t idx2 = 0; idx2 < size_t(VecType::GetVecLength()) ; ++idx2) {
+                        reals[idx2] = (idx1 == idx2 ? -10 : 0);
+                    }
+                    VecType vec(reals);
+                    if(VecType::GetVecLength() == 1){
+                        UASSERTEEQUAL(vec.minInVec(), RealType(-10));
+                        UASSERTEEQUAL(vec.maxInVec(), RealType(-10));
+                    }
+                    else{
+                        UASSERTEEQUAL(vec.minInVec(), RealType(-10));
+                        UASSERTEEQUAL(vec.maxInVec(), RealType(0));
+                    }
+                }
+            }
+        }
     }
 
     void SetTests() {

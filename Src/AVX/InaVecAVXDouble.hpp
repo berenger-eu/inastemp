@@ -266,6 +266,22 @@ public:
         const __m128d valval = _mm_mul_pd(valupper, rest);
         const __m128d res    = _mm_mul_pd(_mm_permute_pd(valval, 1), valval);
         return _mm_cvtsd_f64(res);
+    }    
+
+    inline double minInVec() const {
+        const __m128d valupper = _mm256_extractf128_pd(vec, 1);
+        const __m128d rest = _mm256_castpd256_pd128(vec);
+        const __m128d valval = _mm_min_pd(valupper, rest);
+        const __m128d res    = _mm_min_pd(_mm_permute_pd(valval, 1), valval);
+        return _mm_cvtsd_f64(res);
+    }
+
+    inline double maxInVec() const {
+        const __m128d valupper = _mm256_extractf128_pd(vec, 1);
+        const __m128d rest = _mm256_castpd256_pd128(vec);
+        const __m128d valval = _mm_max_pd(valupper, rest);
+        const __m128d res    = _mm_max_pd(_mm_permute_pd(valval, 1), valval);
+        return _mm_cvtsd_f64(res);
     }
 
     inline InaVecAVX sqrt() const {

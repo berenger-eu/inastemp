@@ -264,6 +264,14 @@ public:
         return sum;
     }
 
+    inline double minInVec() const {
+        return svminv_f64(svptrue_b64(), vec);
+    }
+
+    inline double maxInVec() const {
+        return svmaxv_f64(svptrue_b64(), vec);
+    }
+
     inline InaVecSVE sqrt() const {
         return svsqrt_f64_z(svptrue_b64(),vec);
     }

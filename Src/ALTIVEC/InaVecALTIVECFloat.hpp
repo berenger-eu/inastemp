@@ -273,6 +273,26 @@ public:
                                            0x08U, 0x09U, 0x0AU, 0x0BU, 0x0CU, 0x0DU, 0x0EU, 0x0FU};
         __vector float res = vec_mul(middleres, vec_perm( middleres, middleres, perm1032));
         return vec_extract(res, 0);
+    }    
+
+    inline double minInVec() const {
+        __vector unsigned char perm2301 = {0x8U, 0x9U, 0xAU, 0xBU, 0xCU, 0xDU, 0xEU, 0xFU,
+                                                0x0U, 0x1U, 0x2U, 0x3U, 0x4U, 0x5U, 0x6U, 0x7U};
+        __vector float middleres = vec_min(vec, vec_perm( vec, vec,  perm2301));
+        __vector unsigned char perm1032 = {0x04U, 0x05U, 0x06U, 0x07U, 0x00U, 0x01U, 0x02U, 0x03U,
+                                           0x08U, 0x09U, 0x0AU, 0x0BU, 0x0CU, 0x0DU, 0x0EU, 0x0FU};
+        __vector float res = vec_min(middleres, vec_perm( middleres, middleres, perm1032));
+        return vec_extract(res, 0);
+    }
+
+    inline double maxInVec() const {
+        __vector unsigned char perm2301 = {0x8U, 0x9U, 0xAU, 0xBU, 0xCU, 0xDU, 0xEU, 0xFU,
+                                                0x0U, 0x1U, 0x2U, 0x3U, 0x4U, 0x5U, 0x6U, 0x7U};
+        __vector float middleres = vec_max(vec, vec_perm( vec, vec,  perm2301));
+        __vector unsigned char perm1032 = {0x04U, 0x05U, 0x06U, 0x07U, 0x00U, 0x01U, 0x02U, 0x03U,
+                                           0x08U, 0x09U, 0x0AU, 0x0BU, 0x0CU, 0x0DU, 0x0EU, 0x0FU};
+        __vector float res = vec_max(middleres, vec_perm( middleres, middleres, perm1032));
+        return vec_extract(res, 0);
     }
 
     inline InaVecALTIVEC sqrt() const {

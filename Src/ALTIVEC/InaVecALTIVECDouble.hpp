@@ -278,6 +278,22 @@ public:
         return vec_extract(res, 0);
     }
 
+    inline double minInVec() const {
+        // Does vec_xxmadd could be faster
+        __vector unsigned char perm2301 = {0x8U, 0x9U, 0xAU, 0xBU, 0xCU, 0xDU, 0xEU, 0xFU,
+                                                0x0U, 0x1U, 0x2U, 0x3U, 0x4U, 0x5U, 0x6U, 0x7U};
+        __vector double res = vec_min(vec, vec_perm( vec, vec, perm2301));
+        return vec_extract(res, 0);
+    }
+
+    inline double maxInVec() const {
+        // Does vec_xxmadd could be faster
+        __vector unsigned char perm2301 = {0x8U, 0x9U, 0xAU, 0xBU, 0xCU, 0xDU, 0xEU, 0xFU,
+                                                0x0U, 0x1U, 0x2U, 0x3U, 0x4U, 0x5U, 0x6U, 0x7U};
+        __vector double res = vec_max(vec, vec_perm( vec, vec, perm2301));
+        return vec_extract(res, 0);
+    }
+
     inline InaVecALTIVEC sqrt() const {
         return vec_sqrt(vec);
     }

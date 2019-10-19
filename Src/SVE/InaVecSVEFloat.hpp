@@ -256,6 +256,14 @@ public:
         return svadda_f32(svptrue_b32(), 0, vec);
     }
 
+    inline float minInVec() const {
+        return svminv_f32(svptrue_b64(), vec);
+    }
+
+    inline float maxInVec() const {
+        return svmaxv_f32(svptrue_b64(), vec);
+    }
+
     inline float horizontalMul() const {
         float sum = at(0);
         for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){

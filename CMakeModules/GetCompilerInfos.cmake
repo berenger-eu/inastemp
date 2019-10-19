@@ -78,7 +78,7 @@ elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ARM")
     set(ALL_TYPES "SVE")
 else()
     # X86
-    SET( ARCH_NATIVE_FLAG "-march=native" CACHE STRING "Additional flag for the compiler capacities detection"  )
+    SET( ARCH_NATIVE_FLAG "-march=native -mtune=native" CACHE STRING "Additional flag for the compiler capacities detection"  )
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
         if(APPLE) # INTEL APPLE

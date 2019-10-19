@@ -252,6 +252,16 @@ public:
         return _mm_sqrt_pd(vec);
     }
 
+    inline double minInVec() const {
+        const __m128d res = _mm_min_pd(vec, _mm_shuffle_pd(vec, vec, 1));
+        return _mm_cvtsd_f64(res);
+    }
+
+    inline double maxInVec() const {
+        const __m128d res = _mm_max_pd(vec, _mm_shuffle_pd(vec, vec, 1));
+        return _mm_cvtsd_f64(res);
+    }
+
     inline InaVecSSE3 exp() const {
 #ifdef __INTEL_COMPILER
         return _mm_exp_pd(vec);

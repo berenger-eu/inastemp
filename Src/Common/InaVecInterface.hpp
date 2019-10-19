@@ -99,15 +99,6 @@ public:
     static const bool IsOfFixedSize = VecType::IsOfFixedSize;
 
     using VecType::GetVecLength;
-    /*template <typename ReT = typename std::enable_if< VecType::IsOfFixedSize , int >::type>
-    static constexpr ReT GetVecLength(){
-        return VecType::GetVecLength();
-    }
-
-    template <typename ReT = typename std::enable_if< !VecType::IsOfFixedSize , int >::type>
-    static ReT GetVecLength(){
-        return VecType::GetVecLength();
-    }*/
 
     using VecType::VecType;
 
@@ -233,6 +224,16 @@ public:
     //! @code return inVec[0] * ... * inVec[last-val-idx]
     inline RealType horizontalMul() const {
         return Parent::horizontalMul();
+    }
+
+    //! Return the smallest value in the vector
+    inline RealType minInVec() const {
+        return Parent::minInVec();
+    }
+
+    //! Return the greatest value in the vector
+    inline RealType maxInVec() const {
+        return Parent::maxInVec();
     }
 
     //! Apply Sqrt to all values from inVec

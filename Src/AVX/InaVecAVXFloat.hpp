@@ -280,6 +280,27 @@ public:
         return _mm_cvtss_f32(res);
     }
 
+
+    inline float minInVec() const {
+        const __m128 valupper = _mm256_extractf128_ps(vec, 1);
+        const __m128 rest = _mm256_extractf128_ps(vec, 0);
+        const __m128 valval = _mm_min_ps(valupper,
+                                         rest);
+        __m128 valsum = _mm_min_ps(_mm_permute_ps(valval, 0x1B), valval);
+        __m128 res    = _mm_min_ps(_mm_permute_ps(valsum, 0xB1), valsum);
+        return _mm_cvtss_f32(res);
+    }
+
+    inline float maxInVec() const {
+        const __m128 valupper = _mm256_extractf128_ps(vec, 1);
+        const __m128 rest = _mm256_extractf128_ps(vec, 0);
+        const __m128 valval = _mm_max_ps(valupper,
+                                         rest);
+        __m128 valsum = _mm_max_ps(_mm_permute_ps(valval, 0x1B), valval);
+        __m128 res    = _mm_max_ps(_mm_permute_ps(valsum, 0xB1), valsum);
+        return _mm_cvtss_f32(res);
+    }
+
     inline InaVecAVX sqrt() const {
         return _mm256_sqrt_ps(vec);
     }

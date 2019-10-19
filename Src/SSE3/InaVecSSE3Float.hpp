@@ -253,6 +253,18 @@ public:
         const __m128 val02_13_20_31 = _mm_mul_ps(vec, _mm_movehl_ps(vec, vec));
         const __m128 res            = _mm_mul_ss(val02_13_20_31, _mm_shuffle_ps(val02_13_20_31, val02_13_20_31, 1));
         return _mm_cvtss_f32(res);
+    }    
+
+    inline float minInVec() const {
+        const __m128 val02_13_20_31 = _mm_min_ps(vec, _mm_movehl_ps(vec, vec));
+        const __m128 res            = _mm_min_ps(val02_13_20_31, _mm_shuffle_ps(val02_13_20_31, val02_13_20_31, 1));
+        return _mm_cvtss_f32(res);
+    }
+
+    inline float maxInVec() const {
+        const __m128 val02_13_20_31 = _mm_max_ps(vec, _mm_movehl_ps(vec, vec));
+        const __m128 res            = _mm_max_ps(val02_13_20_31, _mm_shuffle_ps(val02_13_20_31, val02_13_20_31, 1));
+        return _mm_cvtss_f32(res);
     }
 
     inline InaVecSSE3 sqrt() const {

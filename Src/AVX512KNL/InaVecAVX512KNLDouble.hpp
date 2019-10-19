@@ -33,6 +33,8 @@ class alignas(InaVecAVX512COMMON<double>::Alignement) InaVecAVX512KNL<double> : 
     using Parent = InaVecAVX512COMMON<double>;
 
 public:
+    using Parent::GetVecLength;
+
     using InaVecAVX512COMMON<double>::InaVecAVX512COMMON;
 
     inline InaVecAVX512KNL(){}

@@ -74,7 +74,7 @@ public:
     inline bool isAllTrue() const{
         // true if all FF => !FF => 0 & FF => 0
         // sde bug here with _mm512_cmp_epu32_mask return 0xFF instead of 0xFFFF so use 64 bits version
-        const __mmask8 testResult = _mm512_cmp_epu64_mask(mask, _mm512_set1_epi64(0xFFFFFFFFFFFFFFFFUL), _MM_CMPINT_EQ);
+        const __mmask8 testResult = _mm512_cmp_epu64_mask(mask, _mm512_set1_epi64(static_cast<long int>(0xFFFFFFFFFFFFFFFFUL)), _MM_CMPINT_EQ);
         return testResult == 0xFF;
     }
 
@@ -310,6 +310,14 @@ public:
         __m128 res    = _mm_mul_ps(_mm_permute_ps(valsum, 0xB1), valsum);
         return _mm_cvtss_f32(res);
 #endif
+    }
+
+    inline float minInVec() const {
+        return _mm512_reduce_min_ps(vec);
+    }
+
+    inline float maxInVec() const {
+        return _mm512_reduce_max_ps(vec);
     }
 
     inline InaVecAVX512COMMON sqrt() const {

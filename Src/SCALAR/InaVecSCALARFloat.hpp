@@ -209,6 +209,14 @@ public:
         return vec;
     }
 
+    inline float minInVec() const {
+        return vec;
+    }
+
+    inline float maxInVec() const {
+        return vec;
+    }
+
     inline InaVecSCALAR sqrt() const {
         return std::sqrt(vec);
     }
