@@ -74,7 +74,7 @@ public:
     inline bool isAllTrue() const{
         // true if all FF => !FF => 0 & FF => 0
         // sde bug here with _mm512_cmp_epu32_mask return 0xFF instead of 0xFFFF so use 64 bits version
-        const __mmask8 testResult = _mm512_cmp_epu64_mask(mask, _mm512_set1_epi64(0xFFFFFFFFFFFFFFFFUL), _MM_CMPINT_EQ);
+        const __mmask8 testResult = _mm512_cmp_epu64_mask(mask, _mm512_set1_epi64(static_cast<long int>(0xFFFFFFFFFFFFFFFFUL)), _MM_CMPINT_EQ);
         return testResult == 0xFF;
     }
 
