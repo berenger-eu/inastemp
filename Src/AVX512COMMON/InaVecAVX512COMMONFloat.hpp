@@ -313,11 +313,11 @@ public:
     }
 
     inline float minInVec() const {
-        return _mm512_reduce_max_ps(vec);
+        return _mm512_reduce_min_ps(vec);
     }
 
     inline float maxInVec() const {
-        return _mm512_reduce_min_ps(vec);
+        return _mm512_reduce_max_ps(vec);
     }
 
     inline InaVecAVX512COMMON sqrt() const {
