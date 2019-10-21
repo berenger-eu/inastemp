@@ -223,19 +223,17 @@ if($ENV{VERBOSE})
 endif()
 list(GET ALL_USED_TYPES -1 INASTEMP_BESTTYPE )
 
-if(${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX )
-    # For test coverage
-    option(INASTEMP_WITH_PROF "Enable profiling and coverage report analysis" OFF)
-    
-    if( USE_COVERAGE )
-        message(STATUS "Use code coverage")
-        set(CMAKE_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -g -O0 --coverage")
-        list(APPEND INASTEMP_LIBRARIES gcov)
-        # Then one can use these commande:
-        # lcov --directory CMakeFiles/ -c -o coverage-rapport.info
-        # genhtml -o ./coverage -t "Coverage example" coverage-rapport.info
-        message(STATUS "INASTEMP_WITH_PROF has been turned to ${INASTEMP_WITH_PROF}")
-    endif()
+# For test coverage
+option(USE_COVERAGE "Enable profiling and coverage report analysis" OFF)
+
+if( USE_COVERAGE )
+    message(STATUS "Use code coverage")
+    set(CMAKE_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -g -O0 --coverage")
+    list(APPEND INASTEMP_LIBRARIES gcov)
+    # Then one can use these commande:
+    # lcov --directory CMakeFiles/ -c -o coverage-rapport.info
+    # genhtml -o ./coverage -t "Coverage example" coverage-rapport.info
+    message(STATUS "USE_COVERAGE has been turned to ${USE_COVERAGE}")
 endif()
 
 # Options

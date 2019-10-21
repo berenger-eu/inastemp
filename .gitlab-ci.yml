@@ -145,7 +145,7 @@ inastempgccsdecov:
   script:
     - mkdir build
     - cd build
-    - VERBOSE=1 CXX=g++ cmake -DINASTEMP_WITH_PROF=ON ..
+    - VERBOSE=1 CXX=g++ cmake -DUSE_COVERAGE=ON ..
     - VERBOSE=1 make
     - CTEST_OUTPUT_ON_FAILURE=TRUE make test
     - lcov --directory CMakeFiles/ --directory UTests/CMakeFiles/ -c -o coverage-rapport.info
