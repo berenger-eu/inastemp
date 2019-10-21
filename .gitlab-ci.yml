@@ -148,7 +148,7 @@ inastempgccsdecov:
     - VERBOSE=1 CXX=g++ cmake -DINASTEMP_WITH_PROF=ON ..
     - VERBOSE=1 make
     - CTEST_OUTPUT_ON_FAILURE=TRUE make test
-    - lcov --directory CMakeFiles/ --directory unit-tests/CMakeFiles/ -c -o coverage-rapport.info
+    - lcov --directory CMakeFiles/ --directory UTests/CMakeFiles/ -c -o coverage-rapport.info
     - lcov --list coverage-rapport.info
     - genhtml -o ../coverage -t "Coverage inastemp" coverage-rapport.info
   tags:
