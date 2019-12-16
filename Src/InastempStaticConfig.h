@@ -102,7 +102,7 @@
 #include "SVE/InaVecSVEDouble.hpp"
 #endif
 
-#ifdef __ARM_FEATURE_SXA
+#ifdef __NEC__
 #define INASTEMP_USE_SXA
 #undef INASTEMP_STATIC_BEST_TYPE
 #define INASTEMP_STATIC_BEST_TYPE InaVecSXA
