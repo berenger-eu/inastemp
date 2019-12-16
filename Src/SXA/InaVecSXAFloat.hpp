@@ -246,21 +246,21 @@ public:
 
     // Move back to array
     inline void storeInArray(float ptr[]) const {
-        _vel_vst_vssl(vec, 8, ptr, 256);
+        _vel_vst_vssl(vec, 4, ptr, 256);
     }
 
     inline void storeInAlignedArray(float ptr[]) const {
-        _vel_vst_vssl(vec, 8, ptr, 256);
+        _vel_vst_vssl(vec, 4, ptr, 256);
     }
 
     // Acce to individual values
     inline float at(const int index) const {
-        return _vel_lvsl_svs(vec, index);
+        return _vel_lvss_svs(vec, index);
     }
 
     // Horizontal operation
     inline float horizontalSum() const {
-      return _vel_lvsl_svs(_vel_vfsums_vvl(vec, 256),0);
+      return _vel_lvss_svs(_vel_vfsums_vvl(vec, 256),0);
     }
 
     inline float horizontalMul() const {
@@ -343,7 +343,8 @@ public:
     }
 
     inline InaVecSXA floor() const {
-        __vm256 maskInLongInt = _vel_andm_MMM(
+        /* TODO
+        __vm256 maskInLongInt = _vel_andm_mmm(
                                 _vel_vfmklgt_mvl_256(_vel_vfcmps_vvvl( _vel_vbrds_vsl(float(std::numeric_limits<int>::min()), 256), vec, 256), 256),
                                 _vel_vfmklgt_mvl_256(_vel_vfcmps_vvvl( vec, _vel_vbrds_vsl(float(std::numeric_limits<int>::max()), 256), 256), 256));
         __vr vecConvLongInt = _vel_vcvtldrz_vvl(vec, 256);
@@ -356,6 +357,8 @@ public:
                                vec,
                                maskInLongInt,
                                256);
+                               */
+        return vec;
     }
 
     inline InaVecSXA signOf() const {
@@ -500,15 +503,15 @@ public:
     }
 
     inline static InaVecSXA IfElse(const InaVecMaskSXA<float>& inMask, const InaVecSXA& inIfTrue, const InaVecSXA& inIfFalse) {
-        return _vel_vmrgw_vvvMl(inIfTrue.vec, inIfFalse.vec, __vm256(inMask), 256);
+        return _vel_vmrg_vvvml(inIfTrue.vec, inIfFalse.vec, __vm256(inMask), 256);
     }
 
     inline static InaVecSXA IfTrue(const InaVecMaskSXA<float>& inMask, const InaVecSXA& inIfTrue) {
-        return _vel_vmrgw_vvvMl(inIfTrue.vec, _vel_vbrds_vsl(0, 256), __vm256(inMask), 256);
+        return _vel_vmrg_vvvml(inIfTrue.vec, _vel_vbrds_vsl(0, 256), __vm256(inMask), 256);
     }
 
     inline static InaVecSXA IfFalse(const InaVecMaskSXA<float>& inMask, const InaVecSXA& inIfFalse) {
-        return _vel_vmrgw_vvvMl(_vel_vbrds_vsl(0, 256), inIfFalse.vec, __vm256(inMask), 256);
+        return _vel_vmrg_vvvml(_vel_vbrds_vsl(0, 256), inIfFalse.vec, __vm256(inMask), 256);
     }
 
     // Inner operators
