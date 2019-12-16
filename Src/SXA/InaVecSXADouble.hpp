@@ -5,9 +5,15 @@
 #ifndef INAVECSXADOUBLE_HPP
 #define INAVECSXADOUBLE_HPP
 
-#include "InaIfElse.hpp"
-#include "InaUtils.hpp"
-#include "InaFastExp.hpp"
+#include "InastempGlobal.h"
+#include "Common/InaIfElse.hpp"
+#include "Common/InaUtils.hpp"
+
+#ifndef INASTEMP_USE_SXA
+#error InaVecSXA<double> is included but SXA is not enable in the configuration
+#endif
+
+#include "Common/InaFastExp.hpp"
 
 #include <velintrin.h>
 #include <cmath>
