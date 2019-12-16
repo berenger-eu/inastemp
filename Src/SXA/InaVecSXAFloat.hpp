@@ -406,7 +406,7 @@ public:
     }
 
     inline InaVecMaskSXA<float> isZeroMask() const {
-        return _vel_negm_MM(_vel_vfmklgt_mvl_256(_vel_vand_vvvl( _vel_pvbrd_vsl(~0UL, 256), vec, 256), 256));
+        return _vel_negm_mm(_vel_vfmklgt_mvl_256(_vel_vand_vvvl( _vel_pvbrd_vsl(~0UL, 256), vec, 256), 256));
     }
 
     inline InaVecMaskSXA<float> isNotZeroMask() const {
