@@ -13,6 +13,8 @@
 #error InaVecSXA<float> is included but SXA is not enable in the configuration
 #endif
 
+#include "Common/InaFastExp.hpp"
+
 #include <velintrin.h>
 #include <cmath>
 #include <initializer_list>
@@ -34,7 +36,7 @@ class InaVecMaskSXA<float> {
 public:
     // Classic constructors
     inline InaVecMaskSXA() {
-        mask = _vel_xorm_MMM(mask,mask);
+        mask = _vel_xorm_mmm(mask,mask);
     }
 
     inline InaVecMaskSXA(const InaVecMaskSXA& inMask){
@@ -67,51 +69,51 @@ public:
 
     // Bool data type compatibility
     inline explicit InaVecMaskSXA(const bool inBool) : InaVecMaskSXA() {
-        mask = (inBool? _vel_pvfmkat_Ml(0xFFFFFFFFU) : _vel_pvfmkat_Ml(0));
+        mask = (inBool? _vel_vfmklat_ml(0xFFFFFFFFU) : _vel_vfmklat_ml(0));
     }
 
     inline InaVecMaskSXA& operator=(const bool inBool){
-        mask = (inBool? _vel_pvfmkat_Ml(0xFFFFFFFFU) : _vel_pvfmkat_Ml(0));
+        mask = (inBool? _vel_vfmklat_ml(0xFFFFFFFFU) : _vel_vfmklat_ml(0));
         return (*this);
     }
 
     // Binary methods
     inline InaVecMaskSXA Not() const{
-        return _vel_negm_MM(mask);
+        return _vel_negm_mm(mask);
     }
 
     inline bool isAllTrue() const{
-        return _vel_pcvm_sml_256(mask, 256) == 256*8*8;
+        return _vel_pcvm_sml(mask, 256) == 256*8*8;
     }
 
     inline bool isAllFalse() const{
         // true if all zero
-        return _vel_pcvm_sml_256(mask, 256) == 0;
+        return _vel_pcvm_sml(mask, 256) == 0;
     }
 
     // Float args methods
     inline static InaVecMaskSXA And(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_andm_MMM(inMask1.mask,inMask2.mask);
+        return _vel_andm_mmm(inMask1.mask,inMask2.mask);
     }
 
     inline static InaVecMaskSXA NotAnd(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_andm_MMM(_vel_xorm_MMM(inMask1.mask, _vel_pvfmkat_Ml(0xFFFFFFFFU)),inMask2.mask);
+        return _vel_andm_mmm(_vel_xorm_MMM(inMask1.mask, _vel_pvfmkat_Ml(0xFFFFFFFFU)),inMask2.mask);
     }
 
     inline static InaVecMaskSXA Or(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_orm_MMM(inMask1.mask,inMask2.mask);
+        return _vel_orm_mmm(inMask1.mask,inMask2.mask);
     }
 
     inline static InaVecMaskSXA Xor(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_xorm_MMM(inMask1.mask,inMask2.mask);
+        return _vel_xorm_mmm(inMask1.mask,inMask2.mask);
     }
 
     inline static bool IsEqual(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_pcvm_sml_256(_vel_xorm_MMM(inMask1.mask,inMask2.mask), 256) == 0;
+        return _vel_pcvm_sml(_vel_xorm_mmm(inMask1.mask,inMask2.mask), 256) == 0;
     }
 
     inline static bool IsNotEqual(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_pcvm_sml_256(_vel_xorm_MMM(inMask1.mask,inMask2.mask), 256) != 0;
+        return _vel_pcvm_sml(_vel_xorm_mmm(inMask1.mask,inMask2.mask), 256) != 0;
     }
 };
 
