@@ -30,7 +30,7 @@ class InaVecSXA;
 
 // Mask type
 template <>
-class InaVecMaskSXA<double> {
+class alignas(128) InaVecMaskSXA<double> {
     __vm256 mask;
 
 public:
@@ -140,7 +140,7 @@ inline bool operator!=(const InaVecMaskSXA<double>& inMask1, const InaVecMaskSXA
 
 // Vec type
 template <>
-class InaVecSXA<double> {
+class alignas(128) InaVecSXA<double> {
 protected:
     __vr vec;
 
