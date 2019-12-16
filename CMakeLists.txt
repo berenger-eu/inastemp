@@ -74,9 +74,14 @@ set(INASTEMP_VERSION  "${INASTEMP_MAJOR_VERSION}.${INASTEMP_MINOR_VERSION}.${INA
 #===========================================================================
 
 # Available from version 3.1
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+if(NOT ${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "AURORA")
+  if($ENV{VERBOSE})
+    MESSAGE(STATUS "Main -- CMAKE_CXX_STANDARD is set to 17")
+  endif()
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
 
 if((${CMAKE_MAJOR_VERSION} STREQUAL 3 AND CMAKE_MINOR_VERSION LESS 6) OR (${CMAKE_MAJOR_VERSION} LESS 3) AND (CMAKE_CXX_COMPILER_ID STREQUAL "Intel"))
     MESSAGE(WARNING " Main -- CMAKE_CXX_STANDARD does not work with Intel compiler for cmake version < 3.6, we add -std=c++17 flag by hand which might not be compatible with your project")
