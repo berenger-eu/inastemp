@@ -271,6 +271,14 @@ public:
         return sum;
     }
 
+    inline float minInVec() const {
+        return 0; // TODO
+    }
+
+    inline float maxInVec() const {
+        return 0; // TODO
+    }
+
     inline InaVecSXA sqrt() const {
         return _vel_vfsqrts_vvl(vec, 256);
     }
