@@ -12,6 +12,12 @@
 #include <cstring>
 #include <cassert>
 
+#ifdef __NEC__
+#define default_alignas
+#else
+#define default_alignas alignas(512)
+#endif
+
 inline constexpr size_t MaxTestValues(const size_t inSizeOfOneValue){
     return 2048/inSizeOfOneValue;
 }
@@ -66,10 +72,10 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(reals[idx], realsReals[idx]);
         }
 
-        alignas(512) RealType realsalign[VecType::GetVecLength()];
+        default_alignas RealType realsalign[VecType::GetVecLength()];
         vec.storeInAlignedArray( realsalign);
 
-        alignas(512) RealType realsRealsalign[VecType::GetVecLength()];
+        default_alignas RealType realsRealsalign[VecType::GetVecLength()];
         inReal.storeInArray( realsRealsalign);
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
@@ -90,7 +96,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(reals[idx], inReal);
         }
 
-        alignas(512) RealType realsalign[VecType::GetVecLength()];
+        default_alignas RealType realsalign[VecType::GetVecLength()];
         vec.storeInAlignedArray( realsalign);
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
@@ -118,14 +124,14 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(reals[idx], inReals[idx]);
         }
 
-        alignas(512) RealType realsalign[VecType::GetVecLength()];
+        default_alignas RealType realsalign[VecType::GetVecLength()];
         vec.storeInAlignedArray( realsalign);
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTEEQUAL(realsalign[idx], inReals[idx]);
         }        
 
-        alignas(512) char reals_forcena_buffer[VecType::GetVecLength()*sizeof(RealType)+1];
+        default_alignas char reals_forcena_buffer[VecType::GetVecLength()*sizeof(RealType)+1];
         RealType* reals_forcena = reinterpret_cast<RealType*>(&reals_forcena_buffer[1]);
         vec.storeInArray( reals_forcena);
 
@@ -163,7 +169,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTETRUE(approxEqual(reals[idx], inReal));
         }
 
-        alignas(512) RealType realsalign[VecType::GetVecLength()];
+        default_alignas RealType realsalign[VecType::GetVecLength()];
         vec.storeInAlignedArray( realsalign);
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
@@ -184,7 +190,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTETRUE(approxEqual(reals[idx], inReals[idx]));
         }
 
-        alignas(512) RealType realsalign[VecType::GetVecLength()];
+        default_alignas RealType realsalign[VecType::GetVecLength()];
         vec.storeInAlignedArray( realsalign);
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
@@ -205,7 +211,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTETRUE(approxEqualLowAcc(reals[idx], inReals[idx]));
         }
 
-        alignas(512) RealType realsalign[VecType::GetVecLength()];
+        default_alignas RealType realsalign[VecType::GetVecLength()];
         vec.storeInAlignedArray( realsalign);
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
@@ -245,8 +251,8 @@ class TestAll : public UTester< TestAll< VecType > > {
         }
 
         {
-            alignas(512) RealType reals[VecType::GetVecLength()];
-            alignas(512) char buffer[VecType::GetVecLength()*sizeof(RealType)+1];
+            default_alignas RealType reals[VecType::GetVecLength()];
+            default_alignas char buffer[VecType::GetVecLength()*sizeof(RealType)+1];
             RealType* realsna = reinterpret_cast<RealType*>(&buffer+1);
 
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
@@ -435,11 +441,11 @@ class TestAll : public UTester< TestAll< VecType > > {
 
 
         {
-            alignas(512) RealType reals[VecType::GetVecLength()];
-            alignas(512) RealType expres[VecType::GetVecLength()];
-            alignas(512) RealType expreslowacc[VecType::GetVecLength()];
-            alignas(512) RealType sqrtres[VecType::GetVecLength()];
-            alignas(512) RealType rsqrtres[VecType::GetVecLength()];
+            default_alignas RealType reals[VecType::GetVecLength()];
+            default_alignas RealType expres[VecType::GetVecLength()];
+            default_alignas RealType expreslowacc[VecType::GetVecLength()];
+            default_alignas RealType sqrtres[VecType::GetVecLength()];
+            default_alignas RealType rsqrtres[VecType::GetVecLength()];
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx]    = RealType(idx + 1);
                 expres[idx]   = RealType(exp(reals[idx]));
