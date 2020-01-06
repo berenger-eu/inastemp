@@ -145,7 +145,7 @@ protected:
     __vr vec;
 
     static __vm256 _vel_vfmklgt_mvl_256(__vr vz, int vl){
-        return __vm256();
+        return _vel_vfmklgt_mvl(vz, vl); // __vm256();
     }
 
 public:
