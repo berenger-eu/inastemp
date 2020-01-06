@@ -1147,8 +1147,8 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 
     /////////////////////////////////////////////////////////////
 
-    const size_t PanelSizeA = 32;
-    const size_t PanelSizeB = 32;
+    const size_t PanelSizeA = 64;
+    const size_t PanelSizeB = 64;
     const size_t PanelSizeK = 64;
     {
         std::unique_ptr< RealType[] > CScalar(new RealType[matDim*matDim]);
