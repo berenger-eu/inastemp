@@ -258,7 +258,7 @@ public:
             liIndirections1[idx] = inIndirection1[idx];
             liIndirections2[idx] = inIndirection2[idx];
         }
-        setFromIndirect2DArray(inArray, liIndirections1, liIndirections2, inLeadingDimension);
+        setFromIndirect2DArray(inArray, liIndirections1, inLeadingDimension, liIndirections2);
         return *this;
     }
 
