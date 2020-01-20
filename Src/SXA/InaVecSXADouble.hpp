@@ -225,9 +225,18 @@ public:
         return *this;
     }
 
-    inline InaVecSXA& setFromIndirectArray(const double values[], const int inIndirection[]) {
-        __vr offset = _vel_vld_vssl(4, inIndirection, 256);
+    inline InaVecSXA& setFromIndirectArray(const double values[], const long int inIndirection[]) {
+        __vr offset = _vel_vld_vssl(8, inIndirection, 256);
         vec = _vel_vld_vssvl(0, values, offset, 256);
+        return *this;
+    }
+
+    inline InaVecSXA& setFromIndirectArray(const double values[], const int inIndirection[]) {
+        long int liIndirections[256];
+        for(int idx = 0 ; idx < 256 ; ++idx){
+            liIndirections[idx] = inIndirection[idx];
+        }
+        setFromIndirectArray(values, liIndirections);
         return *this;
     }
 
