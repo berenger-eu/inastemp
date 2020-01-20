@@ -152,7 +152,7 @@ public:
     static const bool IsOfFixedSize = true;
 
     static constexpr int GetVecLength(){
-        return 256/sizeof(double);
+        return 256;
     }
 
     inline InaVecSXA() {

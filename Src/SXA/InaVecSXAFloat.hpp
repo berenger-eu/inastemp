@@ -156,7 +156,7 @@ public:
     static const bool IsOfFixedSize = true;
 
     static constexpr int GetVecLength(){
-        return 256/sizeof(float);
+        return 256;
     }
 
     inline InaVecSXA() {
@@ -216,29 +216,29 @@ public:
 
     inline explicit InaVecSXA(const float ptr[])
         : InaVecSXA() {
-        vec = _vel_vld_vssl(8, ptr, 256);
+        vec = _vel_vldu_vssl(4, ptr, 256);
     }
 
     inline InaVecSXA& setFromArray(const float ptr[]){
-        vec = _vel_vld_vssl(8, ptr, 256);
+        vec = _vel_vldu_vssl(4, ptr, 256);
         return *this;
     }
 
     inline InaVecSXA& setFromAlignedArray(const float ptr[]){
-        vec = _vel_vld_vssl(8, ptr, 256);
+        vec = _vel_vldu_vssl(4, ptr, 256);
         return *this;
     }
 
     inline InaVecSXA& setFromIndirectArray(const float values[], const int inIndirection[]) {
-        __vr offset = _vel_vld_vssl(4, inIndirection, 256);
+        __vr offset = _vel_vldu_vssl(4, inIndirection, 256);
         vec = _vel_vldlsx_vssvl(0, values, offset, 256);
         return *this;
     }
 
     inline InaVecSXA& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
-        __vr offset = _vel_vmulul_vvvl(_vel_vld_vssl(4, inIndirection1, 256),
-                                      _vel_vld_vssl(4, inIndirection2, 256),
+        __vr offset = _vel_vmulul_vvvl(_vel_vldu_vssl(4, inIndirection1, 256),
+                                      _vel_vldu_vssl(4, inIndirection2, 256),
                                       256);
         vec = _vel_vldlsx_vssvl(0, inArray, offset, 256);
         return *this;
@@ -246,11 +246,11 @@ public:
 
     // Move back to array
     inline void storeInArray(float ptr[]) const {
-        _vel_vst_vssl(vec, 4, ptr, 256);
+        _vel_vstu_vssl(vec, 4, ptr, 256);
     }
 
     inline void storeInAlignedArray(float ptr[]) const {
-        _vel_vst_vssl(vec, 4, ptr, 256);
+        _vel_vstu_vssl(vec, 4, ptr, 256);
     }
 
     // Acce to individual values
