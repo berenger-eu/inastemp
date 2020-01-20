@@ -227,7 +227,7 @@ public:
 
     inline InaVecSXA& setFromIndirectArray(const double values[], const long int inIndirection[]) {
         __vr offset = _vel_vld_vssl(8, inIndirection, 256);
-        vec = _vel_vld_vssvl(0, values, offset, 256);
+        vec = _vel_vld_vssvl(8, values, offset, 256);
         return *this;
     }
 
@@ -240,12 +240,25 @@ public:
         return *this;
     }
 
+    inline InaVecSXA& setFromIndirect2DArray(const double inArray[], const long int inIndirection1[],
+                                 const int inLeadingDimension, const long int inIndirection2[]){
+        __vr offset = _vel_vaddsl_vvvl(_vel_vld_vssl(8, inIndirection1, 256),
+                     _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
+                                      _vel_vld_vssl(8, inIndirection2, 256),
+                                      256),256);
+        vec = _vel_vld_vssvl(8, inArray, offset, 256);
+        return *this;
+    }
+
     inline InaVecSXA& setFromIndirect2DArray(const double inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
-        __vr offset = _vel_vmulul_vvvl(_vel_vld_vssl(4, inIndirection1, 256),
-                                      _vel_vld_vssl(4, inIndirection2, 256),
-                                      256);
-        vec = _vel_vld_vssvl(0, inArray, offset, 256);
+        long int liIndirections1[256];
+        long int liIndirections2[256];
+        for(int idx = 0 ; idx < 256 ; ++idx){
+            liIndirections1[idx] = inIndirection1[idx];
+            liIndirections2[idx] = inIndirection2[idx];
+        }
+        setFromIndirect2DArray(inArray, liIndirections1, liIndirections2, inLeadingDimension);
         return *this;
     }
 
