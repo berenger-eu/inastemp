@@ -251,12 +251,12 @@ public:
 
     // Acce to individual values
     inline double at(const int index) const {
-        return _vel_lvsl_svs(vec, index);
+        return _vel_lvsd_svs(vec, index);
     }
 
     // Horizontal operation
     inline double horizontalSum() const {
-      return _vel_lvsl_svs(_vel_vfsumd_vvl(vec, 256),0);
+      return _vel_lvsd_svs(_vel_vfsumd_vvl(vec, 256),0);
     }
 
     inline double horizontalMul() const {
