@@ -225,9 +225,9 @@ public:
         return *this;
     }
 
-    inline InaVecSXA& setFromIndirectArray(const double values[], const long int inIndirection[]) {
+    inline InaVecSXA& setFromIndirectArray(const double values[], const unsigned long int inIndirection[]) {
         __vr offset = _vel_vld_vssl(8, inIndirection, 256);
-        __vr address = _vel_pvaddu_vvvl(_vel_pvbrd_vsl((unsigned long int)values, 256),
+        __vr address = _vel_pvaddu_vvvl(_vel_pvbrd_vsl(static_cast<unsigned long int>(values), 256),
                                             offset, 256);
 
         vec = _vel_vgt_vvssl(address, 1, 0, 256);
@@ -235,9 +235,9 @@ public:
     }
 
     inline InaVecSXA& setFromIndirectArray(const double values[], const int inIndirection[]) {
-        long int liIndirections[256];
+        unsigned long int liIndirections[256];
         for(int idx = 0 ; idx < 256 ; ++idx){
-            liIndirections[idx] = inIndirection[idx];
+            liIndirections[idx] = static_cast<unsigned long int>(inIndirection[idx]);
         }
         setFromIndirectArray(values, liIndirections);
         return *this;
