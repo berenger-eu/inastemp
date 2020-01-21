@@ -227,7 +227,7 @@ public:
 
     inline InaVecSXA& setFromIndirectArray(const double values[], const unsigned long int inIndirection[]) {
         __vr offset = _vel_vld_vssl(8, inIndirection, 256);
-        __vr address = _vel_pvaddu_vvvl(_vel_pvbrd_vsl(static_cast<unsigned long int>(values), 256),
+        __vr address = _vel_pvaddu_vvvl(_vel_pvbrd_vsl(reinterpret_cast<unsigned long int>(values), 256),
                                             offset, 256);
 
         vec = _vel_vgt_vvssl(address, 1, 0, 256);
