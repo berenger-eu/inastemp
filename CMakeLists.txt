@@ -181,7 +181,9 @@ foreach(TYPE ${ALL_TYPES_REVERSE})
             endif()
         endforeach()
 
-        OPTION( INASTEMP_USE_${TYPE} "Set to ON to compile with ${TYPE} support (default based on CPU capacities)" ${${TYPE}_SUPPORTED_BY_CPU} )
+        if(NOT DEFINED INASTEMP_USE_${TYPE})
+            OPTION( INASTEMP_USE_${TYPE} "Set to ON to compile with ${TYPE} support (default based on CPU capacities)" ${${TYPE}_SUPPORTED_BY_CPU} )
+        endif()
 
         if(${INASTEMP_USE_${TYPE}})
             set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} ${${TYPE}_FLAGS}")
