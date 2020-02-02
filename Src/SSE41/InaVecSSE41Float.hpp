@@ -65,7 +65,7 @@ public:
 #endif
     }
 
-    inline InaVecSSE41<float> ExpLowAcc() const {
+    inline InaVecSSE41<float> expLowAcc() const {
         const __m128 COEFF_LOG2E = _mm_set1_ps(float(InaFastExp::CoeffLog2E()));
         const __m128 COEFF_A     = _mm_set1_ps(float(InaFastExp::CoeffA32()));
         const __m128 COEFF_B     = _mm_set1_ps(float(InaFastExp::CoeffB32()));
@@ -74,6 +74,60 @@ public:
         const __m128 COEFF_P5_F  = _mm_set1_ps(float(InaFastExp::GetCoefficient3_0()));
 
         __m128 x = _mm_mul_ps( Parent::vec , COEFF_LOG2E);
+
+        const __m128 fractional_part = _mm_sub_ps(x, InaVecSSE41(x).floor().vec);
+
+        __m128 factor = _mm_add_ps(_mm_mul_ps(
+                         _mm_add_ps(_mm_mul_ps(
+                                         COEFF_P5_D, fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
+
+        x = _mm_sub_ps(x,factor);
+
+        __m128i castedInteger = _mm_cvtps_epi32(_mm_add_ps(_mm_mul_ps(COEFF_A, x), COEFF_B));
+
+        return _mm_castsi128_ps(castedInteger);
+    }
+
+    inline InaVecSSE41<float> exp2() const {
+#ifdef __INTEL_COMPILER
+        return _mm_exp2_ps(Parent::vec);
+#else
+        const __m128 COEFF_A     = _mm_set1_ps(float(InaFastExp::CoeffA32()));
+        const __m128 COEFF_B     = _mm_set1_ps(float(InaFastExp::CoeffB32()));
+        const __m128 COEFF_P5_A  = _mm_set1_ps(float(InaFastExp::GetCoefficient6_5()));
+        const __m128 COEFF_P5_B  = _mm_set1_ps(float(InaFastExp::GetCoefficient6_4()));
+        const __m128 COEFF_P5_C  = _mm_set1_ps(float(InaFastExp::GetCoefficient6_3()));
+        const __m128 COEFF_P5_D  = _mm_set1_ps(float(InaFastExp::GetCoefficient6_2()));
+        const __m128 COEFF_P5_E  = _mm_set1_ps(float(InaFastExp::GetCoefficient6_1()));
+        const __m128 COEFF_P5_F  = _mm_set1_ps(float(InaFastExp::GetCoefficient6_0()));
+
+        __m128 x = Parent::vec;
+
+        const __m128 fractional_part = _mm_sub_ps(x, InaVecSSE41(x).floor().vec);
+
+        __m128 factor = _mm_add_ps(_mm_mul_ps(_mm_add_ps( _mm_mul_ps(_mm_add_ps(
+                         _mm_mul_ps(_mm_add_ps( _mm_mul_ps(_mm_add_ps(_mm_mul_ps(
+                         COEFF_P5_A, fractional_part), COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                         COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part), COEFF_P5_F);
+
+        x = _mm_sub_ps(x,factor);
+
+        __m128i castedInteger = _mm_cvtps_epi32(_mm_add_ps(_mm_mul_ps(COEFF_A, x), COEFF_B));
+
+        return _mm_castsi128_ps(castedInteger);
+#endif
+    }
+
+    inline InaVecSSE41<float> exp2LowAcc() const {
+        const __m128 COEFF_A     = _mm_set1_ps(float(InaFastExp::CoeffA32()));
+        const __m128 COEFF_B     = _mm_set1_ps(float(InaFastExp::CoeffB32()));
+        const __m128 COEFF_P5_D  = _mm_set1_ps(float(InaFastExp::GetCoefficient3_2()));
+        const __m128 COEFF_P5_E  = _mm_set1_ps(float(InaFastExp::GetCoefficient3_1()));
+        const __m128 COEFF_P5_F  = _mm_set1_ps(float(InaFastExp::GetCoefficient3_0()));
+
+        __m128 x = Parent::vec;
 
         const __m128 fractional_part = _mm_sub_ps(x, InaVecSSE41(x).floor().vec);
 

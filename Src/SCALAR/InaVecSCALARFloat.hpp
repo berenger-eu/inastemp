@@ -233,6 +233,14 @@ public:
         return std::exp(vec);
     }
 
+    inline InaVecSCALAR exp2() const {
+         return std::exp2(vec);
+    }
+
+    inline InaVecSCALAR exp2LowAcc() const {
+        return std::exp2(vec);
+    }
+
     inline InaVecSCALAR rsqrt() const {
         return 1/std::sqrt(vec);
     }

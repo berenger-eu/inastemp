@@ -332,6 +332,56 @@ public:
         return svreinterpret_f32_s32(castedInteger);
     }
 
+    inline InaVecSVE exp2() const {
+        const svfloat32_t COEFF_A     = svdup_f32(float(InaFastExp::CoeffA32()));
+        const svfloat32_t COEFF_B     = svdup_f32(float(InaFastExp::CoeffB32()));
+        const svfloat32_t COEFF_P5_A  = svdup_f32(float(InaFastExp::GetCoefficient6_5()));
+        const svfloat32_t COEFF_P5_B  = svdup_f32(float(InaFastExp::GetCoefficient6_4()));
+        const svfloat32_t COEFF_P5_C  = svdup_f32(float(InaFastExp::GetCoefficient6_3()));
+        const svfloat32_t COEFF_P5_D  = svdup_f32(float(InaFastExp::GetCoefficient6_2()));
+        const svfloat32_t COEFF_P5_E  = svdup_f32(float(InaFastExp::GetCoefficient6_1()));
+        const svfloat32_t COEFF_P5_F  = svdup_f32(float(InaFastExp::GetCoefficient6_0()));
+
+        svfloat32_t x = vec;
+
+        const svfloat32_t fractional_part = svsub_f32_z(svptrue_b32(), x, InaVecSVE(x).floor().vec);
+
+        svfloat32_t factor = svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(), svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(),svadd_f32_z(svptrue_b32(),
+                         svmul_f32_z(svptrue_b32(),svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(),svadd_f32_z(svptrue_b32(),svmul_f32_z(svptrue_b32(),
+                         COEFF_P5_A, fractional_part), COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                         COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part), COEFF_P5_F);
+
+        x = svsub_f32_z(svptrue_b32(), x,factor);
+
+        svint32_t castedInteger = svcvt_s32_f32_z(svptrue_b32(), svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(), COEFF_A, x), COEFF_B));
+
+        return svreinterpret_f32_s32(castedInteger);
+    }
+
+    inline InaVecSVE exp2LowAcc() const {
+        const svfloat32_t COEFF_A     = svdup_f32(float(InaFastExp::CoeffA32()));
+        const svfloat32_t COEFF_B     = svdup_f32(float(InaFastExp::CoeffB32()));
+        const svfloat32_t COEFF_P5_D  = svdup_f32(float(InaFastExp::GetCoefficient3_2()));
+        const svfloat32_t COEFF_P5_E  = svdup_f32(float(InaFastExp::GetCoefficient3_1()));
+        const svfloat32_t COEFF_P5_F  = svdup_f32(float(InaFastExp::GetCoefficient3_0()));
+
+        svfloat32_t x = vec;
+
+        const svfloat32_t fractional_part = svsub_f32_z(svptrue_b32(), x, InaVecSVE(x).floor().vec);
+
+        svfloat32_t factor = svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(),
+                         svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(),
+                                         COEFF_P5_D, fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
+
+        x = svsub_f32_z(svptrue_b32(), x,factor);
+
+        svint32_t castedInteger = svcvt_s32_f32_z(svptrue_b32(), svadd_f32_z(svptrue_b32(), svmul_f32_z(svptrue_b32(), COEFF_A, x), COEFF_B));
+
+        return svreinterpret_f32_s32(castedInteger);
+    }
+
     inline InaVecSVE rsqrt() const {
         // too low acc svrsqrte_f32(vec);
         return  svdiv_f32_z(svptrue_b32(), svdup_f32(1), svsqrt_f32_z(svptrue_b32(),vec));

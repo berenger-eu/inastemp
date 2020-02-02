@@ -365,6 +365,59 @@ public:
         return _mm256_castsi256_ps(castedInteger);
     }
 
+    inline InaVecAVX exp2() const {
+#ifdef __INTEL_COMPILER
+        return _mm256_exp2_ps(vec);
+#else
+        const __m256 COEFF_A     = _mm256_set1_ps(float(InaFastExp::CoeffA32()));
+        const __m256 COEFF_B     = _mm256_set1_ps(float(InaFastExp::CoeffB32()));
+        const __m256 COEFF_P5_A  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_5()));
+        const __m256 COEFF_P5_B  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_4()));
+        const __m256 COEFF_P5_C  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_3()));
+        const __m256 COEFF_P5_D  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_2()));
+        const __m256 COEFF_P5_E  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_1()));
+        const __m256 COEFF_P5_F  = _mm256_set1_ps(float(InaFastExp::GetCoefficient6_0()));
+
+        __m256 x = vec;
+
+        const __m256 fractional_part = _mm256_sub_ps(x, InaVecAVX(x).floor().vec);
+
+        __m256 factor = _mm256_add_ps(_mm256_mul_ps(_mm256_add_ps( _mm256_mul_ps(_mm256_add_ps(
+                         _mm256_mul_ps(_mm256_add_ps( _mm256_mul_ps(_mm256_add_ps(_mm256_mul_ps(
+                         COEFF_P5_A, fractional_part), COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                         COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part), COEFF_P5_F);
+
+        x = _mm256_sub_ps(x,factor);
+
+        __m256i castedInteger = _mm256_cvtps_epi32(_mm256_add_ps(_mm256_mul_ps(COEFF_A, x), COEFF_B));
+
+        return _mm256_castsi256_ps(castedInteger);
+#endif
+    }
+
+    inline InaVecAVX exp2LowAcc() const {
+        const __m256 COEFF_A     = _mm256_set1_ps(float(InaFastExp::CoeffA32()));
+        const __m256 COEFF_B     = _mm256_set1_ps(float(InaFastExp::CoeffB32()));
+        const __m256 COEFF_P5_D  = _mm256_set1_ps(float(InaFastExp::GetCoefficient3_2()));
+        const __m256 COEFF_P5_E  = _mm256_set1_ps(float(InaFastExp::GetCoefficient3_1()));
+        const __m256 COEFF_P5_F  = _mm256_set1_ps(float(InaFastExp::GetCoefficient3_0()));
+
+        __m256 x = vec;
+
+        const __m256 fractional_part = _mm256_sub_ps(x, InaVecAVX(x).floor().vec);
+
+        __m256 factor = _mm256_add_ps(_mm256_mul_ps(
+                         _mm256_add_ps(_mm256_mul_ps(
+                                         COEFF_P5_D, fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
+
+        x = _mm256_sub_ps(x,factor);
+
+        __m256i castedInteger = _mm256_cvtps_epi32(_mm256_add_ps(_mm256_mul_ps(COEFF_A, x), COEFF_B));
+
+        return _mm256_castsi256_ps(castedInteger);
+    }
     inline InaVecAVX rsqrt() const {
         return _mm256_set1_ps(1) / _mm256_sqrt_ps(vec); // _mm256_rsqrt_ps(val); not accurate enough
     }

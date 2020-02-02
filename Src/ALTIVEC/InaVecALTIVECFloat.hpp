@@ -352,6 +352,53 @@ public:
         return reinterpret_cast<__vector float>(castedInteger);
     }
 
+    inline InaVecALTIVEC exp2() const {
+        const __vector float COEFF_A     = vec_splats(float(InaFastExp::CoeffA32()));
+        const __vector float COEFF_B     = vec_splats(float(InaFastExp::CoeffB32()));
+        const __vector float COEFF_P5_A  = vec_splats(float(InaFastExp::GetCoefficient6_5()));
+        const __vector float COEFF_P5_B  = vec_splats(float(InaFastExp::GetCoefficient6_4()));
+        const __vector float COEFF_P5_C  = vec_splats(float(InaFastExp::GetCoefficient6_3()));
+        const __vector float COEFF_P5_D  = vec_splats(float(InaFastExp::GetCoefficient6_2()));
+        const __vector float COEFF_P5_E  = vec_splats(float(InaFastExp::GetCoefficient6_1()));
+        const __vector float COEFF_P5_F  = vec_splats(float(InaFastExp::GetCoefficient6_0()));
+
+        __vector float x = vec;
+
+        const __vector float fractional_part = x - InaVecALTIVEC(x).floor().vec;
+
+        __vector float factor = (((((COEFF_P5_A * fractional_part + COEFF_P5_B)
+                           * fractional_part + COEFF_P5_C)
+                           * fractional_part + COEFF_P5_D)
+                           * fractional_part + COEFF_P5_E)
+                           * fractional_part + COEFF_P5_F);
+
+        x -= factor;
+
+        __vector int castedInteger = vec_cts(COEFF_A * x + COEFF_B, 0);
+
+        return reinterpret_cast<__vector float>(castedInteger);
+    }
+
+    inline InaVecALTIVEC exp2LowAcc() const {
+        const __vector float COEFF_A     = vec_splats(float(InaFastExp::CoeffA32()));
+        const __vector float COEFF_B     = vec_splats(float(InaFastExp::CoeffB32()));
+        const __vector float COEFF_P5_D  = vec_splats(float(InaFastExp::GetCoefficient3_2()));
+        const __vector float COEFF_P5_E  = vec_splats(float(InaFastExp::GetCoefficient3_1()));
+        const __vector float COEFF_P5_F  = vec_splats(float(InaFastExp::GetCoefficient3_0()));
+
+        __vector float x = vec;
+
+        const __vector float fractional_part = x - InaVecALTIVEC(x).floor().vec;
+
+        __vector float factor = ((COEFF_P5_D * fractional_part + COEFF_P5_E) * fractional_part + COEFF_P5_F);
+
+        x -= factor;
+
+        __vector int castedInteger = vec_cts(COEFF_A * x + COEFF_B, 0);
+
+        return reinterpret_cast<__vector float>(castedInteger);
+    }
+
     inline InaVecALTIVEC rsqrt() const {
         return vec_rsqrt(vec);
     }

@@ -346,6 +346,70 @@ public:
         return svreinterpret_f64_s64(castedInteger);
     }
 
+    inline InaVecSVE exp2() const {
+        const svfloat64_t COEFF_A     = svdup_f64(double(InaFastExp::CoeffA64()));
+        const svfloat64_t COEFF_B     = svdup_f64(double(InaFastExp::CoeffB64()));
+        const svfloat64_t COEFF_P5_X  = svdup_f64(double(InaFastExp::GetCoefficient9_8()));
+        const svfloat64_t COEFF_P5_Y  = svdup_f64(double(InaFastExp::GetCoefficient9_7()));
+        const svfloat64_t COEFF_P5_Z  = svdup_f64(double(InaFastExp::GetCoefficient9_6()));
+        const svfloat64_t COEFF_P5_A  = svdup_f64(double(InaFastExp::GetCoefficient9_5()));
+        const svfloat64_t COEFF_P5_B  = svdup_f64(double(InaFastExp::GetCoefficient9_4()));
+        const svfloat64_t COEFF_P5_C  = svdup_f64(double(InaFastExp::GetCoefficient9_3()));
+        const svfloat64_t COEFF_P5_D  = svdup_f64(double(InaFastExp::GetCoefficient9_2()));
+        const svfloat64_t COEFF_P5_E  = svdup_f64(double(InaFastExp::GetCoefficient9_1()));
+        const svfloat64_t COEFF_P5_F  = svdup_f64(double(InaFastExp::GetCoefficient9_0()));
+
+        svfloat64_t x = vec;
+
+        const svfloat64_t fractional_part = svsub_f64_z(svptrue_b64(),x, InaVecSVE(x).floor().vec);
+
+        svfloat64_t factor = svadd_f64_z(svptrue_b64(),svmul_f64_z(svptrue_b64(),svadd_f64_z(svptrue_b64(),
+                         svmul_f64_z(svptrue_b64(),svadd_f64_z(svptrue_b64(), svmul_f64_z(svptrue_b64(),svadd_f64_z(svptrue_b64(),
+                         svmul_f64_z(svptrue_b64(),svadd_f64_z(svptrue_b64(), svmul_f64_z(svptrue_b64(),svadd_f64_z(svptrue_b64(),
+                         svmul_f64_z(svptrue_b64(),svadd_f64_z(svptrue_b64(), svmul_f64_z(svptrue_b64(),svadd_f64_z(svptrue_b64(),svmul_f64_z(svptrue_b64(),
+                         COEFF_P5_X, fractional_part), COEFF_P5_Y), fractional_part),
+                         COEFF_P5_Z),fractional_part), COEFF_P5_A), fractional_part),
+                         COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                         COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part),
+                         COEFF_P5_F);
+
+        x = svsub_f64_z(svptrue_b64(),x,factor);
+
+        x = svadd_f64_z(svptrue_b64(),svmul_f64_z(svptrue_b64(),COEFF_A, x), COEFF_B);
+
+        svint64_t castedInteger = svcvt_s64_f64_z(svptrue_b64(),x);
+
+        return svreinterpret_f64_s64(castedInteger);
+    }
+
+    inline InaVecSVE exp2LowAcc() const {
+        const svfloat64_t COEFF_A     = svdup_f64(double(InaFastExp::CoeffA64()));
+        const svfloat64_t COEFF_B     = svdup_f64(double(InaFastExp::CoeffB64()));
+        const svfloat64_t COEFF_P5_C  = svdup_f64(double(InaFastExp::GetCoefficient4_3()));
+        const svfloat64_t COEFF_P5_D  = svdup_f64(double(InaFastExp::GetCoefficient4_2()));
+        const svfloat64_t COEFF_P5_E  = svdup_f64(double(InaFastExp::GetCoefficient4_1()));
+        const svfloat64_t COEFF_P5_F  = svdup_f64(double(InaFastExp::GetCoefficient4_0()));
+
+        svfloat64_t x = vec;
+
+        const svfloat64_t fractional_part = svsub_f64_z(svptrue_b64(),x, InaVecSVE(x).floor().vec);
+
+        svfloat64_t factor = svadd_f64_z(svptrue_b64(),svmul_f64_z(svptrue_b64(),svadd_f64_z(svptrue_b64(),
+                         svmul_f64_z(svptrue_b64(),svadd_f64_z(svptrue_b64(),svmul_f64_z(svptrue_b64(),
+                                         COEFF_P5_C, fractional_part),
+                                         COEFF_P5_D), fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
+
+        x = svsub_f64_z(svptrue_b64(),x,factor);
+
+        x = svadd_f64_z(svptrue_b64(),svmul_f64_z(svptrue_b64(),COEFF_A, x), COEFF_B);
+
+        svint64_t castedInteger = svcvt_s64_f64_z(svptrue_b64(),x);
+
+        return svreinterpret_f64_s64(castedInteger);
+    }
+
     inline InaVecSVE rsqrt() const {
         // svrsqrte_f64(vec); seems low accurate
         return  svdiv_f64_z(svptrue_b64(), svdup_f64(1), svsqrt_f64_z(svptrue_b64(),vec));

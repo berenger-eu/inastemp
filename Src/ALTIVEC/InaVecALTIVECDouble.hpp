@@ -383,6 +383,85 @@ public:
         return reinterpret_cast<__vector double>(vec_xl(0, ltmpptr)); 
     }
 
+    inline InaVecALTIVEC exp2() const {
+        const __vector double COEFF_A     = vec_splats(double(InaFastExp::CoeffA64()));
+        const __vector double COEFF_B     = vec_splats(double(InaFastExp::CoeffB64()));
+        const __vector double COEFF_P5_X  = vec_splats(double(InaFastExp::GetCoefficient9_8()));
+        const __vector double COEFF_P5_Y  = vec_splats(double(InaFastExp::GetCoefficient9_7()));
+        const __vector double COEFF_P5_Z  = vec_splats(double(InaFastExp::GetCoefficient9_6()));
+        const __vector double COEFF_P5_A  = vec_splats(double(InaFastExp::GetCoefficient9_5()));
+        const __vector double COEFF_P5_B  = vec_splats(double(InaFastExp::GetCoefficient9_4()));
+        const __vector double COEFF_P5_C  = vec_splats(double(InaFastExp::GetCoefficient9_3()));
+        const __vector double COEFF_P5_D  = vec_splats(double(InaFastExp::GetCoefficient9_2()));
+        const __vector double COEFF_P5_E  = vec_splats(double(InaFastExp::GetCoefficient9_1()));
+        const __vector double COEFF_P5_F  = vec_splats(double(InaFastExp::GetCoefficient9_0()));
+
+        __vector double x = vec;
+
+        const __vector double fractional_part = x - InaVecALTIVEC(x).floor().vec;
+
+        __vector double factor = ((((((((COEFF_P5_X * fractional_part + COEFF_P5_Y)
+                                * fractional_part + COEFF_P5_Z) * fractional_part + COEFF_P5_A)
+                                * fractional_part + COEFF_P5_B) * fractional_part + COEFF_P5_C)
+                                * fractional_part + COEFF_P5_D) * fractional_part + COEFF_P5_E)
+                                * fractional_part + COEFF_P5_F);
+
+        x -= factor;
+
+        x = COEFF_A * x + COEFF_B;
+
+        // TODO find conversion function
+        //__vector long castedInteger = vec_ctsl(x, 0);
+        //return reinterpret_cast<__vector double>(castedInteger);
+        alignas(16) double tmpptr[2];
+        vec_st( reinterpret_cast<__vector unsigned int>(x), 0, reinterpret_cast<unsigned int*>(tmpptr));
+
+#ifdef INASTEMP_USE_XL
+        alignas(16) long long ltmpptr[2];
+#else
+        alignas(16) long ltmpptr[2];
+#endif
+        ltmpptr[0] = long(tmpptr[0]);
+        ltmpptr[1] = long(tmpptr[1]);
+        return reinterpret_cast<__vector double>(vec_xl(0, ltmpptr)); 
+    }
+
+    inline InaVecALTIVEC exp2LowAcc() const {
+        const __vector double COEFF_A     = vec_splats(double(InaFastExp::CoeffA64()));
+        const __vector double COEFF_B     = vec_splats(double(InaFastExp::CoeffB64()));
+        const __vector double COEFF_P5_C  = vec_splats(double(InaFastExp::GetCoefficient4_3()));
+        const __vector double COEFF_P5_D  = vec_splats(double(InaFastExp::GetCoefficient4_2()));
+        const __vector double COEFF_P5_E  = vec_splats(double(InaFastExp::GetCoefficient4_1()));
+        const __vector double COEFF_P5_F  = vec_splats(double(InaFastExp::GetCoefficient4_0()));
+
+        __vector double x = vec;
+
+        const __vector double fractional_part = x - InaVecALTIVEC(x).floor().vec;
+
+        __vector double factor = (((COEFF_P5_C * fractional_part + COEFF_P5_D)
+                           * fractional_part + COEFF_P5_E)
+                           * fractional_part + COEFF_P5_F);
+
+        x -= factor;
+
+        x = COEFF_A * x + COEFF_B;
+
+        // TODO find conversion function
+        //__vector long castedInteger = vec_cts(x, 0);
+        //return reinterpret_cast<__vector double>(castedInteger);
+        alignas(16) double tmpptr[2];
+        vec_st( reinterpret_cast<__vector unsigned int>(x), 0, reinterpret_cast<unsigned int*>(tmpptr));
+
+#ifdef INASTEMP_USE_XL
+        alignas(16) long long ltmpptr[2];
+#else
+        alignas(16) long ltmpptr[2];
+#endif
+        ltmpptr[0] = long(tmpptr[0]);
+        ltmpptr[1] = long(tmpptr[1]);
+        return reinterpret_cast<__vector double>(vec_xl(0, ltmpptr)); 
+    }
+
     inline InaVecALTIVEC rsqrt() const {
         return vec_rsqrt(vec);
     }
