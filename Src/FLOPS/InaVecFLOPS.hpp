@@ -264,6 +264,33 @@ public:
         }
         return Parent::expLowAcc();
     }
+
+    //! Apply exponential to all values from inVec
+    //! @code idx in [0:last-val-idx] => resVec[idx] = Exp(inVec[idx])
+    inline VecType exp10() const {
+        FlopsStats.incAddOp((1+5)*size_t(GetVecLength()));
+        FlopsStats.incMulOp((1+1+5)*size_t(GetVecLength()));
+        FlopsStats.incSubOp((1+1)*size_t(GetVecLength()));
+        if(std::is_same<double,typename VecType::RealType>::value){
+            FlopsStats.incAddOp((3)*size_t(GetVecLength()));
+            FlopsStats.incMulOp((3)*size_t(GetVecLength()));
+        }
+        return Parent::exp10();
+    }
+
+    //! Apply exponential to all values from inVec with low accuracy
+    //! @code idx in [0:last-val-idx] => resVec[idx] = ExpLowExp(inVec[idx])
+    inline VecType exp10LowAcc() const {
+        FlopsStats.incAddOp((1+2)*size_t(GetVecLength()));
+        FlopsStats.incMulOp((1+1+2)*size_t(GetVecLength()));
+        FlopsStats.incSubOp((1+1)*size_t(GetVecLength()));
+        if(std::is_same<double,typename VecType::RealType>::value){
+            FlopsStats.incAddOp((1)*size_t(GetVecLength()));
+            FlopsStats.incMulOp((1)*size_t(GetVecLength()));
+        }
+        return Parent::exp10LowAcc();
+    }
+
     //! Apply exponential base 2 to all values from inVec
     //! @code idx in [0:last-val-idx] => resVec[idx] = Exp(inVec[idx])
     inline VecType exp2() const {

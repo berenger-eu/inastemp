@@ -233,6 +233,14 @@ public:
         return std::exp(vec);
     }
 
+    inline InaVecSCALAR exp10() const {
+         return std::pow(10.f,vec);
+    }
+
+    inline InaVecSCALAR exp10LowAcc() const {
+         return std::pow(10.f,vec);
+    }
+
     inline InaVecSCALAR exp2() const {
          return std::exp2(vec);
     }

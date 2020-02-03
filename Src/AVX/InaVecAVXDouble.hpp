@@ -374,6 +374,89 @@ public:
         return _mm256_castsi256_pd(_mm256_load_si256(reinterpret_cast<const __m256i*>(allvalint)));
     }
 
+
+    inline InaVecAVX exp10() const {
+#ifdef __INTEL_COMPILER
+        return _mm256_exp10_pd(vec);
+#else
+        const __m256d COEFF_LOG210 = _mm256_set1_pd(double(InaFastExp::CoeffLog210()));
+        const __m256d COEFF_A     = _mm256_set1_pd(double(InaFastExp::CoeffA64()));
+        const __m256d COEFF_B     = _mm256_set1_pd(double(InaFastExp::CoeffB64()));
+        const __m256d COEFF_P5_X  = _mm256_set1_pd(double(InaFastExp::GetCoefficient9_8()));
+        const __m256d COEFF_P5_Y  = _mm256_set1_pd(double(InaFastExp::GetCoefficient9_7()));
+        const __m256d COEFF_P5_Z  = _mm256_set1_pd(double(InaFastExp::GetCoefficient9_6()));
+        const __m256d COEFF_P5_A  = _mm256_set1_pd(double(InaFastExp::GetCoefficient9_5()));
+        const __m256d COEFF_P5_B  = _mm256_set1_pd(double(InaFastExp::GetCoefficient9_4()));
+        const __m256d COEFF_P5_C  = _mm256_set1_pd(double(InaFastExp::GetCoefficient9_3()));
+        const __m256d COEFF_P5_D  = _mm256_set1_pd(double(InaFastExp::GetCoefficient9_2()));
+        const __m256d COEFF_P5_E  = _mm256_set1_pd(double(InaFastExp::GetCoefficient9_1()));
+        const __m256d COEFF_P5_F  = _mm256_set1_pd(double(InaFastExp::GetCoefficient9_0()));
+
+        __m256d x = _mm256_mul_pd(vec, COEFF_LOG210);
+
+        const __m256d fractional_part = _mm256_sub_pd(x, InaVecAVX(x).floor().vec);
+
+        __m256d factor = _mm256_add_pd(_mm256_mul_pd(_mm256_add_pd(
+                         _mm256_mul_pd(_mm256_add_pd( _mm256_mul_pd(_mm256_add_pd(
+                         _mm256_mul_pd(_mm256_add_pd( _mm256_mul_pd(_mm256_add_pd(
+                         _mm256_mul_pd(_mm256_add_pd( _mm256_mul_pd(_mm256_add_pd(_mm256_mul_pd(
+                         COEFF_P5_X, fractional_part), COEFF_P5_Y), fractional_part),
+                         COEFF_P5_Z),fractional_part), COEFF_P5_A), fractional_part),
+                         COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                         COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part),
+                         COEFF_P5_F);
+
+        x = _mm256_sub_pd(x,factor);
+
+        x = _mm256_add_pd(_mm256_mul_pd(COEFF_A, x), COEFF_B);
+
+        __m128d valupper = _mm256_extractf128_pd(x, 1);
+        __m128d vallower = _mm256_castpd256_pd128(x);
+
+        alignas(64) long long int allvalint[GetVecLength()] = { _mm_cvtsd_si64(vallower),
+                                                           _mm_cvtsd_si64(_mm_shuffle_pd(vallower, vallower, 1)),
+                                                           _mm_cvtsd_si64(valupper),
+                                                           _mm_cvtsd_si64(_mm_shuffle_pd(valupper, valupper, 1)) };
+
+        return _mm256_castsi256_pd(_mm256_load_si256(reinterpret_cast<const __m256i*>(allvalint)));
+#endif
+    }
+
+    inline InaVecAVX exp10LowAcc() const {
+        const __m256d COEFF_LOG210 = _mm256_set1_pd(double(InaFastExp::CoeffLog210()));
+        const __m256d COEFF_A     = _mm256_set1_pd(double(InaFastExp::CoeffA64()));
+        const __m256d COEFF_B     = _mm256_set1_pd(double(InaFastExp::CoeffB64()));
+        const __m256d COEFF_P5_C  = _mm256_set1_pd(double(InaFastExp::GetCoefficient4_3()));
+        const __m256d COEFF_P5_D  = _mm256_set1_pd(double(InaFastExp::GetCoefficient4_2()));
+        const __m256d COEFF_P5_E  = _mm256_set1_pd(double(InaFastExp::GetCoefficient4_1()));
+        const __m256d COEFF_P5_F  = _mm256_set1_pd(double(InaFastExp::GetCoefficient4_0()));
+
+        __m256d x = _mm256_mul_pd(vec, COEFF_LOG210);
+
+        const __m256d fractional_part = _mm256_sub_pd(x, InaVecAVX(x).floor().vec);
+
+        __m256d factor = _mm256_add_pd(_mm256_mul_pd(_mm256_add_pd(
+                         _mm256_mul_pd(_mm256_add_pd(_mm256_mul_pd(
+                                         COEFF_P5_C, fractional_part),
+                                         COEFF_P5_D), fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
+
+        x = _mm256_sub_pd(x,factor);
+
+        x = _mm256_add_pd(_mm256_mul_pd(COEFF_A, x), COEFF_B);
+
+        __m128d valupper = _mm256_extractf128_pd(x, 1);
+        __m128d vallower = _mm256_castpd256_pd128(x);
+
+        alignas(64) long long int allvalint[GetVecLength()] = { _mm_cvtsd_si64(vallower),
+                                                           _mm_cvtsd_si64(_mm_shuffle_pd(vallower, vallower, 1)),
+                                                           _mm_cvtsd_si64(valupper),
+                                                           _mm_cvtsd_si64(_mm_shuffle_pd(valupper, valupper, 1)) };
+
+        return _mm256_castsi256_pd(_mm256_load_si256(reinterpret_cast<const __m256i*>(allvalint)));
+    }
+
     inline InaVecAVX exp2() const {
 #ifdef __INTEL_COMPILER
         return _mm256_exp2_pd(vec);

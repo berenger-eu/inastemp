@@ -382,6 +382,85 @@ public:
         return _mm512_castsi512_pd(_mm512_load_epi64(reinterpret_cast<const __m512i*>(allvalint)));
     }
 
+
+    inline InaVecAVX512COMMON exp10() const {
+         const __m512d COEFF_LOG210 = _mm512_set1_pd(double(InaFastExp::CoeffLog210()));
+         const __m512d COEFF_A     = _mm512_set1_pd(double(InaFastExp::CoeffA64()));
+         const __m512d COEFF_B     = _mm512_set1_pd(double(InaFastExp::CoeffB64()));
+         const __m512d COEFF_P5_X  = _mm512_set1_pd(double(InaFastExp::GetCoefficient9_8()));
+         const __m512d COEFF_P5_Y  = _mm512_set1_pd(double(InaFastExp::GetCoefficient9_7()));
+         const __m512d COEFF_P5_Z  = _mm512_set1_pd(double(InaFastExp::GetCoefficient9_6()));
+         const __m512d COEFF_P5_A  = _mm512_set1_pd(double(InaFastExp::GetCoefficient9_5()));
+         const __m512d COEFF_P5_B  = _mm512_set1_pd(double(InaFastExp::GetCoefficient9_4()));
+         const __m512d COEFF_P5_C  = _mm512_set1_pd(double(InaFastExp::GetCoefficient9_3()));
+         const __m512d COEFF_P5_D  = _mm512_set1_pd(double(InaFastExp::GetCoefficient9_2()));
+         const __m512d COEFF_P5_E  = _mm512_set1_pd(double(InaFastExp::GetCoefficient9_1()));
+         const __m512d COEFF_P5_F  = _mm512_set1_pd(double(InaFastExp::GetCoefficient9_0()));
+
+         __m512d x = _mm512_mul_pd(vec, COEFF_LOG210);
+
+         const __m512d fractional_part = _mm512_sub_pd(x, InaVecAVX512COMMON(x).floor().vec);
+
+         __m512d factor = _mm512_add_pd(_mm512_mul_pd(_mm512_add_pd(
+                          _mm512_mul_pd(_mm512_add_pd( _mm512_mul_pd(_mm512_add_pd(
+                          _mm512_mul_pd(_mm512_add_pd( _mm512_mul_pd(_mm512_add_pd(
+                          _mm512_mul_pd(_mm512_add_pd( _mm512_mul_pd(_mm512_add_pd(_mm512_mul_pd(
+                          COEFF_P5_X, fractional_part), COEFF_P5_Y), fractional_part),
+                          COEFF_P5_Z),fractional_part), COEFF_P5_A), fractional_part),
+                          COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                          COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part),
+                          COEFF_P5_F);
+
+         x = _mm512_sub_pd(x,factor);
+
+         x = _mm512_add_pd(_mm512_mul_pd(COEFF_A, x), COEFF_B);
+
+         alignas(64) double allvalreal[GetVecLength()];
+         _mm512_store_pd(allvalreal, x);
+
+         alignas(64) long long int allvalint[GetVecLength()] = { static_cast<long long int>(allvalreal[0]), static_cast<long long int>(allvalreal[1]),
+                                                            static_cast<long long int>(allvalreal[2]), static_cast<long long int>(allvalreal[3]),
+                                                            static_cast<long long int>(allvalreal[4]), static_cast<long long int>(allvalreal[5]),
+                                                            static_cast<long long int>(allvalreal[6]), static_cast<long long int>(allvalreal[7]) };
+
+         return _mm512_castsi512_pd(_mm512_load_epi64(reinterpret_cast<const __m512i*>(allvalint)));
+    }
+
+    inline InaVecAVX512COMMON exp10LowAcc() const {
+        const __m512d COEFF_LOG210 = _mm512_set1_pd(double(InaFastExp::CoeffLog210()));
+        const __m512d COEFF_A     = _mm512_set1_pd(double(InaFastExp::CoeffA64()));
+        const __m512d COEFF_B     = _mm512_set1_pd(double(InaFastExp::CoeffB64()));
+        const __m512d COEFF_P5_C  = _mm512_set1_pd(double(InaFastExp::GetCoefficient4_3()));
+        const __m512d COEFF_P5_D  = _mm512_set1_pd(double(InaFastExp::GetCoefficient4_2()));
+        const __m512d COEFF_P5_E  = _mm512_set1_pd(double(InaFastExp::GetCoefficient4_1()));
+        const __m512d COEFF_P5_F  = _mm512_set1_pd(double(InaFastExp::GetCoefficient4_0()));
+
+        __m512d x = _mm512_mul_pd(vec, COEFF_LOG210);
+
+        const __m512d fractional_part = _mm512_sub_pd(x, InaVecAVX512COMMON(x).floor().vec);
+
+        __m512d factor = _mm512_add_pd(_mm512_mul_pd(_mm512_add_pd(
+                         _mm512_mul_pd(_mm512_add_pd(_mm512_mul_pd(
+                                         COEFF_P5_C, fractional_part),
+                                         COEFF_P5_D), fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
+
+        x = _mm512_sub_pd(x,factor);
+
+        x = _mm512_add_pd(_mm512_mul_pd(COEFF_A, x), COEFF_B);
+
+        alignas(64) double allvalreal[GetVecLength()];
+        _mm512_store_pd(allvalreal, x);
+
+        alignas(64) long long int allvalint[GetVecLength()] = { static_cast<long long int>(allvalreal[0]), static_cast<long long int>(allvalreal[1]),
+                                                           static_cast<long long int>(allvalreal[2]), static_cast<long long int>(allvalreal[3]),
+                                                           static_cast<long long int>(allvalreal[4]), static_cast<long long int>(allvalreal[5]),
+                                                           static_cast<long long int>(allvalreal[6]), static_cast<long long int>(allvalreal[7]) };
+
+        return _mm512_castsi512_pd(_mm512_load_epi64(reinterpret_cast<const __m512i*>(allvalint)));
+    }
+
     inline InaVecAVX512COMMON exp2() const {
          const __m512d COEFF_A     = _mm512_set1_pd(double(InaFastExp::CoeffA64()));
          const __m512d COEFF_B     = _mm512_set1_pd(double(InaFastExp::CoeffB64()));

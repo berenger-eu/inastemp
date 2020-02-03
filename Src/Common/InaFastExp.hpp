@@ -26,6 +26,10 @@ public:
         return 1.442695040888963407359924681001892137426645954153;
     }
 
+    inline constexpr static double CoeffLog210() {
+        // return std::log2(10.);
+        return 3.321928094887362347870319429489390175864831393025;
+    }
     inline constexpr static double CoeffA64() {
         return double(S64);
     }

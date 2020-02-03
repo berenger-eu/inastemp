@@ -105,6 +105,80 @@ public:
         return _mm_castsi128_pd(_mm_set_epi64x(allvalint[1], allvalint[0]));
     }
 
+    // Re-put exp to benefit from floor
+    inline InaVecSSE41<double> exp10() const {
+#ifdef __INTEL_COMPILER
+        return _mm_exp10_pd(Parent::vec);
+#else
+        const __m128d COEFF_LOG210 = _mm_set1_pd(double(InaFastExp::CoeffLog210()));
+        const __m128d COEFF_A     = _mm_set1_pd(double(InaFastExp::CoeffA64()));
+        const __m128d COEFF_B     = _mm_set1_pd(double(InaFastExp::CoeffB64()));
+        const __m128d COEFF_P5_X  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_8()));
+        const __m128d COEFF_P5_Y  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_7()));
+        const __m128d COEFF_P5_Z  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_6()));
+        const __m128d COEFF_P5_A  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_5()));
+        const __m128d COEFF_P5_B  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_4()));
+        const __m128d COEFF_P5_C  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_3()));
+        const __m128d COEFF_P5_D  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_2()));
+        const __m128d COEFF_P5_E  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_1()));
+        const __m128d COEFF_P5_F  = _mm_set1_pd(double(InaFastExp::GetCoefficient9_0()));
+
+        __m128d x = _mm_mul_pd(Parent::vec, COEFF_LOG210);
+
+        const __m128d fractional_part = _mm_sub_pd(x, InaVecSSE41(x).floor().vec);
+
+        __m128d factor = _mm_add_pd(_mm_mul_pd(_mm_add_pd(
+                         _mm_mul_pd(_mm_add_pd( _mm_mul_pd(_mm_add_pd(
+                         _mm_mul_pd(_mm_add_pd( _mm_mul_pd(_mm_add_pd(
+                         _mm_mul_pd(_mm_add_pd( _mm_mul_pd(_mm_add_pd(_mm_mul_pd(
+                         COEFF_P5_X, fractional_part), COEFF_P5_Y), fractional_part),
+                         COEFF_P5_Z),fractional_part), COEFF_P5_A), fractional_part),
+                         COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                         COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part),
+                         COEFF_P5_F);
+
+        x = _mm_sub_pd(x,factor);
+
+        x = _mm_add_pd(_mm_mul_pd(COEFF_A, x), COEFF_B);
+
+        alignas(64) long int allvalint[GetVecLength()] = { _mm_cvtsd_si64(x),
+                                                      _mm_cvtsd_si64(_mm_shuffle_pd(x, x, 1)) };
+
+        return _mm_castsi128_pd(_mm_set_epi64x(allvalint[1], allvalint[0]));
+#endif
+    }
+
+    inline InaVecSSE41<double> exp10LowAcc() const {
+        const __m128d COEFF_LOG210 = _mm_set1_pd(double(InaFastExp::CoeffLog210()));
+        const __m128d COEFF_A     = _mm_set1_pd(double(InaFastExp::CoeffA64()));
+        const __m128d COEFF_B     = _mm_set1_pd(double(InaFastExp::CoeffB64()));
+        const __m128d COEFF_P5_C  = _mm_set1_pd(double(InaFastExp::GetCoefficient4_3()));
+        const __m128d COEFF_P5_D  = _mm_set1_pd(double(InaFastExp::GetCoefficient4_2()));
+        const __m128d COEFF_P5_E  = _mm_set1_pd(double(InaFastExp::GetCoefficient4_1()));
+        const __m128d COEFF_P5_F  = _mm_set1_pd(double(InaFastExp::GetCoefficient4_0()));
+
+        __m128d x = _mm_mul_pd(Parent::vec, COEFF_LOG210);
+
+        const __m128d fractional_part = _mm_sub_pd(x, InaVecSSE41(x).floor().vec);
+
+        __m128d factor = _mm_add_pd(_mm_mul_pd(_mm_add_pd(
+                         _mm_mul_pd(_mm_add_pd(_mm_mul_pd(
+                                         COEFF_P5_C, fractional_part),
+                                         COEFF_P5_D), fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
+
+        x = _mm_sub_pd(x,factor);
+
+        x = _mm_add_pd(_mm_mul_pd(COEFF_A, x), COEFF_B);
+
+        alignas(64) long int allvalint[GetVecLength()] = { _mm_cvtsd_si64(x),
+                                                      _mm_cvtsd_si64(_mm_shuffle_pd(x, x, 1)) };
+
+        return _mm_castsi128_pd(_mm_set_epi64x(allvalint[1], allvalint[0]));
+    }
+
+
     inline InaVecSSE41<double> exp2() const {
 #ifdef __INTEL_COMPILER
         return _mm_exp2_pd(Parent::vec);
