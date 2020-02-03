@@ -503,12 +503,16 @@ class TestAll : public UTester< TestAll< VecType > > {
             default_alignas RealType expreslowacc[VecType::GetVecLength()];
             default_alignas RealType exp2res[VecType::GetVecLength()];
             default_alignas RealType exp2reslowacc[VecType::GetVecLength()];
+            default_alignas RealType exp10res[VecType::GetVecLength()];
+            default_alignas RealType exp10reslowacc[VecType::GetVecLength()];
             default_alignas RealType sqrtres[VecType::GetVecLength()];
             default_alignas RealType rsqrtres[VecType::GetVecLength()];
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx]    = RealType((idx%10) + 1);
                 expres[idx]   = RealType(exp(reals[idx]));
                 expreslowacc[idx]   = RealType(exp(reals[idx]));
+                exp10res[idx]   = RealType(exp10(reals[idx]));
+                exp10reslowacc[idx]   = RealType(exp10(reals[idx]));
                 exp2res[idx]   = RealType(exp2(reals[idx]));
                 exp2reslowacc[idx]   = RealType(exp2(reals[idx]));
                 sqrtres[idx]  = RealType(sqrt(reals[idx]));
@@ -517,6 +521,8 @@ class TestAll : public UTester< TestAll< VecType > > {
 
             approxEqualToArray(VecType().setFromAlignedArray(reals).exp(), expres);
             approxLowAccEqualToArray(VecType().setFromAlignedArray(reals).expLowAcc(), expreslowacc);
+            approxEqualToArray(VecType().setFromAlignedArray(reals).exp10(), exp10res);
+            approxLowAccEqualToArray(VecType().setFromAlignedArray(reals).exp10LowAcc(), exp10reslowacc);
             approxEqualToArray(VecType().setFromAlignedArray(reals).exp2(), exp2res);
             approxLowAccEqualToArray(VecType().setFromAlignedArray(reals).exp2LowAcc(), exp2reslowacc);
             approxEqualToArray(VecType().setFromAlignedArray(reals).sqrt(), sqrtres);
