@@ -250,10 +250,12 @@ static void printVec(__vr vec){
 
 printf("values %p\n", values);
 printVecInt(address);
-__vr temp = _vel_vgt_vvssl(address, 0, 9999, 256);
+unsigned long int vecRet = -1;
+__vr temp = _vel_vgt_vvssl(address, 0, vecRet, 256);
+printf("vecRet %p\n", vecRet);
 printVec(temp);
 
-        vec = _vel_vgt_vvssl(address, 0, 9999, 256);
+        vec = _vel_vgt_vvssl(address, 0, vecRet, 256);
 printVec(vec);
 vec = temp;
 printVec(vec);
