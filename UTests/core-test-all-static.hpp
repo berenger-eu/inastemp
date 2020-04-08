@@ -308,7 +308,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             VecType vec_no_fal2;
             vec_no_fal2.setFromArray(reals);
             equalToArray(vec_no_fal2, reals);
-                        return; // TODO
 //            equalToArray(vec_no_fal2, realsna);
 
 //            VecType vec_no_fna2;
@@ -319,6 +318,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             VecType vec_al_fal;
             vec_al_fal.setFromAlignedArray(reals);
             equalToArray(vec_al_fal, reals);
+            return; // TODO
 //            equalToArray(vec_al_fal, realsna);
 
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
