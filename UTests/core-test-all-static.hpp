@@ -219,10 +219,10 @@ class TestAll : public UTester< TestAll< VecType > > {
         }
     }
 
-    void TestBasic() {return; // TODO
+    void TestBasic() {
         equalToScalar(VecType(1), 1);
         equalToScalar(VecType(RealType(0)), 0);
-
+return; // TODO
         {
             RealType reals[VecType::GetVecLength()];
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
