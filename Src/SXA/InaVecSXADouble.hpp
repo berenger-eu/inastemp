@@ -225,12 +225,39 @@ public:
         return *this;
     }
 
+static void printVecInt(__vr vec){
+    unsigned long int array[256];
+    _vel_vst_vssl(vec, 8, array, 256);
+
+    for(int idx = 0 ; idx < /*256*/10 ; ++idx){
+        printf("[%d] = %lu (%lu)\n", idx, array[idx], _vel_lvsl_svs(vec, idx));
+    }
+}
+
+static void printVec(__vr vec){
+    double array[256];
+    _vel_vst_vssl(vec, 8, array, 256);
+
+    for(int idx = 0 ; idx < /*256*/10 ; ++idx){
+        printf("[%d] = %e (%e)\n", idx, array[idx], _vel_lvsl_svs(vec, idx));
+    }
+}
+
     inline InaVecSXA& setFromIndirectArray(const double values[], const unsigned long int inIndirection[]) {
         __vr offset = _vel_vld_vssl(8, inIndirection, 256);
         __vr address = _vel_pvaddu_vvvl(_vel_pvbrd_vsl(reinterpret_cast<unsigned long int>(values), 256),
                                             offset, 256);
 
-        vec = _vel_vgt_vvssl(address, 1, 0, 256);
+printf("values %p\n", values);
+printVecInt(address);
+__vr temp = _vel_vgt_vvssl(address, 0, 9999, 256);
+printVec(temp);
+
+        vec = _vel_vgt_vvssl(address, 0, 9999, 256);
+printVec(vec);
+vec = temp;
+printVec(vec);
+
         return *this;
     }
 
