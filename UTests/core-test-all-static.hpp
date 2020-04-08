@@ -222,7 +222,7 @@ class TestAll : public UTester< TestAll< VecType > > {
     void TestBasic() {
         equalToScalar(VecType(1), 1);
         equalToScalar(VecType(RealType(0)), 0);
-return; // TODO
+
         {
             RealType reals[VecType::GetVecLength()];
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
@@ -285,7 +285,7 @@ return; // TODO
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv}};
             vcopyop += vconstruct * vcopyconstruct; // unused
         }
-
+return; // TODO
         {
             default_alignas RealType reals[VecType::GetVecLength()];
             default_alignas char buffer[VecType::GetVecLength()*sizeof(RealType)+1];
