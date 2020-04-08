@@ -285,7 +285,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv}};
             vcopyop += vconstruct * vcopyconstruct; // unused
         }
-return; // TODO
+
         {
             default_alignas RealType reals[VecType::GetVecLength()];
             default_alignas char buffer[VecType::GetVecLength()*sizeof(RealType)+1];
@@ -298,6 +298,7 @@ return; // TODO
 
             VecType vec_no_fal(reals);
             equalToArray(vec_no_fal, reals);
+            return; // TODO
 //            equalToArray(vec_no_fal, realsna);
 
 //            VecType vec_no_fna(realsna);
