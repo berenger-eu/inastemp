@@ -348,7 +348,7 @@ class TestAll : public UTester< TestAll< VecType > > {
         }
 
         {
-            const size_t limiteOffsetIn = std::min(32, sizeof(RealType)*size_t(VecType::GetVecLength()));
+            const size_t limiteOffsetIn = std::min(32UL, sizeof(RealType)*size_t(VecType::GetVecLength()));
             for(size_t idxOffsetIn = 0 ; idxOffsetIn < limiteOffsetIn ; ++idxOffsetIn){
                 unsigned char* bufferIn[sizeof(RealType)*VecType::GetVecLength()*2];
                 RealType* realsIn = reinterpret_cast<RealType*>(&bufferIn[idxOffsetIn]);
