@@ -381,7 +381,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                     vec.storeInArray(realsOut);
                     printf("line %d\n", __LINE__);
                     for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
-                        printf("idx %lu\n", idx);
+                    //    printf("idx %lu\n", idx);
                         UASSERTEEQUAL(realsOut[idx], realsIn[idx]);
                     }
                     printf("line %d\n", __LINE__);
