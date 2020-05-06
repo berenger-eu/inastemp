@@ -262,7 +262,7 @@ static void printVec(__vr vec){
 
 __vr offset = _vel_vld_vssl(8, inIndirection, 256);
 printVecInt(offset);
-__vr address = _vel_vsfa_vvssl(offset, 3, values, 256);
+__vr address = _vel_vsfa_vvssl(offset, 3, (unsigned long)values, 256);
 printVecInt(vec);
 vec = _vel_vgt_vvssl(address, 0, 0, 256);
 printVec(vec);
