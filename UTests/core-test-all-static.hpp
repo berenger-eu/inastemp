@@ -391,7 +391,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
             equalToScalar(VecType().setFromIndirect2DArray(&real, indirect, 0, indirect), 1);
         }
-        return ; // TODO
 
         {
             RealType reals[VecType::GetVecLength() * 2];
@@ -407,6 +406,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToArray(VecType().setFromIndirect2DArray(reals, indirect2, VecType::GetVecLength(), indirect1), &reals[VecType::GetVecLength()]);
         }
 
+        return ; // TODO
         {
             UASSERTEEQUAL(VecType(1).horizontalSum(), RealType(VecType::GetVecLength()));
             UASSERTEEQUAL(VecType(10).horizontalSum(), RealType(10 * VecType::GetVecLength()));
