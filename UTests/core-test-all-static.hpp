@@ -350,6 +350,8 @@ class TestAll : public UTester< TestAll< VecType > > {
         {
             for(size_t idxOffsetIn = 0 ; idxOffsetIn < sizeof(RealType)*size_t(VecType::GetVecLength()) ; ++idxOffsetIn){
 
+                printf("idxOffsetIn %lu\n", idxOffsetOut);
+
                 printf("line %d\n", __LINE__);
                 unsigned char* bufferIn[sizeof(RealType)*VecType::GetVecLength()*2];
                 RealType* realsIn = reinterpret_cast<RealType*>(&bufferIn[idxOffsetIn]);
@@ -371,7 +373,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                 printf("line %d\n", __LINE__);
 
                 for(size_t idxOffsetOut = 0 ; idxOffsetOut < sizeof(RealType)*size_t(VecType::GetVecLength()) ; ++idxOffsetOut){
-
+                    printf("idxOffsetOut %lu\n", idxOffsetOut);
                     printf("line %d\n", __LINE__);
                     unsigned char* bufferOut[sizeof(RealType)*VecType::GetVecLength()*2];
                     RealType* realsOut = reinterpret_cast<RealType*>(&bufferOut[idxOffsetOut]);
@@ -379,6 +381,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                     vec.storeInArray(realsOut);
                     printf("line %d\n", __LINE__);
                     for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+                        printf("idx %lu\n", idx);
                         UASSERTEEQUAL(realsOut[idx], realsIn[idx]);
                     }
                     printf("line %d\n", __LINE__);
