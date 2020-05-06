@@ -382,7 +382,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
             equalToArray(VecType().setFromIndirectArray(reals, indirect), reals);
         }
-        return ; // TODO
 
         {
             RealType real                     = 1;
@@ -392,6 +391,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
             equalToScalar(VecType().setFromIndirect2DArray(&real, indirect, 0, indirect), 1);
         }
+        return ; // TODO
 
         {
             RealType reals[VecType::GetVecLength() * 2];

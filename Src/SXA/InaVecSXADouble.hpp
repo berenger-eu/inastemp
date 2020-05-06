@@ -285,7 +285,8 @@ printVec(vec);
                      _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
                                       _vel_vld_vssl(8, inIndirection2, 256),
                                       256),256);
-        vec = _vel_vld_vssvl(8, inArray, offset, 256);
+        __vr address = _vel_vsfa_vvssl(offset, 3, (unsigned long)inArray, 256);
+        vec = _vel_vgt_vvssl(address, 0, 0, 256);
         return *this;
     }
 
