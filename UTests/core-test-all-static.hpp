@@ -361,12 +361,11 @@ class TestAll : public UTester< TestAll< VecType > > {
                 vec.setFromArray(realsIn);
                 equalToArray(vec, realsIn);
 
-                return ; // TODO
-
                 for(size_t idxOffsetOut = 0 ; idxOffsetOut < sizeof(RealType)*size_t(VecType::GetVecLength()) ; ++idxOffsetOut){
                     unsigned char* bufferOut[sizeof(RealType)*VecType::GetVecLength()*2];
                     RealType* realsOut = reinterpret_cast<RealType*>(&bufferOut[idxOffsetOut]);
 
+                    return ; // TODO
                     vec.storeInArray(realsOut);
                     for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                         UASSERTEEQUAL(realsOut[idx], realsIn[idx]);
