@@ -244,20 +244,27 @@ static void printVec(__vr vec){
 }
 
     inline InaVecSXA& setFromIndirectArray(const double values[], const unsigned long int inIndirection[]) {
-        __vr offset = _vel_vld_vssl(8, inIndirection, 256);
-        __vr address = _vel_pvaddu_vvvl(_vel_pvbrd_vsl(reinterpret_cast<unsigned long int>(values), 256),
-                                            offset, 256);
+//        __vr offset = _vel_vld_vssl(8, inIndirection, 256);
+//        __vr address = _vel_pvaddu_vvvl(_vel_pvbrd_vsl(reinterpret_cast<unsigned long int>(values), 256),
+//                                            offset, 256);
 
-printf("values %p\n", values);
-printVecInt(address);
-unsigned long int vecRet = -1;
-__vr temp = _vel_vgt_vvssl(address, 0, vecRet, 256);
-printf("vecRet %p\n", vecRet);
-printVec(temp);
+//printf("values %p\n", values);
+//printVecInt(address);
+//unsigned long int vecRet = -1;
+//__vr temp = _vel_vgt_vvssl(address, 0, vecRet, 256);
+//printf("vecRet %p\n", vecRet);
+//printVec(temp);
 
-        vec = _vel_vgt_vvssl(address, 0, vecRet, 256);
-printVec(vec);
-vec = temp;
+//        vec = _vel_vgt_vvssl(address, 0, vecRet, 256);
+//printVec(vec);
+//vec = temp;
+//printVec(vec);
+
+__vr offset = _vel_vld_vssl(8, inIndirection, 256);
+printVecInt(offset);
+__vr address = _vel_vsfa_vvssl(offset, 3, values, 256);
+printVecInt(vec);
+vec = _vel_vgt_vvssl(address, 0, 0, 256);
 printVec(vec);
 
         return *this;
