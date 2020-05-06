@@ -346,7 +346,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
             equalToArray(VecType().setFromIndirectArray(reals, indirect), reals);
         }
-        return ; // TODO
 
         {
             for(size_t idxOffsetIn = 0 ; idxOffsetIn < sizeof(RealType)*size_t(VecType::GetVecLength()) ; ++idxOffsetIn){
@@ -383,6 +382,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
             equalToArray(VecType().setFromIndirectArray(reals, indirect), reals);
         }
+        return ; // TODO
 
         {
             RealType real                     = 1;
