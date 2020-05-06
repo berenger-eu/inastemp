@@ -350,7 +350,7 @@ class TestAll : public UTester< TestAll< VecType > > {
         {
             for(size_t idxOffsetIn = 0 ; idxOffsetIn < sizeof(RealType)*size_t(VecType::GetVecLength()) ; ++idxOffsetIn){
 
-                printf("idxOffsetIn %lu\n", idxOffsetOut);
+                printf("idxOffsetIn %lu\n", idxOffsetIn);
 
                 printf("line %d\n", __LINE__);
                 unsigned char* bufferIn[sizeof(RealType)*VecType::GetVecLength()*2];
