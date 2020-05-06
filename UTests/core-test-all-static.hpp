@@ -335,10 +335,10 @@ class TestAll : public UTester< TestAll< VecType > > {
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 indirect[idx] = 0;
             }
-            //equalToScalar(VecType().setFromIndirectArray(&real, indirect), 1);
-            VecType vec;
-            vec.setFromIndirectArray(&real, indirect);
-            equalToScalar(vec, 1);
+            equalToScalar(VecType().setFromIndirectArray(&real, indirect), 1);
+            //VecType vec;
+            //vec.setFromIndirectArray(&real, indirect);
+            //equalToScalar(vec, 1);
         }
 return ; // TODO
         {
