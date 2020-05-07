@@ -404,8 +404,8 @@ static void printVec(__vr vec){
     }
 
     inline InaVecSXA rsqrt() const {
-        // svrsqrte_f64(vec); seems low accurate
-        return  _vel_vrsqrtd_vvl(vec, 256);
+        const __vr one = _vel_vbrdd_vsl(1.0, 256);
+        return  _vel_vfdivd_vvvl(one, vec, 256);
     }
 
     inline InaVecSXA abs() const {
