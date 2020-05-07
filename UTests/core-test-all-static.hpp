@@ -471,12 +471,11 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxLowAccEqualToArray(VecType(reals).expLowAcc(), expreslowacc);
             approxEqualToArray(VecType(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType(reals).rsqrt(), rsqrtres);
-            return ; // TODO
 
             approxEqualToScalar(VecType(RealType(0)).exp(), std::exp(RealType(0)));
         }
 
-
+        return ; // TODO
 
         {
             default_alignas RealType reals[VecType::GetVecLength()];
