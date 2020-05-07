@@ -201,7 +201,6 @@ class TestAll : public UTester< TestAll< VecType > > {
     void approxLowAccEqualToArray(const VecType vec,
                             const RealType inReals[]) {
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
-            printf("%lu] %e %e\n", idx, vec.at(int(idx)), inReals[idx]);// TODO
             UASSERTETRUE(approxEqualLowAcc(vec.at(int(idx)), inReals[idx]));
         }
 
@@ -461,7 +460,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType sqrtres[VecType::GetVecLength()];
             RealType rsqrtres[VecType::GetVecLength()];
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
-                reals[idx]    = RealType(idx + 1);
+                reals[idx]    = RealType((idx%10) + 1);
                 expres[idx]   = RealType(exp(reals[idx]));
                 expreslowacc[idx]   = RealType(exp(reals[idx]));
                 sqrtres[idx]  = RealType(sqrt(reals[idx]));
