@@ -495,10 +495,9 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxEqualToArray(VecType().setFromAlignedArray(reals).rsqrt(), rsqrtres);
         }
 
-
-        return ; // TODO
         {
             equalToScalar(VecType(RealType(0)).signOf(), 0);
+            return ; // TODO
             equalToScalar(VecType(-1).signOf(), -1);
             equalToScalar(VecType(1).signOf(), 1);
             equalToScalar(VecType(-10).signOf(), -1);
