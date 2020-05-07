@@ -277,20 +277,12 @@ static void printVec(__vr vec){
 
     inline InaVecSXA& setFromIndirect2DArray(const double inArray[], const long int inIndirection1[],
                                  const int inLeadingDimension, const long int inIndirection2[]){
-
-        printVecInt(_vel_vld_vssl(8, inIndirection1, 256));
-        printVecInt(_vel_vbrdl_vsl(inLeadingDimension, 256));
-        printVecInt(_vel_vld_vssl(8, inIndirection2, 256));
-
         __vr offset = _vel_vaddsl_vvvl(_vel_vld_vssl(8, inIndirection2, 256),
                      _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
                                       _vel_vld_vssl(8, inIndirection1, 256),
                                       256),256);
-        printVecInt(offset);
         __vr address = _vel_vsfa_vvssl(offset, 3, (unsigned long)inArray, 256);
-        printVecInt(address);
         vec = _vel_vgt_vvssl(address, 0, 0, 256);
-        printVec(vec);
         return *this;
     }
 

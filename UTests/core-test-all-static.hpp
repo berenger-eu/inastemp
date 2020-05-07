@@ -406,11 +406,11 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToArray(VecType().setFromIndirect2DArray(reals, indirect2, VecType::GetVecLength(), indirect1), &reals[VecType::GetVecLength()]);
         }
 
-        return ; // TODO
         {
             UASSERTEEQUAL(VecType(1).horizontalSum(), RealType(VecType::GetVecLength()));
             UASSERTEEQUAL(VecType(10).horizontalSum(), RealType(10 * VecType::GetVecLength()));
 
+            return ; // TODO
             UASSERTEEQUAL(VecType(1).horizontalMul(), RealType(1));
             UASSERTEEQUAL(VecType(10).horizontalMul(), RealType(pow(10, VecType::GetVecLength())));
         }
