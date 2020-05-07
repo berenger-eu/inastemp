@@ -413,7 +413,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(VecType(1).horizontalMul(), RealType(1));
             UASSERTEEQUAL(VecType(10).horizontalMul(), RealType(pow(10, VecType::GetVecLength())));
         }
-        return ; // TODO
 
         {
             equalToScalar(VecType::Min(VecType(1),
@@ -430,6 +429,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType::Max(VecType(1),
                                          VecType(RealType(0))), RealType(1));
 
+            return ; // TODO
             equalToScalar(VecType(1).abs(), RealType(1));
             equalToScalar(VecType(-1).abs(), RealType(1));
             equalToScalar(VecType(RealType(0)).abs(), RealType(0));
