@@ -475,8 +475,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxEqualToScalar(VecType(RealType(0)).exp(), std::exp(RealType(0)));
         }
 
-        return ; // TODO
-
         {
             default_alignas RealType reals[VecType::GetVecLength()];
             default_alignas RealType expres[VecType::GetVecLength()];
@@ -484,7 +482,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             default_alignas RealType sqrtres[VecType::GetVecLength()];
             default_alignas RealType rsqrtres[VecType::GetVecLength()];
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
-                reals[idx]    = RealType(idx + 1);
+                reals[idx]    = RealType((idx%10) + 1);
                 expres[idx]   = RealType(exp(reals[idx]));
                 expreslowacc[idx]   = RealType(exp(reals[idx]));
                 sqrtres[idx]  = RealType(sqrt(reals[idx]));
@@ -497,6 +495,8 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxEqualToArray(VecType().setFromAlignedArray(reals).rsqrt(), rsqrtres);
         }
 
+
+        return ; // TODO
         {
             equalToScalar(VecType(RealType(0)).signOf(), 0);
             equalToScalar(VecType(-1).signOf(), -1);
