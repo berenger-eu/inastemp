@@ -416,7 +416,7 @@ static void printVec(__vr vec){
         printVec(vec);
         __vr valuesInIntervals = _vel_vfmind_vvvl(
                                     _vel_vfmaxd_vvvl( vec, _vel_vbrdd_vsl(double(std::numeric_limits<long int>::min()), 256), 256);
-                                    _vel_vbrdd_vsl(double(std::numeric_limits<long int>::max())));
+                                    _vel_vbrdd_vsl(double(std::numeric_limits<long int>::max()), 256), 256);
 
         printVec(valuesInIntervals);
         //__vm256 maskInLongInt = _vel_andm_mmm(
