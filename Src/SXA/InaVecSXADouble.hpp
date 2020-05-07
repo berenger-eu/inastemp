@@ -427,14 +427,15 @@ static void printVec(__vr vec){
         __vr vecConvLongIntDouble = _vel_vcvtdl_vvl(vec, 256);
         printVec(vecConvLongIntDouble);
 
-        __vm256 maskNegative = _vel_vfmklgt_mvl(_vel_vcmpsl_vsvl( 0, vec, 256), 256);
-        return _vel_vmrg_vvvml(_vel_vmrg_vvvml(_vel_vfsubd_vvvl( vecConvLongIntDouble, _vel_vbrdd_vsl(1, 256), 256),
-                                               vecConvLongIntDouble,
-                                               maskNegative,
-                                               256),
-                               vec,
-                               maskInLongInt,
-                               256);
+        return vec;
+//        __vm256 maskNegative = _vel_vfmklgt_mvl(_vel_vcmpsl_vsvl( 0, vec, 256), 256);
+//        return _vel_vmrg_vvvml(_vel_vmrg_vvvml(_vel_vfsubd_vvvl( vecConvLongIntDouble, _vel_vbrdd_vsl(1, 256), 256),
+//                                               vecConvLongIntDouble,
+//                                               maskNegative,
+//                                               256),
+//                               vec,
+//                               maskInLongInt,
+//                               256);
     }
 
     inline InaVecSXA signOf() const {
