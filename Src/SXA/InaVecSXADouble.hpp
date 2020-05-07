@@ -490,11 +490,11 @@ static void printVec(__vr vec){
     }
 
     inline static InaVecSXA Min(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return /*_vel_vminswsx_vvvl*/_vel_vfmind_vvvl( inVec1.vec, inVec2.vec, 256);
+        return _vel_vfmind_vvvl( inVec1.vec, inVec2.vec, 256);
     }
 
     inline static InaVecSXA Max(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vmaxswsx_vvvl( inVec1.vec, inVec2.vec, 256);
+        return _vel_vfmaxd_vvvl( inVec1.vec, inVec2.vec, 256);
     }
 
     inline static InaVecSXA IsLowerOrEqual(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {

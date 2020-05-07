@@ -417,7 +417,6 @@ class TestAll : public UTester< TestAll< VecType > > {
         {
             equalToScalar(VecType::Min(VecType(1),
                                          VecType(1)), RealType(1));
-            return ; // TODO
             equalToScalar(VecType::Min(VecType(RealType(0)),
                                          VecType(1)), RealType(0));
             equalToScalar(VecType::Min(VecType(1),
@@ -453,6 +452,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType::GetZero(), 0);
             equalToScalar(VecType::GetOne(), 1);
         }
+        return ; // TODO
 
         {
             RealType reals[VecType::GetVecLength()];
