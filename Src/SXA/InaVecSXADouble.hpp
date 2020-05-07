@@ -427,8 +427,19 @@ static void printVec(__vr vec){
         __vr vecConvLongIntDouble = _vel_vcvtdl_vvl(vecConvLongInt, 256);
         printVec(vecConvLongIntDouble);
 
-        return vec;
-//        __vm256 maskNegative = _vel_vfmklgt_mvl(_vel_vcmpsl_vsvl( 0, vec, 256), 256);
+        __vm256 maskNegative = _vel_vfmklgt_mvl(_vel_vfcmpd_vsvl( 0, vec, 256), 256);
+        printVecInt(_vel_vfcmpd_vsvl( 0, vec, 256));
+
+        __vr res = _vel_vmrg_vvvml(_vel_vfsubd_vvvl( vecConvLongIntDouble, _vel_vbrdd_vsl(1, 256), 256),
+                                   vecConvLongIntDouble,
+                                   maskNegative,
+                                   256);
+        printVec(res);
+
+        return _vel_vmrg_vvvml(_vel_vfsubd_vvvl( vecConvLongIntDouble, _vel_vbrdd_vsl(1, 256), 256),
+                               vecConvLongIntDouble,
+                               maskNegative,
+                               256);
 //        return _vel_vmrg_vvvml(_vel_vmrg_vvvml(_vel_vfsubd_vvvl( vecConvLongIntDouble, _vel_vbrdd_vsl(1, 256), 256),
 //                                               vecConvLongIntDouble,
 //                                               maskNegative,
