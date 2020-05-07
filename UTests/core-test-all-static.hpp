@@ -469,8 +469,8 @@ class TestAll : public UTester< TestAll< VecType > > {
 
             approxEqualToArray(VecType(reals).exp(), expres);
             approxLowAccEqualToArray(VecType(reals).expLowAcc(), expreslowacc);
-            return ; // TODO
             approxEqualToArray(VecType(reals).sqrt(), sqrtres);
+            return ; // TODO
             approxEqualToArray(VecType(reals).rsqrt(), rsqrtres);
 
             approxEqualToScalar(VecType(RealType(0)).exp(), std::exp(RealType(0)));

@@ -413,12 +413,9 @@ static void printVec(__vr vec){
     }
 
     inline InaVecSXA floor() const {
-        printVec(vec);
         __vr valuesInIntervals = _vel_vfmind_vvvl(
                                     _vel_vfmaxd_vvvl( vec, _vel_vbrdd_vsl(double(std::numeric_limits<long int>::min()), 256), 256),
                                     _vel_vbrdd_vsl(double(std::numeric_limits<long int>::max()), 256), 256);
-
-        printVec(valuesInIntervals);
         //__vm256 maskInLongInt = _vel_andm_mmm(
         //                        _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( , vec, 256), 256),
         //                        _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( vec, _vel_vbrdd_vsl(double(std::numeric_limits<long int>::max()), 256), 256), 256));
