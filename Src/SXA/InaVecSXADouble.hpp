@@ -424,7 +424,7 @@ static void printVec(__vr vec){
         //                        _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( vec, _vel_vbrdd_vsl(double(std::numeric_limits<long int>::max()), 256), 256), 256));
         __vr vecConvLongInt = _vel_vcvtldrz_vvl(valuesInIntervals, 256);
         printVecInt(vecConvLongInt);
-        __vr vecConvLongIntDouble = _vel_vcvtdl_vvl(vec, 256);
+        __vr vecConvLongIntDouble = _vel_vcvtdl_vvl(vecConvLongInt, 256);
         printVec(vecConvLongIntDouble);
 
         return vec;
