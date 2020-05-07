@@ -201,6 +201,7 @@ class TestAll : public UTester< TestAll< VecType > > {
     void approxLowAccEqualToArray(const VecType vec,
                             const RealType inReals[]) {
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+            printf("%lu] %e %e\n", vec.at(int(idx)), inReals[idx]);// TODO
             UASSERTETRUE(approxEqualLowAcc(vec.at(int(idx)), inReals[idx]));
         }
 
