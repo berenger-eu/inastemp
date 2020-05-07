@@ -423,18 +423,9 @@ static void printVec(__vr vec){
         //                        _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( , vec, 256), 256),
         //                        _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( vec, _vel_vbrdd_vsl(double(std::numeric_limits<long int>::max()), 256), 256), 256));
         __vr vecConvLongInt = _vel_vcvtldrz_vvl(valuesInIntervals, 256);
-        printVecInt(vecConvLongInt);
         __vr vecConvLongIntDouble = _vel_vcvtdl_vvl(vecConvLongInt, 256);
-        printVec(vecConvLongIntDouble);
 
         __vm256 maskPositive = _vel_vfmklgt_mvl(_vel_vfcmpd_vsvl( 0, vec, 256), 256);
-        printVecInt(_vel_vfcmpd_vsvl( 0, vec, 256));
-
-        __vr res = _vel_vmrg_vvvml(vecConvLongIntDouble,
-                                   _vel_vfsubd_vvvl( vecConvLongIntDouble, _vel_vbrdd_vsl(1, 256), 256),
-                                   maskPositive,
-                                   256);
-        printVec(res);
 
         return _vel_vmrg_vvvml(vecConvLongIntDouble,
                                _vel_vfsubd_vvvl( vecConvLongIntDouble, _vel_vbrdd_vsl(1, 256), 256),
