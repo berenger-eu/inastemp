@@ -405,7 +405,7 @@ static void printVec(__vr vec){
 
     inline InaVecSXA rsqrt() const {
         const __vr one = _vel_vbrdd_vsl(1.0, 256);
-        return  _vel_vfdivd_vvvl(one, vec, 256);
+        return  _vel_vfsqrtd_vvl(_vel_vfdivd_vvvl(one, vec, 256), 256);
     }
 
     inline InaVecSXA abs() const {
