@@ -413,11 +413,20 @@ static void printVec(__vr vec){
     }
 
     inline InaVecSXA floor() const {
-        __vm256 maskInLongInt = _vel_andm_mmm(
-                                _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( _vel_vbrdd_vsl(double(std::numeric_limits<long int>::min()), 256), vec, 256), 256),
-                                _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( vec, _vel_vbrdd_vsl(double(std::numeric_limits<long int>::max()), 256), 256), 256));
-        __vr vecConvLongInt = _vel_vcvtldrz_vvl(vec, 256);
+        printVec(vec);
+        __vr valuesInIntervals = _vel_vfmind_vvvl(
+                                    _vel_vfmaxd_vvvl( vec, _vel_vbrdd_vsl(double(std::numeric_limits<long int>::min()), 256), 256);
+                                    _vel_vbrdd_vsl(double(std::numeric_limits<long int>::max())));
+
+        printVec(valuesInIntervals);
+        //__vm256 maskInLongInt = _vel_andm_mmm(
+        //                        _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( , vec, 256), 256),
+        //                        _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( vec, _vel_vbrdd_vsl(double(std::numeric_limits<long int>::max()), 256), 256), 256));
+        __vr vecConvLongInt = _vel_vcvtldrz_vvl(valuesInIntervals, 256);
+        printVecInt(vecConvLongInt);
         __vr vecConvLongIntDouble = _vel_vcvtdl_vvl(vec, 256);
+        printVec(vecConvLongIntDouble);
+
         __vm256 maskNegative = _vel_vfmklgt_mvl(_vel_vcmpsl_vsvl( 0, vec, 256), 256);
         return _vel_vmrg_vvvml(_vel_vmrg_vvvml(_vel_vfsubd_vvvl( vecConvLongIntDouble, _vel_vbrdd_vsl(1, 256), 256),
                                                vecConvLongIntDouble,
