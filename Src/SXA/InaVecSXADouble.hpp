@@ -442,6 +442,11 @@ static void printVec(__vr vec){
         __vm256 maskPositive = _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( zero, vec, 256), 256);
         __vm256 maskNegative = _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( vec, zero, 256), 256);
 
+        printf("comp zero\n");
+        printVec(_vel_vfcmpd_vvvl( vec, zero, 256));
+        printf("comp2 zero\n");
+        printVec(_vel_vfcmpd_vvvl( zero, vec, 256));
+
         return _vel_vmrg_vvvml(_vel_vbrdd_vsl(-1, 256),
                                _vel_vmrg_vvvml(_vel_vbrdd_vsl(1, 256),
                                                   zero,
