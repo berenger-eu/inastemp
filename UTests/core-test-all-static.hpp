@@ -452,7 +452,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType::GetZero(), 0);
             equalToScalar(VecType::GetOne(), 1);
         }
-        return ; // TODO
 
         {
             RealType reals[VecType::GetVecLength()];
@@ -469,6 +468,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
 
             approxEqualToArray(VecType(reals).exp(), expres);
+            return ; // TODO
             approxLowAccEqualToArray(VecType(reals).expLowAcc(), expreslowacc);
             approxEqualToArray(VecType(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType(reals).rsqrt(), rsqrtres);
