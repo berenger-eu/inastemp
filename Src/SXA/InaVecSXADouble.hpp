@@ -447,7 +447,7 @@ static void printVec(__vr vec){
         printf("comp2 zero\n");
         printVecInt(_vel_vfcmpd_vvvl( zero, vec, 256));
 
-        return _vel_vmrg_vvvml(_vel_vmrg_vvvml(zero
+        return _vel_vmrg_vvvml(_vel_vmrg_vvvml(zero,
                                                _vel_vbrdd_vsl(1, 256),
                                                  maskPositive, 256),
                                _vel_vbrdd_vsl(-1, 256),
