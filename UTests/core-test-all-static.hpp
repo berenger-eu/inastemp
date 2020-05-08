@@ -623,13 +623,13 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalarMask(VecType(1).isPositiveMask(), trueMask);
             equalToScalarMask(VecType(-10).isPositiveMask(), falseMask);
             equalToScalarMask(VecType(10).isPositiveMask(), trueMask);
-            return ; // TODO
 
             equalToScalarMask(VecType(RealType(0)).isNegativeMask(), trueMask);
             equalToScalarMask(VecType(-1).isNegativeMask(), trueMask);
             equalToScalarMask(VecType(1).isNegativeMask(), falseMask);
             equalToScalarMask(VecType(-10).isNegativeMask(), trueMask);
             equalToScalarMask(VecType(10).isNegativeMask(), falseMask);
+            return ; // TODO
 
             equalToScalarMask(VecType(RealType(0)).isPositiveStrictMask(), falseMask);
             equalToScalarMask(VecType(-1).isPositiveStrictMask(), falseMask);
