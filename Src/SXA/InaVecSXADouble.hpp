@@ -320,7 +320,7 @@ static void printVec(__vr vec){
     }
 
     inline double horizontalMul() const {
-        // TODO
+        // TODO use vfim when available
         double sum = at(0);
         for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
             sum *= at(idx);
