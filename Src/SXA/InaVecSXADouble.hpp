@@ -329,23 +329,11 @@ static void printVec(__vr vec){
     }
 
     inline double minInVec() const {
-        // TODO
-        double min = at(0);
-        for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
-            min = std::min(min, at(idx));
-        }
-        return min;
+        return _vel_lvsd_svs(_vel_vfrmindfst_vvl(vec, 256),0);
     }
 
     inline double maxInVec() const {
         return _vel_lvsd_svs(_vel_vfrmaxdfst_vvl(vec, 256),0);
-
-        // TODO
-        double max = at(0);
-        for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
-            max = std::max(max, at(idx));
-        }
-        return max;
     }
 
     inline InaVecSXA sqrt() const {
