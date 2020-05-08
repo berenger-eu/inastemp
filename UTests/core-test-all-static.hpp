@@ -106,8 +106,11 @@ class TestAll : public UTester< TestAll< VecType > > {
 
     void equalToScalarMask(const MaskType vec,
                            const MaskType inReal) {
+        printf("equalToScalarMask A\n"); // TODO
         VecType vecval = VecType::IfTrue(vec, VecType(1));
+        printf("equalToScalarMask B\n"); // TODO
         VecType realval = VecType::IfTrue(inReal, VecType(1));
+        printf("equalToScalarMask C\n"); // TODO
         equalToVecType(vecval, realval);
     }
 
