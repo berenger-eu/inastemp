@@ -657,15 +657,15 @@ static void printVec(__vr vec){
     }
 
     inline static InaVecSXA IfElse(const InaVecMaskSXA<double>& inMask, const InaVecSXA& inIfTrue, const InaVecSXA& inIfFalse) {
-        return _vel_vmrg_vvvml(inIfTrue.vec, inIfFalse.vec, __vm256(inMask), 256);
+        return _vel_vmrg_vvvml(inIfFalse.vec, inIfTrue.vec, __vm256(inMask), 256);
     }
 
     inline static InaVecSXA IfTrue(const InaVecMaskSXA<double>& inMask, const InaVecSXA& inIfTrue) {
-        return _vel_vmrg_vvvml(inIfTrue.vec, _vel_vbrdd_vsl(0, 256), __vm256(inMask), 256);
+        return _vel_vmrg_vvvml(_vel_vbrdd_vsl(0, 256), inIfTrue.vec, __vm256(inMask), 256);
     }
 
     inline static InaVecSXA IfFalse(const InaVecMaskSXA<double>& inMask, const InaVecSXA& inIfFalse) {
-        return _vel_vmrg_vvvml(_vel_vbrdd_vsl(0, 256), inIfFalse.vec, __vm256(inMask), 256);
+        return _vel_vmrg_vvvml(inIfFalse.vec, _vel_vbrdd_vsl(0, 256), __vm256(inMask), 256);
     }
 
     // Inner operators
