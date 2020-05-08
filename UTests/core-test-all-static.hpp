@@ -507,7 +507,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(1).isPositive(), 1);
             equalToScalar(VecType(-10).isPositive(), 0);
             equalToScalar(VecType(10).isPositive(), 1);
-            return ; // TODO
 
             equalToScalar(VecType(RealType(0)).isNegative(), 1);
             equalToScalar(VecType(-1).isNegative(), 1);
@@ -536,6 +535,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(1).isZero(), 0);
             equalToScalar(VecType(1).isNotZero(), 1);
         }
+        return ; // TODO
         {
             equalToScalar(VecType::IsLowerOrEqual(VecType(RealType(0)),
                                                     VecType(RealType(0))),
