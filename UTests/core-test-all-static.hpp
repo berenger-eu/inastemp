@@ -742,7 +742,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(RealType(100000.9999)).floor(), std::floor(RealType(100000.9999)));
             equalToScalar(VecType(RealType(-100000.9999)).floor(), std::floor(RealType(-100000.9999)));
         }
-        return ; // TODO
         {
             const VecType trueMask(1);
             const VecType falseMask(RealType(0));
@@ -791,6 +790,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToVecType(VecType::BitsNotAnd(falseMask,trueMask),
                               trueMask);
         }
+        return ; // TODO
         {
             equalToScalar(VecType(0.) + VecType(0.),0);
             equalToScalar(VecType(0.) + VecType(10.),10);
