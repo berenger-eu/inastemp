@@ -614,12 +614,12 @@ class TestAll : public UTester< TestAll< VecType > > {
                                                 VecType(-1)),
                           1);
         }
-        return ; // TODO
         {
             const MaskType trueMask(true);
             const MaskType falseMask(false);
 
             equalToScalarMask(VecType(RealType(0)).isPositiveMask(), trueMask);
+            return ; // TODO
             equalToScalarMask(VecType(-1).isPositiveMask(), falseMask);
             equalToScalarMask(VecType(1).isPositiveMask(), trueMask);
             equalToScalarMask(VecType(-10).isPositiveMask(), falseMask);
