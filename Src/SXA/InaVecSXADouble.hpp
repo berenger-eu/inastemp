@@ -338,6 +338,8 @@ static void printVec(__vr vec){
     }
 
     inline double maxInVec() const {
+        return _vel_lvsd_svs(_vel_vfrmaxdfst_vvl(vec, 256),0);
+
         // TODO
         double max = at(0);
         for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
