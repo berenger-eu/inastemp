@@ -517,7 +517,7 @@ static void printVec(__vr vec){
     inline InaVecMaskSXA<double> isPositiveMask() const {
         __vr zero = _vel_vbrdd_vsl(0, 256);
         printf("A %d\n", __LINE__);
-        __vm256 mask = _vel_vfmklge_mvl(_vel_vfcmpd_vvvl( zero, vec, 256), 256);
+        __vm256 mask = _vel_vfmklle_mvl(_vel_vfcmpd_vvvl( zero, vec, 256), 256);
         printf("B %d\n", __LINE__);
         InaVecMaskSXA<double> mask2(mask);
         printf("C %d\n", __LINE__);
@@ -526,17 +526,17 @@ static void printVec(__vr vec){
 
     inline InaVecMaskSXA<double> isNegativeMask() const {
         __vr zero = _vel_vbrdd_vsl(0, 256);
-        return _vel_vfmklge_mvl(_vel_vfcmpd_vvvl( vec, zero, 256), 256);
+        return _vel_vfmklge_mvl(_vel_vfcmpd_vvvl( zero, vec, 256), 256);
     }
 
     inline InaVecMaskSXA<double> isPositiveStrictMask() const {
         __vr zero = _vel_vbrdd_vsl(0, 256);
-        return _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( zero, vec, 256), 256);
+        return _vel_vfmkllt_mvl(_vel_vfcmpd_vvvl( zero, vec, 256), 256);
     }
 
     inline InaVecMaskSXA<double> isNegativeStrictMask() const {
         __vr zero = _vel_vbrdd_vsl(0, 256);
-        return _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( vec, zero, 256), 256);
+        return _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( zero, vec, 256), 256);
     }
 
     inline InaVecMaskSXA<double> isZeroMask() const {
