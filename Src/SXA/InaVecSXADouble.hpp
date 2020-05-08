@@ -518,12 +518,7 @@ static void printVec(__vr vec){
 
     inline InaVecMaskSXA<double> isPositiveMask() const {
         __vr zero = _vel_vbrdd_vsl(0, 256);
-        printf("A %d\n", __LINE__);
-        __vm256 mask = _vel_vfmklle_mvl(_vel_vfcmpd_vvvl( zero, vec, 256), 256);
-        printf("B %d\n", __LINE__);
-        InaVecMaskSXA<double> mask2(mask);
-        printf("C %d\n", __LINE__);
-        return mask;
+        return _vel_vfmklle_mvl(_vel_vfcmpd_vvvl( zero, vec, 256), 256);
     }
 
     inline InaVecMaskSXA<double> isNegativeMask() const {
