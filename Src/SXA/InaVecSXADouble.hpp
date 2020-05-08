@@ -69,11 +69,11 @@ public:
 
     // Bool data type compatibility
     inline explicit InaVecMaskSXA(const bool inBool) : InaVecMaskSXA() {
-        mask = (inBool? _vel_vfmklat_ml(0xFFFFFFFFU) : _vel_vfmklat_ml(0));
+        mask = (inBool? _vel_vfmklat_ml(1) : _vel_vfmklat_ml(0));
     }
 
     inline InaVecMaskSXA& operator=(const bool inBool){
-        mask = (inBool? _vel_vfmklat_ml(0xFFFFFFFFU) : _vel_vfmklat_ml(0));
+        mask = (inBool? _vel_vfmklat_ml(1) : _vel_vfmklat_ml(0));
         return (*this);
     }
 
@@ -83,7 +83,7 @@ public:
     }
 
     inline bool isAllTrue() const{
-        return _vel_pcvm_sml(mask, 256) == 256*8*8;
+        return _vel_pcvm_sml(mask, 256) == 256;
     }
 
     inline bool isAllFalse() const{
@@ -97,7 +97,7 @@ public:
     }
 
     inline static InaVecMaskSXA NotAnd(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_andm_mmm(_vel_xorm_mmm(inMask1.mask, _vel_vfmklat_ml(0xFFFFFFFFU)),inMask2.mask);
+        return _vel_andm_mmm(_vel_xorm_mmm(inMask1.mask, _vel_vfmklat_ml(1)),inMask2.mask);
     }
 
     inline static InaVecMaskSXA Or(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
