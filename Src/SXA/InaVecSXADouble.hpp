@@ -462,10 +462,10 @@ static void printVec(__vr vec){
 
     inline InaVecSXA isPositive() const {
         __vr zero = _vel_vbrdd_vsl(0, 256);
-        __vm256 maskPositive = _vel_vfmklge_mvl(_vel_vfcmpd_vvvl( zero, vec, 256), 256);
+        __vm256 maskPositive = _vel_vfmklle_mvl(_vel_vfcmpd_vvvl( zero, vec, 256), 256);
 
-        return _vel_vmrg_vvvml(_vel_vbrdd_vsl(1, 256),
-                               zero,
+        return _vel_vmrg_vvvml(zero,
+                               _vel_vbrdd_vsl(1, 256),
                                maskPositive, 256);
     }
 
