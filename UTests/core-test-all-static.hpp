@@ -501,13 +501,13 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(1).signOf(), 1);
             equalToScalar(VecType(-10).signOf(), -1);
             equalToScalar(VecType(10).signOf(), 1);
-            return ; // TODO
 
             equalToScalar(VecType(RealType(0)).isPositive(), 1);
             equalToScalar(VecType(-1).isPositive(), 0);
             equalToScalar(VecType(1).isPositive(), 1);
             equalToScalar(VecType(-10).isPositive(), 0);
             equalToScalar(VecType(10).isPositive(), 1);
+            return ; // TODO
 
             equalToScalar(VecType(RealType(0)).isNegative(), 1);
             equalToScalar(VecType(-1).isNegative(), 1);
