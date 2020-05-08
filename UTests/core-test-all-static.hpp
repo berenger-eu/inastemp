@@ -659,7 +659,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalarMask(VecType::IsLowerOrEqualMask(VecType(RealType(0)),
                                                             VecType(RealType(0))),
                               trueMask);
-            return ; // TODO
             equalToScalarMask(VecType::IsLowerOrEqualMask(VecType(-1),
                                                             VecType(-1)),
                               trueMask);
@@ -735,6 +734,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                                                         VecType(-1)),
                               trueMask);
         }
+        return ; // TODO
 
         {
             equalToScalar(VecType(RealType(1)).floor(), std::floor(RealType(1)));
