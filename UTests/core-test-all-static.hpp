@@ -913,7 +913,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(v4.horizontalSum(), res[3]);
             UASSERTEEQUAL(v5.horizontalSum(), res[4]);
         }
-        return ; // TODO
         {
             const int nb_vec_test = 3;
             RealType res[nb_vec_test] = {0};
@@ -1059,6 +1058,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
         }
 
+        return ; // TODO
 
         {
             RealType reals[VecType::GetVecLength()];
