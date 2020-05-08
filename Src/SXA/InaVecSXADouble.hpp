@@ -98,6 +98,7 @@ public:
 
     inline static InaVecMaskSXA NotAnd(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
         __vm256 one;
+        (void)one;
         one = _vel_negm_mm(_vel_xorm_mmm(one, one));
         return _vel_andm_mmm(_vel_xorm_mmm(inMask1.mask, one),inMask2.mask);
     }
