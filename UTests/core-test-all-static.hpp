@@ -535,7 +535,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(1).isZero(), 0);
             equalToScalar(VecType(1).isNotZero(), 1);
         }
-        return ; // TODO
         {
             equalToScalar(VecType::IsLowerOrEqual(VecType(RealType(0)),
                                                     VecType(RealType(0))),
@@ -615,6 +614,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                                                 VecType(-1)),
                           1);
         }
+        return ; // TODO
         {
             const MaskType trueMask(true);
             const MaskType falseMask(false);
