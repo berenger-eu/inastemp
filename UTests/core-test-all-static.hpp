@@ -839,7 +839,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar((-1.) * a,1.);
         }
 
-        return ; // TODO
         {
             equalToScalar(VecType(1.).pow(0),1.);
             equalToScalar(VecType(1.).pow(1),1.);
@@ -914,6 +913,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(v4.horizontalSum(), res[3]);
             UASSERTEEQUAL(v5.horizontalSum(), res[4]);
         }
+        return ; // TODO
         {
             const int nb_vec_test = 3;
             RealType res[nb_vec_test] = {0};
