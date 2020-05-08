@@ -809,7 +809,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(0.) / VecType(10.),0);
             equalToScalar(VecType(10.) / VecType(10.),1);
         }
-        return ; // TODO
         {
             equalToScalar(VecType(0.) += VecType(0.),0);
             equalToScalar(VecType(0.) += VecType(10.),10);
@@ -840,6 +839,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar((-1.) * a,1.);
         }
 
+        return ; // TODO
         {
             equalToScalar(VecType(1.).pow(0),1.);
             equalToScalar(VecType(1.).pow(1),1.);
