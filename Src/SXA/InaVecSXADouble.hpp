@@ -341,7 +341,7 @@ static void printVec(__vr vec){
         // TODO
         double max = at(0);
         for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
-            max = std::min(max, at(idx));
+            max = std::max(max, at(idx));
         }
         return max;
     }
