@@ -340,15 +340,15 @@ class TestAll : public UTester< TestAll< VecType > > {
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 //?
                 printf("line %d\n", __LINE__);
-                equalToScalar(vec_no_fal.at(int(idx)), RealType(idx+1));
+                UASSERTEEQUAL(vec_no_fal.at(int(idx)), RealType(idx+1));
                 printf("line %d\n", __LINE__);
-                equalToScalar(vec_no_fna.at(int(idx)), RealType(idx+1));
+                UASSERTEEQUAL(vec_no_fna.at(int(idx)), RealType(idx+1));
                 printf("line %d\n", __LINE__);
-                equalToScalar(vec_no_fal2.at(int(idx)), RealType(idx+1));
+                UASSERTEEQUAL(vec_no_fal2.at(int(idx)), RealType(idx+1));
                 printf("line %d\n", __LINE__);
-                equalToScalar(vec_no_fna2.at(int(idx)), RealType(idx+1));
+                UASSERTEEQUAL(vec_no_fna2.at(int(idx)), RealType(idx+1));
                 printf("line %d\n", __LINE__);
-                equalToScalar(vec_al_fal.at(int(idx)), RealType(idx+1));
+                UASSERTEEQUAL(vec_al_fal.at(int(idx)), RealType(idx+1));
                 printf("line %d\n", __LINE__);
                 // end ?
             }
