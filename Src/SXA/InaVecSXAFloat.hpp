@@ -236,7 +236,7 @@ public:
         //vec = _vel_vldlsx_vssvl(0, values, offset, 256);
 
         __vr offset = _vel_vld_vssl(8, inIndirection, 256);
-        __vr address = _vel_vsfa_vvssl(offset, 3, reinterpret_cast<unsigned long>(values), 256);
+        __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(values), 256);
         vec = _vel_vgtu_vvssl(address, 0, 0, 256);
 
         return *this;
