@@ -298,6 +298,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
             double val;// TODO
             printf("val %p (%x)\n", &val, (unsigned long int)&val);// TODO
+            printf("realsna %p (%x)\n", realsna, (unsigned long int)realsna);// TODO
 
             VecType vec_no_fal(reals);
             equalToArray(vec_no_fal, reals);
