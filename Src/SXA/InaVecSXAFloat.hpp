@@ -364,8 +364,8 @@ public:
         printf("vec\n"); printVec(x);
         printf("vec int\n"); printVecInt(x);
 
-        __vr castedInteger = _vel_pvcvtwsrz_vvl(x, 256);
-        // NO: _vel_vcvtwssxrz_vvl, _vel_vcvtwdsxrz_vvl, _vel_vcvtldrz_vvl
+        __vr castedInteger = _vel_vcvtwdzxrz_vvl(x, 256);
+        // NO: _vel_vcvtwssxrz_vvl, _vel_vcvtwdsxrz_vvl, _vel_vcvtldrz_vvl, _vel_pvcvtwsrz_vvl
         printf("castedInteger\n"); printVec(castedInteger);
         printf("castedInteger int\n"); printVecInt(castedInteger);
 
