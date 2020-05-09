@@ -321,7 +321,7 @@ public:
         _vel_vst_vssl(vec, 8, array, 256);
 
         for(int idx = 0 ; idx < /*256*/10 ; ++idx){
-            printf("[%d] = %lu / %x (%lu)\n", idx, array[idx], array[idx], _vel_lvsl_svs(vec, idx));
+            printf("[%d] = %lu / %lx (%lu)\n", idx, array[idx], array[idx], _vel_lvsl_svs(vec, idx));
         }
     }
 
