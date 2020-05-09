@@ -300,36 +300,55 @@ class TestAll : public UTester< TestAll< VecType > > {
             VecType vec_no_fal(reals);
             equalToArray(vec_no_fal, reals);
             //?
+            printf("line %d\n", __LINE__);
             equalToArray(vec_no_fal, realsna);
 
+            printf("line %d\n", __LINE__);
             VecType vec_no_fna(realsna);
+            printf("line %d\n", __LINE__);
             equalToArray(vec_no_fna, reals);
+            printf("line %d\n", __LINE__);
             equalToArray(vec_no_fna, realsna);
+            printf("line %d\n", __LINE__);
             // end ?
             VecType vec_no_fal2;
             vec_no_fal2.setFromArray(reals);
             equalToArray(vec_no_fal2, reals);
             //?
+            printf("line %d\n", __LINE__);
             equalToArray(vec_no_fal2, realsna);
+            printf("line %d\n", __LINE__);
 
             VecType vec_no_fna2;
+            printf("line %d\n", __LINE__);
             vec_no_fna2.setFromArray(realsna);
+            printf("line %d\n", __LINE__);
             equalToArray(vec_no_fna2, reals);
+            printf("line %d\n", __LINE__);
             equalToArray(vec_no_fna2, realsna);
+            printf("line %d\n", __LINE__);
             // end ?
             VecType vec_al_fal;
             vec_al_fal.setFromAlignedArray(reals);
             equalToArray(vec_al_fal, reals);
             //?
+            printf("line %d\n", __LINE__);
             equalToArray(vec_al_fal, realsna);
+            printf("line %d\n", __LINE__);
             // end ?
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 //?
+                printf("line %d\n", __LINE__);
                 equalToScalar(vec_no_fal.at(int(idx)), RealType(idx+1));
+                printf("line %d\n", __LINE__);
                 equalToScalar(vec_no_fna.at(int(idx)), RealType(idx+1));
+                printf("line %d\n", __LINE__);
                 equalToScalar(vec_no_fal2.at(int(idx)), RealType(idx+1));
+                printf("line %d\n", __LINE__);
                 equalToScalar(vec_no_fna2.at(int(idx)), RealType(idx+1));
+                printf("line %d\n", __LINE__);
                 equalToScalar(vec_al_fal.at(int(idx)), RealType(idx+1));
+                printf("line %d\n", __LINE__);
                 // end ?
             }
         }
