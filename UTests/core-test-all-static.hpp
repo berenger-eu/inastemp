@@ -377,7 +377,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
         }
         printf("LINE %d\n", __LINE__);
-        return ; // TODO
 
         {
             RealType reals[VecType::GetVecLength()];
@@ -399,6 +398,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType().setFromIndirect2DArray(&real, indirect, 0, indirect), 1);
         }
         printf("LINE %d\n", __LINE__);
+        return ; // TODO
 
         {
             RealType reals[VecType::GetVecLength() * 2];

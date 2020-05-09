@@ -258,7 +258,7 @@ public:
                      _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
                                       _vel_vld_vssl(8, inIndirection1, 256),
                                       256),256);
-        __vr address = _vel_vsfa_vvssl(offset, 3, reinterpret_cast<unsigned long>(inArray), 256);
+        __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(inArray), 256);
         vec = _vel_vgtu_vvssl(address, 0, 0, 256);
         return *this;
     }
