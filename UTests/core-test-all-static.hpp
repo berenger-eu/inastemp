@@ -299,37 +299,41 @@ class TestAll : public UTester< TestAll< VecType > > {
 
             VecType vec_no_fal(reals);
             equalToArray(vec_no_fal, reals);
-
+{
             equalToArray(vec_no_fal, realsna);
 
-//            VecType vec_no_fna(realsna);
-//            equalToArray(vec_no_fna, reals);
-//            equalToArray(vec_no_fna, realsna);
-
+            VecType vec_no_fna(realsna);
+            equalToArray(vec_no_fna, reals);
+            equalToArray(vec_no_fna, realsna);
+}
             VecType vec_no_fal2;
             vec_no_fal2.setFromArray(reals);
             equalToArray(vec_no_fal2, reals);
-//            equalToArray(vec_no_fal2, realsna);
+            {
+            equalToArray(vec_no_fal2, realsna);
 
-//            VecType vec_no_fna2;
-//            vec_no_fna2.setFromArray(realsna);
-//            equalToArray(vec_no_fna2, reals);
-//            equalToArray(vec_no_fna2, realsna);
-
+            VecType vec_no_fna2;
+            vec_no_fna2.setFromArray(realsna);
+            equalToArray(vec_no_fna2, reals);
+            equalToArray(vec_no_fna2, realsna);
+}
             VecType vec_al_fal;
             vec_al_fal.setFromAlignedArray(reals);
             equalToArray(vec_al_fal, reals);
-//            equalToArray(vec_al_fal, realsna);
-
+            {
+            equalToArray(vec_al_fal, realsna);
+}
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
-//                equalToScalar(vec_no_fal.at(int(idx)), RealType(idx+1));
-//                equalToScalar(vec_no_fna.at(int(idx)), RealType(idx+1));
-//                equalToScalar(vec_no_fal2.at(int(idx)), RealType(idx+1));
-//                equalToScalar(vec_no_fna2.at(int(idx)), RealType(idx+1));
-//                equalToScalar(vec_al_fal.at(int(idx)), RealType(idx+1));
+                {
+                equalToScalar(vec_no_fal.at(int(idx)), RealType(idx+1));
+                equalToScalar(vec_no_fna.at(int(idx)), RealType(idx+1));
+                equalToScalar(vec_no_fal2.at(int(idx)), RealType(idx+1));
+                equalToScalar(vec_no_fna2.at(int(idx)), RealType(idx+1));
+                equalToScalar(vec_al_fal.at(int(idx)), RealType(idx+1));
+            }
             }
         }
-
+return; // TODO
 
         {
             RealType real = 1;
