@@ -295,7 +295,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx] = RealType(idx+1);
                 realsna[idx] = RealType(idx+1);
-                printf("%lu %e %e\n", idx; reals[idx], realsna[idx]);// TODO
+                printf("%lu %e %e\n", idx ,reals[idx], realsna[idx]);// TODO
             }
 
             VecType vec_no_fal(reals);
