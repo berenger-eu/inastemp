@@ -444,7 +444,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(RealType(0)).abs(), RealType(0));
         }
         printf("LINE %d\n", __LINE__);
-        return ; // TODO
 
         {
             RealType reals[VecType::GetVecLength()];
@@ -465,6 +464,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType::GetOne(), 1);
         }
         printf("LINE %d\n", __LINE__);
+        return ; // TODO
 
         {
             RealType reals[VecType::GetVecLength()];
