@@ -343,7 +343,7 @@ public:
 
         x = _vel_vfadds_vvvl(_vel_vfmuls_vvvl(COEFF_A, x, 256), COEFF_B, 256);
 
-        __vr castedInteger = _vel_vcvtldrz_vvl(x, 256);
+        __vr castedInteger = _vel_vcvtwdsxrz_vvl(x, 256); // _vel_vcvtldrz_vvl
 
         return (castedInteger); // Automatically reinterpret not cast
     }
