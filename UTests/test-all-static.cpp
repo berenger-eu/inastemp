@@ -9,7 +9,7 @@
 
 int main() {
     // clang-format off
-    //TestAll<InaVec@TYPE@<float>> testerSingle;
+    TestAll<InaVec@TYPE@<float>> testerSingle;
     //return testerSingle.Run();
     // TODO
     TestAll<InaVec@TYPE@<double>> testerDouble;
