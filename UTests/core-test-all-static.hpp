@@ -398,7 +398,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType().setFromIndirect2DArray(&real, indirect, 0, indirect), 1);
         }
         printf("LINE %d\n", __LINE__);
-        return ; // TODO
 
         {
             RealType reals[VecType::GetVecLength() * 2];
@@ -423,6 +422,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(VecType(10).horizontalMul(), RealType(pow(10, VecType::GetVecLength())));
         }
         printf("LINE %d\n", __LINE__);
+        return ; // TODO
 
         {
             equalToScalar(VecType::Min(VecType(1),
