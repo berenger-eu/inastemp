@@ -270,6 +270,7 @@ static void printVec(__vr vec){
 
     inline InaVecSXA& setFromIndirectArray(const double values[], const int inIndirection[]) {
         unsigned long int liIndirections[256];
+        // TODO in one instruction
         for(int idx = 0 ; idx < 256 ; ++idx){
             liIndirections[idx] = static_cast<unsigned long int>(inIndirection[idx]);
         }
@@ -292,6 +293,7 @@ static void printVec(__vr vec){
                                  const int inLeadingDimension, const int inIndirection2[]){
         long int liIndirections1[256];
         long int liIndirections2[256];
+        // TODO in one instruction
         for(int idx = 0 ; idx < 256 ; ++idx){
             liIndirections1[idx] = inIndirection1[idx];
             liIndirections2[idx] = inIndirection2[idx];

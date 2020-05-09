@@ -69,11 +69,11 @@ public:
 
     // Bool data type compatibility
     inline explicit InaVecMaskSXA(const bool inBool) : InaVecMaskSXA() {
-        mask = (inBool? _vel_vfmklat_ml(0xFFFFFFFFU) : _vel_vfmklat_ml(0));
+        mask = (inBool? _vel_negm_mm(_vel_xorm_mmm(mask, mask)) : _vel_xorm_mmm(mask, mask));
     }
 
     inline InaVecMaskSXA& operator=(const bool inBool){
-        mask = (inBool? _vel_vfmklat_ml(0xFFFFFFFFU) : _vel_vfmklat_ml(0));
+        mask = (inBool? _vel_negm_mm(_vel_xorm_mmm(mask, mask)) : _vel_xorm_mmm(mask, mask));
         return (*this);
     }
 
@@ -83,7 +83,7 @@ public:
     }
 
     inline bool isAllTrue() const{
-        return _vel_pcvm_sml(mask, 256) == 256*8*8;
+        return _vel_pcvm_sml(mask, 256) == 256;
     }
 
     inline bool isAllFalse() const{
@@ -97,7 +97,9 @@ public:
     }
 
     inline static InaVecMaskSXA NotAnd(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_andm_mmm(_vel_xorm_mmm(inMask1.mask, _vel_vfmklat_ml(0xFFFFFFFFU)),inMask2.mask);
+        __vm256 one = _vel_vfmklat_ml(0); // dumbe init
+        one = _vel_negm_mm(_vel_xorm_mmm(one, one)); // set to zero than negate
+        return _vel_andm_mmm(_vel_xorm_mmm(inMask1.mask, one),inMask2.mask);
     }
 
     inline static InaVecMaskSXA Or(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
@@ -229,18 +231,48 @@ public:
         return *this;
     }
 
-    inline InaVecSXA& setFromIndirectArray(const float values[], const int inIndirection[]) {
-        __vr offset = _vel_vldu_vssl(4, inIndirection, 256);
-        vec = _vel_vldlsx_vssvl(0, values, offset, 256);
+    inline InaVecSXA& setFromIndirectArray(const float values[], const unsigned long int inIndirection[]) {
+        //__vr offset = _vel_vldu_vssl(4, inIndirection, 256);
+        //vec = _vel_vldlsx_vssvl(0, values, offset, 256);
+
+        __vr offset = _vel_vld_vssl(4, inIndirection, 256);
+        __vr address = _vel_vsfa_vvssl(offset, 3, reinterpret_cast<unsigned long>(values), 256);
+        vec = _vel_vgtu_vvssl(address, 0, 0, 256);
+
         return *this;
     }
 
-    inline InaVecSXA& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
+    inline InaVecSXA& setFromIndirectArray(const float values[], const int inIndirection[]) {
+        unsigned long int liIndirections[256];
+        // TODO in one instruction
+        for(int idx = 0 ; idx < 256 ; ++idx){
+            liIndirections[idx] = static_cast<unsigned long int>(inIndirection[idx]);
+        }
+        setFromIndirectArray(values, liIndirections);
+        return *this;
+    }
+
+    inline InaVecSXA& setFromIndirect2DArray(const float inArray[], const long int inIndirection1[],
+                                 const int inLeadingDimension, const long int inIndirection2[]){
+        __vr offset = _vel_vaddsl_vvvl(_vel_vld_vssl(8, inIndirection2, 256),
+                     _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
+                                      _vel_vld_vssl(8, inIndirection1, 256),
+                                      256),256);
+        __vr address = _vel_vsfa_vvssl(offset, 3, reinterpret_cast<unsigned long>(inArray), 256);
+        vec = _vel_vgtu_vvssl(address, 0, 0, 256);
+        return *this;
+    }
+
+    inline InaVecSXA& setFromIndirect2DArray(const double inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
-        __vr offset = _vel_vmulul_vvvl(_vel_vldu_vssl(4, inIndirection1, 256),
-                                      _vel_vldu_vssl(4, inIndirection2, 256),
-                                      256);
-        vec = _vel_vldlsx_vssvl(0, inArray, offset, 256);
+        long int liIndirections1[256];
+        long int liIndirections2[256];
+        // TODO in one instruction
+        for(int idx = 0 ; idx < 256 ; ++idx){
+            liIndirections1[idx] = inIndirection1[idx];
+            liIndirections2[idx] = inIndirection2[idx];
+        }
+        setFromIndirect2DArray(inArray, liIndirections1, inLeadingDimension, liIndirections2);
         return *this;
     }
 
@@ -264,6 +296,7 @@ public:
     }
 
     inline float horizontalMul() const {
+        // TODO use vfim when available
         float sum = at(0);
         for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
             sum *= at(idx);
@@ -272,11 +305,11 @@ public:
     }
 
     inline float minInVec() const {
-        return 0; // TODO
+        return _vel_lvss_svs(_vel_vfrminsfst_vvl(vec, 256),0);
     }
 
     inline float maxInVec() const {
-        return 0; // TODO
+        return _vel_lvss_svs(_vel_vfrmaxsfst_vvl(vec, 256),0);
     }
 
     inline InaVecSXA sqrt() const {
@@ -344,6 +377,8 @@ public:
     inline InaVecSXA rsqrt() const {
         // svrsqrte_f64(vec); seems low accurate
         return  _vel_vrsqrts_vvl(vec, 256);
+        //const __vr one = _vel_vbrds_vsl(1.0, 256);
+        //return  _vel_vfsqrts_vvl(_vel_vfdivs_vvvl(one, vec, 256), 256);
     }
 
     inline InaVecSXA abs() const {
@@ -351,74 +386,114 @@ public:
     }
 
     inline InaVecSXA floor() const {
-        /* TODO
-        __vm256 maskInLongInt = _vel_andm_mmm(
-                                _vel_vfmklgt_mvl_256(_vel_vfcmps_vvvl( _vel_vbrds_vsl(float(std::numeric_limits<int>::min()), 256), vec, 256), 256),
-                                _vel_vfmklgt_mvl_256(_vel_vfcmps_vvvl( vec, _vel_vbrds_vsl(float(std::numeric_limits<int>::max()), 256), 256), 256));
-        __vr vecConvLongInt = _vel_vcvtldrz_vvl(vec, 256);
-        __vr vecConvLongIntFloat = _vel_vcvtdl_vvl(vec, 256);
-        __vm256 maskNegative = _vel_vfmklgt_mvl_256(_vel_vcmpsl_vsvl( 0, vec, 256), 256);
-        return _vel_vmrg_vvvml(_vel_vmrg_vvvml(_vel_vfsubs_vvvl( vecConvLongIntFloat, _vel_vbrds_vsl(1, 256), 256),
-                                               vecConvLongIntFloat,
-                                               maskNegative,
-                                               256),
-                               vec,
-                               maskInLongInt,
+        __vr valuesInIntervals = _vel_vfmins_vvvl(
+                                    _vel_vfmaxs_vvvl( vec, _vel_vbrds_vsl(double(std::numeric_limits<int>::min()), 256), 256),
+                                    _vel_vbrds_vsl(double(std::numeric_limits<int>::max()), 256), 256);
+        __vr vecConvLongInt = _vel_vcvtwdsxrz_vvl(valuesInIntervals, 256);
+        __vr vecConvLongIntDouble = _vel_vcvtsd_vvl(vecConvLongInt, 256);
+
+        __vm256 maskPositive = _vel_vfmklgt_mvl(_vel_vfcmps_vsvl( 0, vec, 256), 256);
+
+        return _vel_vmrg_vvvml(vecConvLongIntDouble,
+                               _vel_vfsubs_vvvl( vecConvLongIntDouble, _vel_vbrds_vsl(1, 256), 256),
+                               maskPositive,
                                256);
-                               */
-        return vec;
     }
 
     inline InaVecSXA signOf() const {
-        return _vel_vfcmps_vvvl(vec, _vel_vbrds_vsl(0, 256), 256);
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        __vm256 maskPositive = _vel_vfmkllt_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
+        __vm256 maskNegative = _vel_vfmkllt_mvl(_vel_vfcmps_vvvl( vec, zero, 256), 256);
+
+        return _vel_vmrg_vvvml(_vel_vmrg_vvvml(zero,
+                                               _vel_vbrds_vsl(1, 256),
+                                                maskPositive, 256),
+                               _vel_vbrds_vsl(-1, 256),
+                               maskNegative, 256);
     }
 
     inline InaVecSXA isPositive() const {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256), _vel_vbrds_vsl(0, 256), __vm256(isPositiveMask()), 256);
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        __vm256 maskPositive = _vel_vfmklle_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
+
+        return _vel_vmrg_vvvml(zero,
+                               _vel_vbrds_vsl(1, 256),
+                               maskPositive, 256);
     }
 
     inline InaVecSXA isNegative() const {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256), _vel_vbrds_vsl(0, 256), __vm256(isNegativeMask()), 256);
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        __vm256 maskNegative = _vel_vfmklle_mvl(_vel_vfcmps_vvvl( vec, zero, 256), 256);
+
+        return _vel_vmrg_vvvml(zero,
+                               _vel_vbrds_vsl(1, 256),
+                               maskNegative, 256);
     }
 
     inline InaVecSXA isPositiveStrict() const {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256), _vel_vbrds_vsl(0, 256), __vm256(isPositiveStrictMask()), 256);
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        __vm256 maskPositive = _vel_vfmkllt_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
+
+        return _vel_vmrg_vvvml(zero,
+                               _vel_vbrds_vsl(1, 256),
+                               maskPositive, 256);
     }
 
     inline InaVecSXA isNegativeStrict() const {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256), _vel_vbrds_vsl(0, 256), __vm256(isNegativeStrictMask()), 256);
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        __vm256 maskNegative = _vel_vfmkllt_mvl(_vel_vfcmps_vvvl( vec, zero, 256), 256);
+
+        return _vel_vmrg_vvvml( zero,
+                                _vel_vbrds_vsl(1, 256),
+                               maskNegative, 256);
     }
 
     inline InaVecSXA isZero() const {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256), _vel_vbrds_vsl(0, 256), __vm256(isZeroMask()), 256);
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        __vm256 maskEqual = _vel_vfmkleq_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
+
+        return _vel_vmrg_vvvml(zero,
+                               _vel_vbrds_vsl(1, 256),
+                               maskEqual, 256);
     }
 
     inline InaVecSXA isNotZero() const {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256), _vel_vbrds_vsl(0, 256), __vm256(isNotZeroMask()), 256);
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        __vm256 maskEqual = _vel_vfmkleq_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
+
+        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256),
+                               zero,
+                               maskEqual, 256);
     }
 
     inline InaVecMaskSXA<float> isPositiveMask() const {
-        return _vel_vfmklgt_mvl_256(_vel_vfcmps_vvvl( _vel_vbrds_vsl(0-std::numeric_limits<float>::epsilon(), 256), vec, 256), 256);
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        return _vel_vfmklle_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
     }
 
     inline InaVecMaskSXA<float> isNegativeMask() const {
-        return _vel_vfmklgt_mvl_256(_vel_vfcmps_vvvl( vec, _vel_vbrds_vsl(0+std::numeric_limits<float>::epsilon(), 256), 256), 256);
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        return _vel_vfmklge_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
     }
 
     inline InaVecMaskSXA<float> isPositiveStrictMask() const {
-        return _vel_vfmklgt_mvl_256(_vel_vfcmps_vvvl( _vel_vbrds_vsl(0-std::numeric_limits<float>::epsilon(), 256), vec, 256), 256);
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        return _vel_vfmkllt_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
     }
 
     inline InaVecMaskSXA<float> isNegativeStrictMask() const {
-        return _vel_vfmklgt_mvl_256(_vel_vfcmps_vvvl( vec, _vel_vbrds_vsl(0+std::numeric_limits<float>::epsilon(), 256), 256), 256);
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        return _vel_vfmklgt_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
     }
 
     inline InaVecMaskSXA<float> isZeroMask() const {
-        return _vel_negm_mm(_vel_vfmklgt_mvl_256(_vel_vand_vvvl( _vel_pvbrd_vsl(~0UL, 256), vec, 256), 256));
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        return _vel_vfmkleq_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
     }
 
     inline InaVecMaskSXA<float> isNotZeroMask() const {
-        return _vel_vfmklgt_mvl_256(_vel_vand_vvvl( _vel_pvbrd_vsl(~0UL, 256), vec, 256), 256);
+        __vr zero = _vel_vbrds_vsl(0, 256);
+        return _vel_vfmklne_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
     }
 
     // Static basic methods
@@ -431,59 +506,77 @@ public:
     }
 
     inline static InaVecSXA Min(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vminswsx_vvvl( inVec1.vec, inVec2.vec, 256);
+        return _vel_vfmins_vvvl( inVec1.vec, inVec2.vec, 256);
     }
 
     inline static InaVecSXA Max(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vmaxswsx_vvvl( inVec1.vec, inVec2.vec, 256);
+        return _vel_vfmaxs_vvvl( inVec1.vec, inVec2.vec, 256);
     }
 
     inline static InaVecSXA IsLowerOrEqual(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256), _vel_vbrds_vsl(0, 256), __vm256(IsLowerOrEqualMask(inVec1, inVec2)), 256);
+        __vm256 mask = _vel_vfmklle_mvl(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
+        return _vel_vmrg_vvvml(_vel_vbrds_vsl(0, 256),
+                               _vel_vbrds_vsl(1, 256),
+                               mask, 256);
     }
 
     inline static InaVecSXA IsLower(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256), _vel_vbrds_vsl(0, 256), __vm256(IsLowerMask(inVec1, inVec2)), 256);
+        __vm256 mask = _vel_vfmkllt_mvl(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
+        return _vel_vmrg_vvvml(_vel_vbrds_vsl(0, 256),
+                               _vel_vbrds_vsl(1, 256),
+                               mask, 256);
     }
 
     inline static InaVecSXA IsGreaterOrEqual(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256), _vel_vbrds_vsl(0, 256), __vm256(IsGreaterOrEqualMask(inVec1, inVec2)), 256);
+        __vm256 mask = _vel_vfmklge_mvl(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
+        return _vel_vmrg_vvvml(_vel_vbrds_vsl(0, 256),
+                               _vel_vbrds_vsl(1, 256),
+                               mask, 256);
     }
 
     inline static InaVecSXA IsGreater(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256), _vel_vbrds_vsl(0, 256), __vm256(IsGreaterMask(inVec1, inVec2)), 256);
+        __vm256 mask = _vel_vfmklgt_mvl(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
+        return _vel_vmrg_vvvml(_vel_vbrds_vsl(0, 256),
+                               _vel_vbrds_vsl(1, 256),
+                               mask, 256);
     }
 
     inline static InaVecSXA IsEqual(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256), _vel_vbrds_vsl(0, 256), __vm256(IsEqualMask(inVec1, inVec2)), 256);
+        __vm256 mask = _vel_vfmkleq_mvl(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
+        return _vel_vmrg_vvvml(_vel_vbrds_vsl(0, 256),
+                               _vel_vbrds_vsl(1, 256),
+                               mask, 256);
     }
 
     inline static InaVecSXA IsNotEqual(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(1, 256), _vel_vbrds_vsl(0, 256), __vm256(IsNotEqualMask(inVec1, inVec2)), 256);
+        __vm256 mask = _vel_vfmklne_mvl(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
+        return _vel_vmrg_vvvml(_vel_vbrds_vsl(0, 256),
+                               _vel_vbrds_vsl(1, 256),
+                               mask, 256);
     }
 
     inline static InaVecMaskSXA<float> IsLowerOrEqualMask(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vfmklgt_mvl_256(_vel_vfcmps_vvvl( _vel_vfsubs_vvvl(inVec1.vec, _vel_vbrds_vsl(std::numeric_limits<float>::epsilon(), 256), 256), inVec2.vec, 256), 256);
+        return _vel_vfmklle_mvl(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
     }
 
     inline static InaVecMaskSXA<float> IsLowerMask(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vfmklgt_mvl_256(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
+        return _vel_vfmkllt_mvl(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
     }
 
     inline static InaVecMaskSXA<float> IsGreaterOrEqualMask(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vfmklgt_mvl_256(_vel_vfcmps_vvvl( inVec2.vec, inVec1.vec, 256), 256);
+        return _vel_vfmklge_mvl(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
     }
 
     inline static InaVecMaskSXA<float> IsGreaterMask(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return _vel_vfmklgt_mvl_256(_vel_vfcmps_vvvl( _vel_vfsubs_vvvl(inVec2.vec, _vel_vbrds_vsl(std::numeric_limits<float>::epsilon(), 256), 256), inVec1.vec, 256), 256);
+        return _vel_vfmklgt_mvl(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
     }
 
     inline static InaVecMaskSXA<float> IsEqualMask(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return  InaVecMaskSXA<float>::And(IsGreaterOrEqualMask(inVec1, inVec2), IsLowerOrEqualMask(inVec1, inVec2));
+        return _vel_vfmkleq_mvl(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
     }
 
     inline static InaVecMaskSXA<float> IsNotEqualMask(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
-        return  InaVecMaskSXA<float>::Xor(IsGreaterOrEqualMask(inVec1, inVec2), IsLowerOrEqualMask(inVec1, inVec2));
+        return _vel_vfmklne_mvl(_vel_vfcmps_vvvl( inVec1.vec, inVec2.vec, 256), 256);
     }
 
     inline static InaVecSXA BitsAnd(const InaVecSXA& inVec1, const InaVecSXA& inVec2) {
@@ -511,15 +604,15 @@ public:
     }
 
     inline static InaVecSXA IfElse(const InaVecMaskSXA<float>& inMask, const InaVecSXA& inIfTrue, const InaVecSXA& inIfFalse) {
-        return _vel_vmrg_vvvml(inIfTrue.vec, inIfFalse.vec, __vm256(inMask), 256);
+        return _vel_vmrg_vvvml(inIfFalse.vec, inIfTrue.vec, __vm256(inMask), 256);
     }
 
     inline static InaVecSXA IfTrue(const InaVecMaskSXA<float>& inMask, const InaVecSXA& inIfTrue) {
-        return _vel_vmrg_vvvml(inIfTrue.vec, _vel_vbrds_vsl(0, 256), __vm256(inMask), 256);
+        return _vel_vmrg_vvvml(_vel_vbrds_vsl(0, 256), inIfTrue.vec, __vm256(inMask), 256);
     }
 
     inline static InaVecSXA IfFalse(const InaVecMaskSXA<float>& inMask, const InaVecSXA& inIfFalse) {
-        return _vel_vmrg_vvvml(_vel_vbrds_vsl(0, 256), inIfFalse.vec, __vm256(inMask), 256);
+        return _vel_vmrg_vvvml(inIfFalse.vec, _vel_vbrds_vsl(0, 256), __vm256(inMask), 256);
     }
 
     // Inner operators
