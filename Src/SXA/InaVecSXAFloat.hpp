@@ -263,7 +263,7 @@ public:
         return *this;
     }
 
-    inline InaVecSXA& setFromIndirect2DArray(const double inArray[], const int inIndirection1[],
+    inline InaVecSXA& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
         long int liIndirections1[256];
         long int liIndirections2[256];
