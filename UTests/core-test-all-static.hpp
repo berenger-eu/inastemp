@@ -289,8 +289,8 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         {
             default_alignas RealType reals[VecType::GetVecLength()];
-            default_alignas char buffer[VecType::GetVecLength()*sizeof(RealType)+1];
-            RealType* realsna = reinterpret_cast<RealType*>(&buffer+1);
+            default_alignas char buffer[VecType::GetVecLength()*sizeof(RealType)+8];
+            RealType* realsna = reinterpret_cast<RealType*>(&buffer+8);
 
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx] = RealType(idx+1);
