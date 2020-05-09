@@ -321,7 +321,7 @@ public:
         _vel_vst_vssl(vec, 8, array, 256);
 
         for(int idx = 0 ; idx < /*256*/10 ; ++idx){
-            printf("[%d] = %lu / %x (%lu)\n", idx, array[idx], _vel_lvsl_svs(vec, idx));
+            printf("[%d] = %lu / %x (%lu)\n", idx, array[idx], array[idx], _vel_lvsl_svs(vec, idx));
         }
     }
 
@@ -364,7 +364,7 @@ public:
         printf("vec\n"); printVec(x);
         printf("vec int\n"); printVecInt(x);
 
-        __vr castedInteger = _vel_pvcvtwsrz_vvl(x, 256); // _vel_vcvtldrz_vvl _vel_vcvtwdsxrz_vvl _vel_vcvtwssxrz_vvl
+        __vr castedInteger = _vel_vcvtwssxrz_vvl(x, 256); // _vel_vcvtldrz_vvl _vel_vcvtwdsxrz_vvl _vel_vcvtwssxrz_vvl
 
         printf("castedInteger\n"); printVec(castedInteger);
         printf("castedInteger int\n"); printVecInt(castedInteger);
