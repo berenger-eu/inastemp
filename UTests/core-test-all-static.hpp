@@ -296,6 +296,8 @@ class TestAll : public UTester< TestAll< VecType > > {
                 reals[idx] = RealType(idx+1);
                 realsna[idx] = RealType(idx+1);
             }
+            double val;// TODO
+            printf("val %p (%x)\n", &val, (unsigned long int)&val);// TODO
 
             VecType vec_no_fal(reals);
             equalToArray(vec_no_fal, reals);
