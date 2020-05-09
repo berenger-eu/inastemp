@@ -9,10 +9,11 @@
 
 int main() {
     // clang-format off
-    TestAll<InaVec@TYPE@<float>> testerSingle;
-    return testerSingle.Run();
+    //TestAll<InaVec@TYPE@<float>> testerSingle;
+    //return testerSingle.Run();
     // TODO
     TestAll<InaVec@TYPE@<double>> testerDouble;
+    return testerDouble.Run();
 
     TestAll<InaVecFLOPS<InaVec@TYPE@<double>>> testerDoubleFlops;
     TestAll<InaVecFLOPS<InaVec@TYPE@<float>>> testerSingleFlops;
