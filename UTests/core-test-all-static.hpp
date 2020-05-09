@@ -230,7 +230,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
             equalToScalar(VecType(reals), 1);
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             assert(VecType::GetVecLength() < 256);
             const RealType rv = 0;
@@ -285,7 +285,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv}};
             vcopyop += vconstruct * vcopyconstruct; // unused
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             default_alignas RealType reals[VecType::GetVecLength()];
@@ -329,7 +329,7 @@ class TestAll : public UTester< TestAll< VecType > > {
 //                equalToScalar(vec_al_fal.at(int(idx)), RealType(idx+1));
             }
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             RealType real = 1;
@@ -339,7 +339,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
             equalToScalar(VecType().setFromIndirectArray(&real, indirect), 1);
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             RealType reals[VecType::GetVecLength()];
             int indirect[VecType::GetVecLength()];
@@ -349,7 +349,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
             equalToArray(VecType().setFromIndirectArray(reals, indirect), reals);
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             const size_t limiteOffsetIn = std::min(32UL, sizeof(RealType)*size_t(VecType::GetVecLength()));
@@ -376,7 +376,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                 }
             }
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             RealType reals[VecType::GetVecLength()];
@@ -387,7 +387,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
             equalToArray(VecType().setFromIndirectArray(reals, indirect), reals);
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             RealType real                     = 1;
@@ -397,7 +397,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
             equalToScalar(VecType().setFromIndirect2DArray(&real, indirect, 0, indirect), 1);
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             RealType reals[VecType::GetVecLength() * 2];
@@ -412,7 +412,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToArray(VecType().setFromIndirect2DArray(reals, indirect1, 0, indirect1), reals);
             equalToArray(VecType().setFromIndirect2DArray(reals, indirect2, VecType::GetVecLength(), indirect1), &reals[VecType::GetVecLength()]);
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             UASSERTEEQUAL(VecType(1).horizontalSum(), RealType(VecType::GetVecLength()));
@@ -421,7 +421,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(VecType(1).horizontalMul(), RealType(1));
             UASSERTEEQUAL(VecType(10).horizontalMul(), RealType(pow(10, VecType::GetVecLength())));
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             equalToScalar(VecType::Min(VecType(1),
@@ -443,7 +443,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(-1).abs(), RealType(1));
             equalToScalar(VecType(RealType(0)).abs(), RealType(0));
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             RealType reals[VecType::GetVecLength()];
@@ -457,13 +457,13 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(VecType(reals).horizontalSum(), sum);
             UASSERTEEQUAL(VecType(reals).horizontalMul(), mul);
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             equalToScalar(VecType::GetZero(), 0);
             equalToScalar(VecType::GetOne(), 1);
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             RealType reals[VecType::GetVecLength()];
@@ -486,7 +486,7 @@ class TestAll : public UTester< TestAll< VecType > > {
 
             // TODO approxEqualToScalar(VecType(RealType(0)).exp(), std::exp(RealType(0)));
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             default_alignas RealType reals[VecType::GetVecLength()];
@@ -507,7 +507,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxEqualToArray(VecType().setFromAlignedArray(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType().setFromAlignedArray(reals).rsqrt(), rsqrtres);
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             equalToScalar(VecType(RealType(0)).signOf(), 0);
@@ -549,7 +549,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(1).isZero(), 0);
             equalToScalar(VecType(1).isNotZero(), 1);
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             equalToScalar(VecType::IsLowerOrEqual(VecType(RealType(0)),
                                                     VecType(RealType(0))),
@@ -629,7 +629,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                                                 VecType(-1)),
                           1);
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             const MaskType trueMask(true);
             const MaskType falseMask(false);
@@ -667,7 +667,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalarMask(VecType(1).isZeroMask(), falseMask);
             equalToScalarMask(VecType(1).isNotZeroMask(), trueMask);
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             const MaskType trueMask(true);
@@ -751,16 +751,17 @@ class TestAll : public UTester< TestAll< VecType > > {
                                                         VecType(-1)),
                               trueMask);
         }
-        printf("LINE %d\n", __LINE__);
 
-        if(false){ // TODO
+
+        {
             equalToScalar(VecType(RealType(1)).floor(), std::floor(RealType(1)));
+            return; // TODO
             equalToScalar(VecType(RealType(1.5)).floor(), std::floor(RealType(1.5)));
             equalToScalar(VecType(RealType(1.9)).floor(), std::floor(RealType(1.9)));
             equalToScalar(VecType(RealType(100000.9999)).floor(), std::floor(RealType(100000.9999)));
             equalToScalar(VecType(RealType(-100000.9999)).floor(), std::floor(RealType(-100000.9999)));
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             const VecType trueMask(1);
             const VecType falseMask(RealType(0));
@@ -809,7 +810,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToVecType(VecType::BitsNotAnd(falseMask,trueMask),
                               trueMask);
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             equalToScalar(VecType(0.) + VecType(0.),0);
             equalToScalar(VecType(0.) + VecType(10.),10);
@@ -829,7 +830,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(0.) / VecType(10.),0);
             equalToScalar(VecType(10.) / VecType(10.),1);
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             equalToScalar(VecType(0.) += VecType(0.),0);
             equalToScalar(VecType(0.) += VecType(10.),10);
@@ -849,7 +850,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(0.) /= VecType(10.),0);
             equalToScalar(VecType(10.) /= VecType(10.),1);
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             equalToScalar(-VecType(-4.),4.);
             equalToScalar(-VecType(4.),-4.);
@@ -860,7 +861,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(-a,1.);
             equalToScalar((-1.) * a,1.);
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             equalToScalar(VecType(1.).pow(0),1.);
@@ -872,7 +873,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(5.).pow(10),RealType(std::pow(5., 10)));
             equalToScalar(VecType(2.).pow(12),RealType(std::pow(2., 12)));
         }
-        printf("LINE %d\n", __LINE__);
+
 
         {
             VecType::MultiHorizontalSum(nullptr); // Should compile
@@ -885,7 +886,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             VecType::MultiHorizontalSum(&res, VecType(10));
             UASSERTEEQUAL(VecType(10).horizontalSum(), res);
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             RealType res[2] = {0};
             VecType v1(1);
@@ -896,7 +897,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(v1.horizontalSum(), res[0]);
             UASSERTEEQUAL(v2.horizontalSum(), res[1]);
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             RealType res[3] = {0};
             VecType v1(1);
@@ -909,7 +910,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(v2.horizontalSum(), res[1]);
             UASSERTEEQUAL(v3.horizontalSum(), res[2]);
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             RealType res[4] = {0};
             VecType v1(1);
@@ -924,7 +925,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(v3.horizontalSum(), res[2]);
             UASSERTEEQUAL(v4.horizontalSum(), res[3]);
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             RealType res[5] = {0};
             VecType v1(1);
@@ -941,7 +942,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(v4.horizontalSum(), res[3]);
             UASSERTEEQUAL(v5.horizontalSum(), res[4]);
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             const int nb_vec_test = 3;
             RealType res[nb_vec_test] = {0};
@@ -960,7 +961,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                 UASSERTEEQUAL(good_res[idx], res[idx]);
             }
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             const int nb_vec_test = 5;
             RealType res[nb_vec_test] = {0};
@@ -979,7 +980,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                 UASSERTEEQUAL(good_res[idx], res[idx]);
             }
         }
-        printf("LINE %d\n", __LINE__);
+
         {
             const int nb_vec_test = 7;
             RealType res[nb_vec_test] = {0};
