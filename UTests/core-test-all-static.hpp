@@ -300,7 +300,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             VecType vec_no_fal(reals);
             equalToArray(vec_no_fal, reals);
 
-//            equalToArray(vec_no_fal, realsna);
+            equalToArray(vec_no_fal, realsna);
 
 //            VecType vec_no_fna(realsna);
 //            equalToArray(vec_no_fna, reals);
