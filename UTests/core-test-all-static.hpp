@@ -295,10 +295,8 @@ class TestAll : public UTester< TestAll< VecType > > {
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx] = RealType(idx+1);
                 realsna[idx] = RealType(idx+1);
+                printf("%lu %e %e\n", idx; reals[idx], realsna[idx]);// TODO
             }
-            double val;// TODO
-            printf("val %p (%x)\n", &val, (unsigned long int)&val);// TODO
-            printf("realsna %p (%x)\n", realsna, (unsigned long int)realsna);// TODO
 
             VecType vec_no_fal(reals);
             equalToArray(vec_no_fal, reals);
