@@ -240,39 +240,11 @@ public:
     }
 
     inline InaVecSXA& setFromIndirectArray(const float values[], const int inIndirection[]) {
-        unsigned long int liIndirections[256];
-        // TODO in one instruction
-        for(int idx = 0 ; idx < 256 ; ++idx){
-            liIndirections[idx] = static_cast<unsigned long int>(inIndirection[idx]);
-        }
-        {// TODO remove
-            printf("veclongint\n");
-            __vr veclongint = _vel_vld_vssl(8, liIndirections, 256);
-            printVecInt(veclongint);
+        __vr offset = _vel_vldu_vssl(4, inIndirection, 256);
+        offset = _vel_vsrl_vvsl(vecintu, 32, 256);
+        __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(values), 256);
+        vec = _vel_vgtu_vvssl(address, 0, 0, 256);
 
-//            printf("vecint\n");
-//            __vr vecint = _vel_vld_vssl(4, inIndirection, 256);
-//            printVecInt(vecint);
-
-            printf("vecint u\n");
-            __vr vecintu = _vel_vldu_vssl(4, inIndirection, 256);
-            printVecInt(vecintu);
-
-            printf("vecint shifted u right\n");
-            vecintu = _vel_vsrl_vvsl(vecintu, 32, 256);
-            printVecInt(vecintu);
-
-            //unsigned long int vecRet = -1;
-            //__vr temp = _vel_vgt_vvssl(address, 0, vecRet, 256);
-            //printf("vecRet %p\n", vecRet);
-            //printVec(temp);
-
-            //        vec = _vel_vgt_vvssl(address, 0, vecRet, 256);
-            //printVec(vec);
-            //vec = temp;
-            //printVec(vec);
-        }
-        setFromIndirectArray(values, liIndirections);
         return *this;
     }
 
