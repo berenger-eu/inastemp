@@ -336,16 +336,18 @@ class TestAll : public UTester< TestAll< VecType > > {
             // end ?
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 // MUST be UASSERTEEQUAL or it will failed
+                if(std::is_same<VecType, InaVecSXADouble<double>>::value
+                        || std::is_same<VecType, InaVecSXADouble<float>>::value){
+                    UASSERTEEQUAL(vec_no_fal.at(int(idx)), RealType(idx+1));
 
-                UASSERTEEQUAL(vec_no_fal.at(int(idx)), RealType(idx+1));
+                    UASSERTEEQUAL(vec_no_fna.at(int(idx)), RealType(idx+1));
 
-                UASSERTEEQUAL(vec_no_fna.at(int(idx)), RealType(idx+1));
+                    UASSERTEEQUAL(vec_no_fal2.at(int(idx)), RealType(idx+1));
 
-                UASSERTEEQUAL(vec_no_fal2.at(int(idx)), RealType(idx+1));
+                    UASSERTEEQUAL(vec_no_fna2.at(int(idx)), RealType(idx+1));
 
-                UASSERTEEQUAL(vec_no_fna2.at(int(idx)), RealType(idx+1));
-
-                UASSERTEEQUAL(vec_al_fal.at(int(idx)), RealType(idx+1));
+                    UASSERTEEQUAL(vec_al_fal.at(int(idx)), RealType(idx+1));
+                }
             }
         }
 
