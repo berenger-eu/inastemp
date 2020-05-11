@@ -418,13 +418,13 @@ public:
         printVec(valuesInIntervals);
         printVecInt(valuesInIntervals);
 
-        __vr vecConvLongInt = _vel_vcvtwdsxrz_vvl(valuesInIntervals, 256);
+        __vr vecConvLongInt = _vel_vcvtwssxrz_vvl(valuesInIntervals, 256);
 
         printf("vecConvLongInt\n");
         printVec(vecConvLongInt);
         printVecInt(vecConvLongInt);
 
-        __vr vecConvLongIntDouble = _vel_vcvtsd_vvl(vecConvLongInt, 256);
+        __vr vecConvLongIntDouble = _vel_vcvtsw_vvl(vecConvLongInt, 256);
 
         printf("vecConvLongIntDouble\n");
         printVec(vecConvLongIntDouble);
