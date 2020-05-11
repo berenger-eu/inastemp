@@ -245,9 +245,9 @@ public:
         vec = _vel_vgtu_vvssl(address, 0, 0, 256);
 
         {// TODO remove
-            printf("veclongint\n");
-            __vr veclongint = _vel_vld_vssl(8, liIndirections, 256);
-            printVecInt(veclongint);
+//            printf("veclongint\n");
+//            __vr veclongint = _vel_vld_vssl(8, liIndirections, 256);
+//            printVecInt(veclongint);
 
             printf("vecint\n");
             __vr vecint = _vel_vld_vssl(4, inIndirection, 256);
