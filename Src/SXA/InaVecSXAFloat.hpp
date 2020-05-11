@@ -250,9 +250,9 @@ public:
             __vr veclongint = _vel_vld_vssl(8, liIndirections, 256);
             printVecInt(veclongint);
 
-            printf("vecint\n");
-            __vr vecint = _vel_vld_vssl(4, inIndirection, 256);
-            printVecInt(vecint);
+//            printf("vecint\n");
+//            __vr vecint = _vel_vld_vssl(4, inIndirection, 256);
+//            printVecInt(vecint);
 
             printf("vecint u\n");
             __vr vecintu = _vel_vldu_vssl(4, inIndirection, 256);
