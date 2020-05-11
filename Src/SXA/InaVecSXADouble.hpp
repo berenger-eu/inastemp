@@ -254,12 +254,10 @@ static void printVec(__vr vec){
     }
 
     inline InaVecSXA& setFromIndirectArray(const double values[], const int inIndirection[]) {
-        unsigned long int liIndirections[256];
-        // TODO in one instruction
-        for(int idx = 0 ; idx < 256 ; ++idx){
-            liIndirections[idx] = static_cast<unsigned long int>(inIndirection[idx]);
-        }
-        setFromIndirectArray(values, liIndirections);
+        __vr offset = _vel_vldu_vssl(4, inIndirection, 256);
+        offset = _vel_vsrl_vvsl(offset, 32, 256);
+        __vr address = _vel_vsfa_vvssl(offset, 3, reinterpret_cast<unsigned long>(values), 256);
+        vec = _vel_vgt_vvssl(address, 0, 0, 256);
         return *this;
     }
 
@@ -276,14 +274,19 @@ static void printVec(__vr vec){
 
     inline InaVecSXA& setFromIndirect2DArray(const double inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
-        long int liIndirections1[256];
-        long int liIndirections2[256];
-        // TODO in one instruction
-        for(int idx = 0 ; idx < 256 ; ++idx){
-            liIndirections1[idx] = inIndirection1[idx];
-            liIndirections2[idx] = inIndirection2[idx];
-        }
-        setFromIndirect2DArray(inArray, liIndirections1, inLeadingDimension, liIndirections2);
+        __vr offset1 = _vel_vldu_vssl(4, inIndirection1, 256);
+        offset1 = _vel_vsrl_vvsl(offset1, 32, 256);
+
+        __vr offset2 = _vel_vldu_vssl(4, inIndirection2, 256);
+        offset2 = _vel_vsrl_vvsl(offset2, 32, 256);
+
+        __vr offset = _vel_vaddsl_vvvl(offset2,
+                     _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
+                                      offset1,
+                                      256),256);
+
+        __vr address = _vel_vsfa_vvssl(offset, 3, reinterpret_cast<unsigned long>(inArray), 256);
+        vec = _vel_vgt_vvssl(address, 0, 0, 256);
         return *this;
     }
 
