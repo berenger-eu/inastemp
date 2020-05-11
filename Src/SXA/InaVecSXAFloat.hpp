@@ -317,24 +317,6 @@ public:
         return _vel_vfsqrts_vvl(vec, 256);
     }
 
-    static void printVecInt(__vr vec){
-        unsigned long int array[256];
-        _vel_vst_vssl(vec, 8, array, 256);
-
-        for(int idx = 0 ; idx < /*256*/10 ; ++idx){
-            printf("[%d] = %lu / %lx (%lu)\n", idx, array[idx], array[idx], _vel_lvsl_svs(vec, idx));
-        }
-    }
-
-    static void printVec(__vr vec){
-        float array[256];
-        _vel_vstu_vssl(vec, 4, array, 256);
-
-        for(int idx = 0 ; idx < /*256*/10 ; ++idx){
-            printf("[%d] = %e (%e)\n", idx, array[idx], _vel_lvss_svs(vec, idx));
-        }
-    }
-
     inline InaVecSXA exp() const {
         const __vr COEFF_LOG2E = _vel_vbrds_vsl(float(InaFastExp::CoeffLog2E()), 256);
         const __vr COEFF_A     = _vel_vbrds_vsl(float(InaFastExp::CoeffA32()), 256);
