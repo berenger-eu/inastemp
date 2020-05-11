@@ -1147,9 +1147,9 @@ void compareGemmTime(const size_t NbOverLoop, const size_t matDim){
 
     /////////////////////////////////////////////////////////////
 
-    const size_t PanelSizeA = 64;
-    const size_t PanelSizeB = 64;
-    const size_t PanelSizeK = 64;
+    const size_t PanelSizeA = std::max(64, InaVecBestType<RealType>::GetVecLength());
+    const size_t PanelSizeB = std::max(64, InaVecBestType<RealType>::GetVecLength());
+    const size_t PanelSizeK = std::max(64, InaVecBestType<RealType>::GetVecLength());
     {
         std::unique_ptr< RealType[] > CScalar(new RealType[matDim*matDim]);
         memset(CScalar.get(), 0, sizeof(RealType)*matDim*matDim);
