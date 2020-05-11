@@ -18,7 +18,6 @@ int main() {
     TestAll<InaVecFLOPS<InaVec@TYPE@<double>>> testerDoubleFlops;
     TestAll<InaVecFLOPS<InaVec@TYPE@<float>>> testerSingleFlops;
     // clang-format on
-    //return testerDouble.Run() + testerSingle.Run()
-    //        + testerDoubleFlops.Run() + testerSingleFlops.Run();
-    return testerDouble.Run();
+    return testerDouble.Run() + testerSingle.Run()
+            + testerDoubleFlops.Run() + testerSingleFlops.Run();
 }

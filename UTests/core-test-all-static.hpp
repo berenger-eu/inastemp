@@ -129,7 +129,7 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTEEQUAL(realsalign[idx], inReals[idx]);
-        }        
+        }
 
         default_alignas char reals_forcena_buffer[VecType::GetVecLength()*sizeof(RealType)+1];
         RealType* reals_forcena = reinterpret_cast<RealType*>(&reals_forcena_buffer[1]);
@@ -254,7 +254,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
-			rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
+                        rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
@@ -271,11 +271,11 @@ class TestAll : public UTester< TestAll< VecType > > {
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
-			rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
-			rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
+                        rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
+                        rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
@@ -301,39 +301,25 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToArray(vec_no_fal, reals);
             equalToArray(vec_no_fal, realsna);
 
-
             VecType vec_no_fna(realsna);
-
             equalToArray(vec_no_fna, reals);
-
             equalToArray(vec_no_fna, realsna);
 
-            // end ?
             VecType vec_no_fal2;
             vec_no_fal2.setFromArray(reals);
             equalToArray(vec_no_fal2, reals);
-            //?
-
             equalToArray(vec_no_fal2, realsna);
 
-
             VecType vec_no_fna2;
-
             vec_no_fna2.setFromArray(realsna);
-
             equalToArray(vec_no_fna2, reals);
-
             equalToArray(vec_no_fna2, realsna);
 
-            // end ?
             VecType vec_al_fal;
             vec_al_fal.setFromAlignedArray(reals);
             equalToArray(vec_al_fal, reals);
-            //?
-
             equalToArray(vec_al_fal, realsna);
 
-            // end ?
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 // MUST be UASSERTEEQUAL or it will failed
 #ifdef INASTEMP_USE_SXA
@@ -346,6 +332,12 @@ class TestAll : public UTester< TestAll< VecType > > {
                     UASSERTEEQUAL(vec_no_fna2.at(int(idx)), RealType(idx+1));
 
                     UASSERTEEQUAL(vec_al_fal.at(int(idx)), RealType(idx+1));
+#else
+                   equalToScalar(vec_no_fal.at(int(idx)), RealType(idx+1));
+                   equalToScalar(vec_no_fna.at(int(idx)), RealType(idx+1));
+                   equalToScalar(vec_no_fal2.at(int(idx)), RealType(idx+1));
+                   equalToScalar(vec_no_fna2.at(int(idx)), RealType(idx+1));
+                   equalToScalar(vec_al_fal.at(int(idx)), RealType(idx+1));
 #endif
             }
         }
@@ -369,7 +361,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToArray(VecType().setFromIndirectArray(reals, indirect), reals);
         }
 
-
         {
             const size_t limiteOffsetIn = std::min(32UL, sizeof(RealType)*size_t(VecType::GetVecLength()));
             for(size_t idxOffsetIn = 0 ; idxOffsetIn < limiteOffsetIn ; ++idxOffsetIn){
@@ -378,6 +369,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                 for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                     realsIn[idx]    = RealType(idx);
                 }
+
                 VecType vec(realsIn);
                 equalToArray(vec, realsIn);
 
@@ -396,7 +388,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
         }
 
-
         {
             RealType reals[VecType::GetVecLength()];
             int indirect[VecType::GetVecLength()];
@@ -407,7 +398,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToArray(VecType().setFromIndirectArray(reals, indirect), reals);
         }
 
-
         {
             RealType real                     = 1;
             int indirect[VecType::GetVecLength()];
@@ -416,7 +406,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
             equalToScalar(VecType().setFromIndirect2DArray(&real, indirect, 0, indirect), 1);
         }
-
 
         {
             RealType reals[VecType::GetVecLength() * 2];
@@ -432,7 +421,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToArray(VecType().setFromIndirect2DArray(reals, indirect2, VecType::GetVecLength(), indirect1), &reals[VecType::GetVecLength()]);
         }
 
-
         {
             UASSERTEEQUAL(VecType(1).horizontalSum(), RealType(VecType::GetVecLength()));
             UASSERTEEQUAL(VecType(10).horizontalSum(), RealType(10 * VecType::GetVecLength()));
@@ -441,7 +429,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(VecType(10).horizontalMul(), RealType(pow(10, VecType::GetVecLength())));
         }
 
-
         {
             equalToScalar(VecType::Min(VecType(1),
                                          VecType(1)), RealType(1));
@@ -449,7 +436,6 @@ class TestAll : public UTester< TestAll< VecType > > {
                                          VecType(1)), RealType(0));
             equalToScalar(VecType::Min(VecType(1),
                                          VecType(RealType(0))), RealType(0));
-
 
             equalToScalar(VecType::Max(VecType(1),
                                          VecType(1)), RealType(1));
@@ -462,7 +448,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(-1).abs(), RealType(1));
             equalToScalar(VecType(RealType(0)).abs(), RealType(0));
         }
-
 
         {
             RealType reals[VecType::GetVecLength()];
@@ -477,12 +462,10 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(VecType(reals).horizontalMul(), mul);
         }
 
-
         {
             equalToScalar(VecType::GetZero(), 0);
             equalToScalar(VecType::GetOne(), 1);
         }
-
 
         {
             RealType reals[VecType::GetVecLength()];
@@ -507,6 +490,7 @@ class TestAll : public UTester< TestAll< VecType > > {
         }
 
 
+
         {
             default_alignas RealType reals[VecType::GetVecLength()];
             default_alignas RealType expres[VecType::GetVecLength()];
@@ -526,7 +510,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxEqualToArray(VecType().setFromAlignedArray(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType().setFromAlignedArray(reals).rsqrt(), rsqrtres);
         }
-
 
         {
             equalToScalar(VecType(RealType(0)).signOf(), 0);
@@ -568,7 +551,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(1).isZero(), 0);
             equalToScalar(VecType(1).isNotZero(), 1);
         }
-
         {
             equalToScalar(VecType::IsLowerOrEqual(VecType(RealType(0)),
                                                     VecType(RealType(0))),
@@ -648,7 +630,6 @@ class TestAll : public UTester< TestAll< VecType > > {
                                                 VecType(-1)),
                           1);
         }
-
         {
             const MaskType trueMask(true);
             const MaskType falseMask(false);
@@ -686,7 +667,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalarMask(VecType(1).isZeroMask(), falseMask);
             equalToScalarMask(VecType(1).isNotZeroMask(), trueMask);
         }
-
 
         {
             const MaskType trueMask(true);
@@ -771,7 +751,6 @@ class TestAll : public UTester< TestAll< VecType > > {
                               trueMask);
         }
 
-
         {
             equalToScalar(VecType(RealType(1)).floor(), std::floor(RealType(1)));
             equalToScalar(VecType(RealType(1.5)).floor(), std::floor(RealType(1.5)));
@@ -779,7 +758,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(RealType(100000.9999)).floor(), std::floor(RealType(100000.9999)));
             equalToScalar(VecType(RealType(-100000.99)).floor(), std::floor(RealType(-100000.99)));
         }
-
         {
             const VecType trueMask(1);
             const VecType falseMask(RealType(0));
@@ -828,7 +806,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToVecType(VecType::BitsNotAnd(falseMask,trueMask),
                               trueMask);
         }
-
         {
             equalToScalar(VecType(0.) + VecType(0.),0);
             equalToScalar(VecType(0.) + VecType(10.),10);
@@ -848,7 +825,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(0.) / VecType(10.),0);
             equalToScalar(VecType(10.) / VecType(10.),1);
         }
-
         {
             equalToScalar(VecType(0.) += VecType(0.),0);
             equalToScalar(VecType(0.) += VecType(10.),10);
@@ -868,7 +844,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(0.) /= VecType(10.),0);
             equalToScalar(VecType(10.) /= VecType(10.),1);
         }
-
         {
             equalToScalar(-VecType(-4.),4.);
             equalToScalar(-VecType(4.),-4.);
@@ -879,7 +854,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(-a,1.);
             equalToScalar((-1.) * a,1.);
         }
-
 
         {
             equalToScalar(VecType(1.).pow(0),1.);
@@ -892,7 +866,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(2.).pow(12),RealType(std::pow(2., 12)));
         }
 
-
         {
             VecType::MultiHorizontalSum(nullptr); // Should compile
 
@@ -904,7 +877,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             VecType::MultiHorizontalSum(&res, VecType(10));
             UASSERTEEQUAL(VecType(10).horizontalSum(), res);
         }
-
         {
             RealType res[2] = {0};
             VecType v1(1);
@@ -915,7 +887,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(v1.horizontalSum(), res[0]);
             UASSERTEEQUAL(v2.horizontalSum(), res[1]);
         }
-
         {
             RealType res[3] = {0};
             VecType v1(1);
@@ -928,7 +899,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(v2.horizontalSum(), res[1]);
             UASSERTEEQUAL(v3.horizontalSum(), res[2]);
         }
-
         {
             RealType res[4] = {0};
             VecType v1(1);
@@ -943,7 +913,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(v3.horizontalSum(), res[2]);
             UASSERTEEQUAL(v4.horizontalSum(), res[3]);
         }
-
         {
             RealType res[5] = {0};
             VecType v1(1);
@@ -960,7 +929,6 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(v4.horizontalSum(), res[3]);
             UASSERTEEQUAL(v5.horizontalSum(), res[4]);
         }
-
         {
             const int nb_vec_test = 3;
             RealType res[nb_vec_test] = {0};
@@ -979,7 +947,6 @@ class TestAll : public UTester< TestAll< VecType > > {
                 UASSERTEEQUAL(good_res[idx], res[idx]);
             }
         }
-
         {
             const int nb_vec_test = 5;
             RealType res[nb_vec_test] = {0};
@@ -998,7 +965,6 @@ class TestAll : public UTester< TestAll< VecType > > {
                 UASSERTEEQUAL(good_res[idx], res[idx]);
             }
         }
-
         {
             const int nb_vec_test = 7;
             RealType res[nb_vec_test] = {0};

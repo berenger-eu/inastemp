@@ -9,8 +9,9 @@
 
 int main() {
     // clang-format off
-    TestAll<InaVec@TYPE@<float>> testerSingle;
     TestAll<InaVec@TYPE@<double>> testerDouble;
+    TestAll<InaVec@TYPE@<float>> testerSingle;
+
     TestAll<InaVecFLOPS<InaVec@TYPE@<double>>> testerDoubleFlops;
     TestAll<InaVecFLOPS<InaVec@TYPE@<float>>> testerSingleFlops;
     // clang-format on
