@@ -102,6 +102,14 @@
 #include "SVE/InaVecSVEDouble.hpp"
 #endif
 
+#ifdef __NEC__
+#define INASTEMP_USE_SXA
+#undef INASTEMP_STATIC_BEST_TYPE
+#define INASTEMP_STATIC_BEST_TYPE InaVecSXA
+#include "SXA/InaVecSXAFloat.hpp"
+#include "SXA/InaVecSXADouble.hpp"
+#endif
+
 template < class RealType >
 using InaVecBestType = INASTEMP_STATIC_BEST_TYPE< RealType >;
 

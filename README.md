@@ -64,6 +64,9 @@ Template C++ source-code                           Compiled Template C++ code
     - Power-8 Altivec/VMX
 - The following ARM PC SIMD types are currently supported:
     - SVE
+- The following NEC SIMD types are currently supported:
+    - VEC/SVE for Aurora
+    
 - arithmetic operators `*/+-` are provided
 - CPU capacities are detected automatically during the CMake stage
 - The compiler capacities are detected automatically during the CMake stage
@@ -155,6 +158,18 @@ In this aim, it will pass `-march=native+sve` to the compiler.
 If you want to compile for another processor, override `${ARCH_NATIVE_FLAG}` using `-march=armv8.2-a+sve` for example.
 
 Then the configuration system will look if the CPU is able to execute some SVE, the answer is currently always yes (because the ARM emulator says always no, so we override the value, but that will change in the future).
+
+### CMake variables - Hardware detection (NEC AURORA)
+
+As NEC Aurora is a device and is not involved for the compilation that is done on the CPU.
+Therefore, it is mandatory to set `${CUSTOM_SYSTEM_PROCESSOR}`.
+Moreover, it is necessary to set the `CXX` compiler as the compiler for vectorization is usually not the default one.
+As a result, here is the `cmake` command to be used:
+```
+# Considering that the compiler is located at /opt/nec/nosupport/llvm-ve-1.9.0/bin/clang++
+CXX="/opt/nec/nosupport/llvm-ve-1.9.0/bin/clang++ -target ve-linux -fno-vectorize -fno-slp-vectorize" cmake .. -DCUSTOM_SYSTEM_PROCESSOR=AURORA
+```
+
 
 ### Using Inastemp as a sub-project with CMake
 
