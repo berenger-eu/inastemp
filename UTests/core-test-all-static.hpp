@@ -497,7 +497,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                 rsqrtres[idx] = RealType(1 / sqrt(reals[idx]));
             }
 
-            // TODO approxEqualToArray(VecType(reals).exp(), expres);
+            approxEqualToArray(VecType(reals).exp(), expres);
             // TODO approxLowAccEqualToArray(VecType(reals).expLowAcc(), expreslowacc);
             approxEqualToArray(VecType(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType(reals).rsqrt(), rsqrtres);

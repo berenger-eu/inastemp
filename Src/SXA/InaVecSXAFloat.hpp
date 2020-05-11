@@ -414,21 +414,21 @@ public:
                                     _vel_vfmaxs_vvvl( vec, _vel_vbrds_vsl(double(std::numeric_limits<int>::min()), 256), 256),
                                     _vel_vbrds_vsl(double(std::numeric_limits<int>::max()), 256), 256);
 
-        printf("valuesInIntervals\n");
-        printVec(valuesInIntervals);
-        printVecInt(valuesInIntervals);
+//        printf("valuesInIntervals\n");
+//        printVec(valuesInIntervals);
+//        printVecInt(valuesInIntervals);
 
         __vr vecConvLongInt = _vel_vcvtwssxrz_vvl(valuesInIntervals, 256);
 
-        printf("vecConvLongInt\n");
-        printVec(vecConvLongInt);
-        printVecInt(vecConvLongInt);
+//        printf("vecConvLongInt\n");
+//        printVec(vecConvLongInt);
+//        printVecInt(vecConvLongInt);
 
         __vr vecConvLongIntDouble = _vel_vcvtsw_vvl(vecConvLongInt, 256);
 
-        printf("vecConvLongIntDouble\n");
-        printVec(vecConvLongIntDouble);
-        printVecInt(vecConvLongIntDouble);
+//        printf("vecConvLongIntDouble\n");
+//        printVec(vecConvLongIntDouble);
+//        printVecInt(vecConvLongIntDouble);
 
         __vm256 maskPositive = _vel_vfmklgt_mvl(_vel_vfcmps_vsvl( 0, vec, 256), 256);
 
