@@ -260,29 +260,6 @@ static void printVec(__vr vec){
             liIndirections[idx] = static_cast<unsigned long int>(inIndirection[idx]);
         }
         setFromIndirectArray(values, liIndirections);
-        {// TODO remove
-            printf("veclongint\n");
-            __vr veclongint = _vel_vld_vssl(8, liIndirections, 256);
-            printVecInt(veclongint);
-
-            printf("vecint\n");
-            __vr vecint = _vel_vld_vssl(4, inIndirection, 256);
-            printVecInt(veclongint);
-
-            printf("vecint shifted right\n");
-            vecint = _vel_vsrl_vvsl(vecint, 32, 256);
-            printVecInt(veclongint);
-
-            //unsigned long int vecRet = -1;
-            //__vr temp = _vel_vgt_vvssl(address, 0, vecRet, 256);
-            //printf("vecRet %p\n", vecRet);
-            //printVec(temp);
-
-            //        vec = _vel_vgt_vvssl(address, 0, vecRet, 256);
-            //printVec(vec);
-            //vec = temp;
-            //printVec(vec);
-        }
         return *this;
     }
 
