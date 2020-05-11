@@ -502,7 +502,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxEqualToArray(VecType(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType(reals).rsqrt(), rsqrtres);
 
-            // TODO approxEqualToScalar(VecType(RealType(0)).exp(), std::exp(RealType(0)));
+            approxEqualToScalar(VecType(RealType(0)).exp(), std::exp(RealType(0)));
         }
 
 
