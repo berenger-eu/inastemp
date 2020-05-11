@@ -520,8 +520,8 @@ class TestAll : public UTester< TestAll< VecType > > {
                 rsqrtres[idx] = RealType(1 / sqrt(reals[idx]));
             }
 
-            // TODO approxEqualToArray(VecType().setFromAlignedArray(reals).exp(), expres);
-            // TODO approxLowAccEqualToArray(VecType().setFromAlignedArray(reals).expLowAcc(), expreslowacc);
+            approxEqualToArray(VecType().setFromAlignedArray(reals).exp(), expres);
+            approxLowAccEqualToArray(VecType().setFromAlignedArray(reals).expLowAcc(), expreslowacc);
             approxEqualToArray(VecType().setFromAlignedArray(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType().setFromAlignedArray(reals).rsqrt(), rsqrtres);
         }
