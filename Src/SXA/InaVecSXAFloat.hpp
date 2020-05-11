@@ -257,8 +257,12 @@ public:
             __vr vecint = _vel_vld_vssl(4, inIndirection, 256);
             printVecInt(veclongint);
 
-            printf("vecint shifted right\n");
-            vecint = _vel_vsrl_vvsl(vecint, 32, 256);
+            printf("vecint u\n");
+            __vr vecintu = _vel_vldu_vssl(4, inIndirection, 256);
+            printVecInt(veclongint);
+
+            printf("vecint shifted u right\n");
+            vecintu = _vel_vsrl_vvsl(vecintu, 32, 256);
             printVecInt(veclongint);
 
             //unsigned long int vecRet = -1;
