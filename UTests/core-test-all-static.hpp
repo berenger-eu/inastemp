@@ -773,7 +773,6 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         {
             equalToScalar(VecType(RealType(1)).floor(), std::floor(RealType(1)));
-            return; // TODO
             equalToScalar(VecType(RealType(1.5)).floor(), std::floor(RealType(1.5)));
             equalToScalar(VecType(RealType(1.9)).floor(), std::floor(RealType(1.9)));
             equalToScalar(VecType(RealType(100000.9999)).floor(), std::floor(RealType(100000.9999)));
