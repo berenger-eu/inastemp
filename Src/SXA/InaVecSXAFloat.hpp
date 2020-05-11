@@ -369,6 +369,10 @@ public:
         printf("castedInteger\n"); printVec(castedInteger);
         printf("castedInteger int\n"); printVecInt(castedInteger);
 
+        castedInteger = _vel_vsll_vvsl(castedInteger, 32, 256);// TEST TODO
+        printf("castedInteger shifted \n"); printVec(castedInteger);
+        printf("castedInteger shifted int\n"); printVecInt(castedInteger);
+
         return (castedInteger); // Automatically reinterpret not cast
     }
 
@@ -413,25 +417,9 @@ public:
         __vr valuesInIntervals = _vel_vfmins_vvvl(
                                     _vel_vfmaxs_vvvl( vec, _vel_vbrds_vsl(double(std::numeric_limits<int>::min()), 256), 256),
                                     _vel_vbrds_vsl(double(std::numeric_limits<int>::max()), 256), 256);
-
-//        printf("valuesInIntervals\n");
-//        printVec(valuesInIntervals);
-//        printVecInt(valuesInIntervals);
-
         __vr vecConvLongInt = _vel_vcvtwssxrz_vvl(valuesInIntervals, 256);
-
-//        printf("vecConvLongInt\n");
-//        printVec(vecConvLongInt);
-//        printVecInt(vecConvLongInt);
-
         __vr vecConvLongIntDouble = _vel_vcvtsw_vvl(vecConvLongInt, 256);
-
-//        printf("vecConvLongIntDouble\n");
-//        printVec(vecConvLongIntDouble);
-//        printVecInt(vecConvLongIntDouble);
-
         __vm256 maskPositive = _vel_vfmklgt_mvl(_vel_vfcmps_vsvl( 0, vec, 256), 256);
-
         return _vel_vmrg_vvvml(vecConvLongIntDouble,
                                _vel_vfsubs_vvvl( vecConvLongIntDouble, _vel_vbrds_vsl(1, 256), 256),
                                maskPositive,
