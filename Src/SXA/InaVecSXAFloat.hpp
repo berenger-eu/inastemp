@@ -361,17 +361,8 @@ public:
 
         x = _vel_vfadds_vvvl(_vel_vfmuls_vvvl(COEFF_A, x, 256), COEFF_B, 256);
 
-        printf("vec\n"); printVec(x);
-        printf("vec int\n"); printVecInt(x);
-
         __vr castedInteger = _vel_vcvtwssxrz_vvl(x, 256);
-        // NO: _vel_vcvtwssxrz_vvl, _vel_vcvtwdsxrz_vvl, _vel_vcvtldrz_vvl, _vel_pvcvtwsrz_vvl
-        printf("castedInteger\n"); printVec(castedInteger);
-        printf("castedInteger int\n"); printVecInt(castedInteger);
-
-        castedInteger = _vel_vsll_vvsl(castedInteger, 32, 256);// TEST TODO
-        printf("castedInteger shifted \n"); printVec(castedInteger);
-        printf("castedInteger shifted int\n"); printVecInt(castedInteger);
+        castedInteger = _vel_vsll_vvsl(castedInteger, 32, 256);
 
         return (castedInteger); // Automatically reinterpret not cast
     }
@@ -398,6 +389,7 @@ public:
         x = _vel_vfadds_vvvl(_vel_vfmuls_vvvl(COEFF_A, x, 256), COEFF_B, 256);
 
         __vr castedInteger = _vel_vcvtwssxrz_vvl(x, 256);
+        castedInteger = _vel_vsll_vvsl(castedInteger, 32, 256);
 
         return (castedInteger); // Automatically reinterpret not cast
     }

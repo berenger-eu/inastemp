@@ -498,7 +498,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             }
 
             approxEqualToArray(VecType(reals).exp(), expres);
-            // TODO approxLowAccEqualToArray(VecType(reals).expLowAcc(), expreslowacc);
+            approxLowAccEqualToArray(VecType(reals).expLowAcc(), expreslowacc);
             approxEqualToArray(VecType(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType(reals).rsqrt(), rsqrtres);
 
