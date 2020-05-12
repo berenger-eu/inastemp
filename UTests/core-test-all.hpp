@@ -232,7 +232,7 @@ class TestAll : public UTester< TestAll< VecType > > {
         }
 
         {
-            assert(VecType::GetVecLength() < 256);
+            assert(VecType::GetVecLength() <= 256);
             const RealType rv = 0;
             VecType vconstruct {{rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
                         rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv, rv,
