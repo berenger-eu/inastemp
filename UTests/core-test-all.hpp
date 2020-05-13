@@ -291,10 +291,10 @@ class TestAll : public UTester< TestAll< VecType > > {
             default_alignas RealType reals[VecType::GetVecLength()];
 #ifndef __NEC__
             default_alignas char buffer[VecType::GetVecLength()*sizeof(RealType)+8];
-            RealType* realsna = reinterpret_cast<RealType*>(&buffer+8);
+            RealType* realsna = reinterpret_cast<RealType*>(buffer+8);
 #else
             default_alignas RealType buffer[VecType::GetVecLength()+1];
-            RealType* realsna = reinterpret_cast<RealType*>(&buffer+1);
+            RealType* realsna = reinterpret_cast<RealType*>(buffer+1);
 #endif
 
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
@@ -748,7 +748,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType(RealType(1.5)).floor(), std::floor(RealType(1.5)));
             equalToScalar(VecType(RealType(1.9)).floor(), std::floor(RealType(1.9)));
             equalToScalar(VecType(RealType(100000.9999)).floor(), std::floor(RealType(100000.9999)));
-            equalToScalar(VecType(RealType(-100000.99)).floor(), std::floor(RealType(-100000.99)));
+            equalToScalar(VecType(RealType(-1000.99)).floor(), std::floor(RealType(-1000.99)));
         }
         {
             const VecType trueMask(1);
@@ -1099,6 +1099,30 @@ class TestAll : public UTester< TestAll< VecType > > {
                     }
                 }
             }
+        }
+
+        {
+            const VecType zero(RealType(0));
+            const VecType one(RealType(1));
+            equalToScalar(VecType::Fma(zero, zero, zero), RealType(0));
+            equalToScalar(VecType::Fma(one, zero, zero), RealType(1));
+            equalToScalar(VecType::Fma(zero, one, one), RealType(1));
+            equalToScalar(VecType::Fma(one, one, one), RealType(2));
+
+            RealType a[VecType::GetVecLength()];
+            RealType b[VecType::GetVecLength()];
+            RealType c[VecType::GetVecLength()];
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+                a[idx] = RealType(idx+1);
+                b[idx] = RealType(idx*10);
+                c[idx] = RealType(idx)+RealType(1.3);
+            }
+
+            RealType res[VecType::GetVecLength()];
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+                res[idx] = a[idx] + (b[idx] * c[idx]);
+            }
+            equalToArray(VecType::Fma(VecType(a), VecType(b), VecType(c)), res);
         }
     }
 

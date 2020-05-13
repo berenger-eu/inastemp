@@ -158,6 +158,10 @@ public:
         return int(svcntw());
     }
 
+    static constexpr bool IsRealFma(){
+        return true;
+    }
+
     inline InaVecSVE() : vec(*reinterpret_cast<svfloat32_t*>(vecData)) {}
     inline InaVecSVE(const InaVecSVE&) = default;
 
@@ -577,6 +581,10 @@ public:
     }
 
     inline static void MultiHorizontalSum(float /*sumRes*/[]){
+    }
+
+    inline static InaVecSVE<float> Fma(const InaVecSVE<float>& inValAdd, const InaVecSVE<float>& inValMul1, const InaVecSVE<float>& inValMul2){
+        return svmad_f32_z(inValMul1.vec, inValMul2.vec, inValAdd.vec, svptrue_b32());
     }
 };
 

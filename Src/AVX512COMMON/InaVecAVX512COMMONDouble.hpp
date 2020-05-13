@@ -19,6 +19,7 @@
 
 #include <cmath>
 #include <initializer_list>
+#include <limits>
 
 // Forward declarations
 template <class RealType>
@@ -148,6 +149,10 @@ public:
 
     static constexpr int GetVecLength(){
         return 8;
+    }
+
+    static constexpr bool IsRealFma(){
+        return true;
     }
 
     inline InaVecAVX512COMMON(){}
@@ -388,10 +393,16 @@ public:
     }
 
     inline InaVecAVX512COMMON floor() const {
-        return _mm512_cvt_roundps_pd(
-            _mm256_cvtepi32_ps(
-                _mm512_cvt_roundpd_epi32(vec, (_MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC))),
-            _MM_FROUND_NO_EXC);
+        const __m512i vecConvLongInt = _mm512_cvtepi32_epi64(_mm512_cvt_roundpd_epi32(vec, (/*_MM_FROUND_TO_NEG_INF*/_MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC)));
+        const __m512i valuesDec = _mm512_sub_epi64(vecConvLongInt, _mm512_set1_epi64(1));
+
+        const __mmask8 maskPositive = _mm512_cmp_pd_mask(_mm512_setzero_pd(), vec, _CMP_LE_OQ);
+        const __mmask8 maskNegative = __mmask8(~maskPositive);
+
+        const __m512i valuesToConv = _mm512_or_epi64(_mm512_maskz_mov_epi64(maskPositive, vecConvLongInt),
+                                                   _mm512_maskz_mov_epi64(maskNegative, valuesDec));
+
+        return _mm512_cvtepi32_pd(_mm512_cvtepi64_epi32(valuesToConv));
     }
 
     inline InaVecAVX512COMMON signOf() const {
@@ -698,6 +709,10 @@ public:
     }
 
     inline static void MultiHorizontalSum(double /*sumRes*/[]){
+    }
+
+    inline static InaVecAVX512COMMON<double> Fma(const InaVecAVX512COMMON<double>& inValAdd, const InaVecAVX512COMMON<double>& inValMul1, const InaVecAVX512COMMON<double>& inValMul2){
+        return _mm512_fmadd_pd(inValMul1.vec,inValMul2.vec, inValAdd.vec);
     }
 };
 

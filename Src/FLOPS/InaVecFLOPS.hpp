@@ -94,6 +94,8 @@ public:
 
     using VecType::VecType;
 
+    using VecType::IsRealFma;
+
     inline InaVecFLOPS(){}
     inline InaVecFLOPS(const InaVecFLOPS&) = default;
     inline InaVecFLOPS& operator = (const InaVecFLOPS&) = default;
@@ -566,6 +568,12 @@ public:
         const size_t nbVecs = sizeof...(args);
         FlopsStats.incAddOp((size_t(GetVecLength())-1)*nbVecs);
         Parent::MultiHorizontalSum(sumRes, args...);
+    }
+
+    inline static VecType Fma(const VecType& inValAdd, const VecType& inValMul1, const VecType& inValMul2){
+        FlopsStats.incAddOp(size_t(GetVecLength()));
+        FlopsStats.incMulOp(size_t(GetVecLength()));
+        return Parent::Fma(inValAdd, inValMul1, inValMul2);
     }
 };
 

@@ -155,6 +155,10 @@ public:
         return 16;
     }
 
+    static constexpr bool IsRealFma(){
+        return true;
+    }
+
     inline InaVecAVX512COMMON(){}
     inline InaVecAVX512COMMON(const InaVecAVX512COMMON&) = default;
     inline InaVecAVX512COMMON& operator = (const InaVecAVX512COMMON&) = default;
@@ -387,9 +391,16 @@ public:
     }
 
     inline InaVecAVX512COMMON floor() const {
-        return _mm512_cvt_roundepi32_ps(
-            _mm512_cvt_roundps_epi32(vec, (_MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC)),
-            (_MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC));
+        const __m512i vecConvLongInt = _mm512_cvt_roundps_epi32(vec, (/*_MM_FROUND_TO_NEG_INF*/_MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC));
+        const __m512i valuesDec = _mm512_sub_epi32(vecConvLongInt, _mm512_set1_epi32(1));
+
+        const __mmask16 maskPositive = _mm512_cmp_ps_mask(_mm512_setzero_ps(), vec, _CMP_LE_OQ);
+        const __mmask16 maskNegative = __mmask16(~maskPositive);
+
+        const __m512i valuesToConv = _mm512_or_epi32(_mm512_maskz_mov_epi32(maskPositive, vecConvLongInt),
+                                                   _mm512_maskz_mov_epi32(maskNegative, valuesDec));
+
+        return _mm512_cvtepi32_ps(valuesToConv);
     }
 
     inline InaVecAVX512COMMON signOf() const {
@@ -712,6 +723,10 @@ public:
     }
 
     inline static void MultiHorizontalSum(float /*sumRes*/[]){
+    }
+
+    inline static InaVecAVX512COMMON<float> Fma(const InaVecAVX512COMMON<float>& inValAdd, const InaVecAVX512COMMON<float>& inValMul1, const InaVecAVX512COMMON<float>& inValMul2){
+        return _mm512_fmadd_ps(inValMul1.vec,inValMul2.vec, inValAdd.vec);
     }
 };
 

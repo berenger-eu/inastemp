@@ -157,6 +157,10 @@ public:
         return 256;
     }
 
+    static constexpr bool IsRealFma(){
+        return true;
+    }
+
     inline InaVecSXA() {
         vec = _vel_vbrdd_vsl(0,256);
     }
@@ -391,9 +395,6 @@ public:
         __vr valuesInIntervals = _vel_vfmind_vvvl(
                                     _vel_vfmaxd_vvvl( vec, _vel_vbrdd_vsl(double(std::numeric_limits<long int>::min()), 256), 256),
                                     _vel_vbrdd_vsl(double(std::numeric_limits<long int>::max()), 256), 256);
-        //__vm256 maskInLongInt = _vel_andm_mmm(
-        //                        _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( , vec, 256), 256),
-        //                        _vel_vfmklgt_mvl(_vel_vfcmpd_vvvl( vec, _vel_vbrdd_vsl(double(std::numeric_limits<long int>::max()), 256), 256), 256));
         __vr vecConvLongInt = _vel_vcvtldrz_vvl(valuesInIntervals, 256);
         __vr vecConvLongIntDouble = _vel_vcvtdl_vvl(vecConvLongInt, 256);
 
@@ -403,13 +404,6 @@ public:
                                _vel_vfsubd_vvvl( vecConvLongIntDouble, _vel_vbrdd_vsl(1, 256), 256),
                                maskPositive,
                                256);
-//        return _vel_vmrg_vvvml(_vel_vmrg_vvvml(_vel_vfsubd_vvvl( vecConvLongIntDouble, _vel_vbrdd_vsl(1, 256), 256),
-//                                               vecConvLongIntDouble,
-//                                               maskNegative,
-//                                               256),
-//                               vec,
-//                               maskInLongInt,
-//                               256);
     }
 
     inline InaVecSXA signOf() const {
@@ -681,6 +675,10 @@ public:
     }
 
     inline static void MultiHorizontalSum(double /*sumRes*/[]){
+    }
+
+    inline static InaVecSXA<double> Fma(const InaVecSXA<double>& inValAdd, const InaVecSXA<double>& inValMul1, const InaVecSXA<double>& inValMul2){
+        return _vel_vfmadd_vvvvl(inValAdd.vec, inValMul1.vec, inValMul2.vec, 256);
     }
 };
 

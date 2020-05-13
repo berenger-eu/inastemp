@@ -167,6 +167,10 @@ public:
         return 2;
     }
 
+    static constexpr bool IsRealFma(){
+        return false;
+    }
+
     inline InaVecALTIVEC(){}
     inline InaVecALTIVEC(const InaVecALTIVEC&) = default;
     inline InaVecALTIVEC& operator = (const InaVecALTIVEC&) = default;
@@ -615,6 +619,10 @@ public:
     }
 
     inline static void MultiHorizontalSum(double /*sumRes*/[]){
+    }
+
+    inline static InaVecALTIVEC<double> Fma(const InaVecALTIVEC<double>& inValAdd, const InaVecALTIVEC<double>& inValMul1, const InaVecALTIVEC<double>& inValMul2){
+        return vec_add(inValAdd.vec, vec_mul(inValMul1.vec,inValMul2.vec));
     }
 };
 
