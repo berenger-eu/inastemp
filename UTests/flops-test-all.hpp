@@ -124,6 +124,27 @@ class FlopsTestAll : public UTester< FlopsTestAll< VecType > > {
             UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(VecType::GetVecLength()) * size_t(0));
             UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(VecType::GetVecLength()) * size_t(0));
         }
+
+        VecType::ResetFlopsStats();
+        {
+            VecType res = VecType::Fma(VecType(1),VecType(1),VecType(1));
+
+            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(VecType::GetVecLength()));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(VecType::GetVecLength()));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(0));
+
+            res = VecType::Fma(res, res, res);
+
+            UASSERTEEQUAL(VecType::GetFlopsStats().getMulOp() , size_t(2 * VecType::GetVecLength()));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getDivOp() , size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getAddOp() , size_t(2 * VecType::GetVecLength()));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSubOp() , size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getRsqrt() , size_t(0));
+            UASSERTEEQUAL(VecType::GetFlopsStats().getSqrt() , size_t(0));
+        }
     }
 
     void SetTests() {

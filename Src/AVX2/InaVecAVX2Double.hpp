@@ -36,9 +36,21 @@ public:
         return "InaVecAVX2<double>";
     }
 
+#ifdef __FMA__
+    static constexpr bool IsRealFma(){
+        return true;
+    }
+#endif
+
     inline static InaIfElse< InaVecAVX2<double> >::ThenClass If(const typename Parent::MaskType& inTest) {
         return InaIfElse< InaVecAVX2<double> >::IfClass().If(inTest);
     }
+
+#ifdef __FMA__
+    inline static InaVecAVX2<double> Fma(const InaVecAVX2<double>& inValAdd, const InaVecAVX2<double>& inValMul1, const InaVecAVX2<double>& inValMul2){
+        return _mm256_fmadd_pd(inValMul1.Parent::vec,inValMul2.Parent::vec, inValAdd.Parent::vec);
+    }
+#endif
 };
 
 

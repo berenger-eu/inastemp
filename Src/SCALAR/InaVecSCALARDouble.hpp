@@ -128,6 +128,10 @@ public:
         return 1;
     }
 
+    static constexpr bool IsRealFma(){
+        return false;
+    }
+
     inline InaVecSCALAR(){}
     inline InaVecSCALAR(const InaVecSCALAR&) = default;
     inline InaVecSCALAR& operator = (const InaVecSCALAR&) = default;
@@ -431,6 +435,10 @@ public:
     }
 
     inline static void MultiHorizontalSum(double /*sumRes*/[]){
+    }
+
+    inline static InaVecSCALAR<double> Fma(const InaVecSCALAR<double>& inValAdd, const InaVecSCALAR<double>& inValMul1, const InaVecSCALAR<double>& inValMul2){
+        return inValAdd.vec + (inValMul1.vec * inValMul2.vec);
     }
 };
 

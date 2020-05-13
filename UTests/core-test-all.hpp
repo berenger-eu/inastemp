@@ -1100,6 +1100,30 @@ class TestAll : public UTester< TestAll< VecType > > {
                 }
             }
         }
+
+        {
+            const VecType zero(RealType(0));
+            const VecType one(RealType(1));
+            equalToScalar(VecType::Fma(zero, zero, zero), RealType(0));
+            equalToScalar(VecType::Fma(one, zero, zero), RealType(1));
+            equalToScalar(VecType::Fma(zero, one, one), RealType(1));
+            equalToScalar(VecType::Fma(one, one, one), RealType(2));
+
+            RealType a[VecType::GetVecLength()];
+            RealType b[VecType::GetVecLength()];
+            RealType c[VecType::GetVecLength()];
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+                a[idx] = RealType(idx+1);
+                b[idx] = RealType(idx*10);
+                c[idx] = RealType(idx)+RealType(1.3);
+            }
+
+            RealType res[VecType::GetVecLength()];
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+                res[idx] = a[idx] + (b[idx] * c[idx]);
+            }
+            equalToArray(VecType::Fma(VecType(a), VecType(b), VecType(c)), res);
+        }
     }
 
     void SetTests() {

@@ -20,6 +20,10 @@
 #include <cmath>
 #include <initializer_list>
 
+#ifdef __FMA__
+#include <immintrin.h>
+#endif
+
 // Forward declarations
 template <class RealType>
 class InaVecMaskSSE3;
@@ -145,6 +149,14 @@ public:
 
     static constexpr int GetVecLength(){
         return 4;
+    }
+
+    static constexpr bool IsRealFma(){
+#ifdef __FMA__
+        return true;
+#else
+        return false;
+#endif
     }
 
     inline InaVecSSE3(){}
@@ -597,6 +609,14 @@ public:
     }
 
     inline static void MultiHorizontalSum(float /*sumRes*/[]){
+    }
+
+    inline static InaVecSSE3<float> Fma(const InaVecSSE3<float>& inValAdd, const InaVecSSE3<float>& inValMul1, const InaVecSSE3<float>& inValMul2){
+#ifdef __FMA__
+        return _mm_fmadd_ps(inValMul1.vec, inValMul2.vec, inValAdd.vec);
+#else
+        return _mm_add_ps(inValAdd.vec, _mm_mul_ps(inValMul1.vec,inValMul2.vec));
+#endif
     }
 };
 
