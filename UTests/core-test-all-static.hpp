@@ -291,10 +291,10 @@ class TestAll : public UTester< TestAll< VecType > > {
             default_alignas RealType reals[VecType::GetVecLength()];
 #ifndef __NEC__
             default_alignas char buffer[VecType::GetVecLength()*sizeof(RealType)+8];
-            RealType* realsna = reinterpret_cast<RealType*>(&buffer+8);
+            RealType* realsna = reinterpret_cast<RealType*>(buffer+8);
 #else
             default_alignas RealType buffer[VecType::GetVecLength()+1];
-            RealType* realsna = reinterpret_cast<RealType*>(&buffer+1);
+            RealType* realsna = reinterpret_cast<RealType*>(buffer+1);
 #endif
 
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
