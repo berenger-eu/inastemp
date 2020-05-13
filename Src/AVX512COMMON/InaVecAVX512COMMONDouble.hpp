@@ -402,7 +402,7 @@ public:
         const __m512i valuesToConv = _mm512_or_epi64(_mm512_maskz_mov_epi64(maskPositive, vecConvLongInt),
                                                    _mm512_maskz_mov_epi64(maskNegative, valuesDec));
 
-        return _mm512_cvtepi64_pd(valuesToConv);
+        return _mm512_cvtepi32_pd(_mm512_cvtepi64_epi32(valuesToConv));
     }
 
     inline InaVecAVX512COMMON signOf() const {
