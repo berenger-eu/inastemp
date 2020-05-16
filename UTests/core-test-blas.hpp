@@ -250,6 +250,30 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
         }
 
+
+        // ADD BY SCALAR
+        {
+            alignas(512) RealType reals[VecType::GetVecLength()];
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+                reals[idx] = RealType(12);
+            }
+
+            VecType vec(reals);
+
+            InaBlas<VecType> blas{};
+
+            alignas(512) char buff[VecType::GetVecLength()*sizeof(RealType)+1];
+            RealType* ptr_test = reinterpret_cast<RealType*>(&buff[1]);
+
+            blas.setScalar(ptr_test, 37, 5);
+
+            blas.VecAddScalar(ptr_test, 37, 7);
+
+            equalToArray(vec, ptr_test);
+            equalToScalar(VecType(12), ptr_test[36]);
+
+        }
+
     }
 
     void SetTests() {
