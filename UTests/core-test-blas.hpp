@@ -186,30 +186,69 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
     void TestBasic() {
 
-        equalToScalar(VecType(1), 1);
+        // ZERO
+        {
+            alignas(512) RealType reals[VecType::GetVecLength()];
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+                reals[idx] = RealType(0);
+            }
 
+            alignas(512) char buff[VecType::GetVecLength()*sizeof(RealType)+1];
+            RealType* ptr_test = reinterpret_cast<RealType*>(&buff[1]);
 
-        alignas(512) RealType reals[VecType::GetVecLength()];
-        alignas(512) char buffer[VecType::GetVecLength()*sizeof(RealType)+1];
-        RealType* realsna = reinterpret_cast<RealType*>(&buffer+1);
+            VecType vec(reals);
 
-        for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
-            reals[idx] = RealType(5);
-            realsna[idx] = RealType(5);
+            InaBlas<VecType> blas{};
+
+            blas.setZero(ptr_test, 37);
+
+            equalToArray(vec, ptr_test);
+            equalToScalar(VecType::GetZero(), ptr_test[36]);
         }
 
-        InaBlas<VecType> vec{};
-        VecType vec_no_fal(reals);
 
+        // SCALAR
+        {
+            alignas(512) RealType reals[VecType::GetVecLength()];
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+                reals[idx] = RealType(5);
+            }
 
+            VecType vec(reals);
 
-        alignas(512) char buff[VecType::GetVecLength()*sizeof(RealType)+1];
-        RealType* zero_ptr = reinterpret_cast<RealType*>(&buff[1]);
+            InaBlas<VecType> blas{};
 
-        vec.setScalar(zero_ptr, 32, 5);
-        vec.setFromArray(zero_ptr);
+            alignas(512) char buff[VecType::GetVecLength()*sizeof(RealType)+1];
+            RealType* ptr_test = reinterpret_cast<RealType*>(&buff[1]);
 
-        equalToArray(vec, reals);
+            blas.setScalar(ptr_test, 37, 5);
+
+            equalToArray(vec, ptr_test);
+            equalToScalar(VecType(5), ptr_test[36]);
+        }
+
+        // MULT BY SCALAR
+        {
+            alignas(512) RealType reals[VecType::GetVecLength()];
+            for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
+                reals[idx] = RealType(15);
+            }
+
+            VecType vec(reals);
+
+            InaBlas<VecType> blas{};
+
+            alignas(512) char buff[VecType::GetVecLength()*sizeof(RealType)+1];
+            RealType* ptr_test = reinterpret_cast<RealType*>(&buff[1]);
+
+            blas.setScalar(ptr_test, 37, 5);
+
+            blas.VecMultScalar(ptr_test, 37, 3);
+
+            equalToArray(vec, ptr_test);
+            equalToScalar(VecType(15), ptr_test[36]);
+
+        }
 
     }
 
