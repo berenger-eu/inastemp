@@ -151,40 +151,39 @@ public:
     }
 
 
-    inline RealType* MultTermToTerm(RealType* ptr1, RealType* ptr2, const long int nbValues){
+    inline RealType* MultTermToTerm(RealType* ptr1, RealType* ptr2, const unsigned long nbValues){
         VecType vec_ptr1, vec_ptr2, res;
 
-        alignas(512) char buff2[VecType::GetVecLength()*sizeof(RealType)+1];
-        RealType* ptr_res = reinterpret_cast<RealType*>(&buff2[1]);
+        RealType* ptr_res = new RealType[nbValues];
 
-        const long int nbValuesRounded4 = nbValues - (nbValues%(4*VecType::GetVecLength()));
+        const unsigned long nbValuesRounded4 = nbValues - (nbValues%(4*VecType::GetVecLength()));
 
         if((std::ptrdiff_t (ptr1) & (Alignement-1)) == 0) {
-            for(long int idx = 0 ; idx < nbValuesRounded4 ; idx += 4*VecType::GetVecLength()){
+            for(unsigned long idx = 0 ; idx < nbValuesRounded4 ; idx += 4*VecType::GetVecLength()){
                 res=vec_ptr1.setFromAlignedArray(&ptr1[idx])*vec_ptr2.setFromAlignedArray(&ptr2[idx]);
                 res.storeInAlignedArray(&ptr_res[idx]);
                 res=vec_ptr1.setFromAlignedArray(&ptr1[idx+VecType::GetVecLength()])*vec_ptr2.setFromAlignedArray(&ptr2[idx+VecType::GetVecLength()]);
                 res.storeInAlignedArray(&ptr_res[idx+VecType::GetVecLength()]);
-                res=vec_ptr1.setFromAlignedArray(&ptr1[idx+2*VecType::GetVecLength()])*vec_ptr2.setFromAlignedArray(&ptr2[idx+3*VecType::GetVecLength()]);
+                res=vec_ptr1.setFromAlignedArray(&ptr1[idx+2*VecType::GetVecLength()])*vec_ptr2.setFromAlignedArray(&ptr2[idx+2*VecType::GetVecLength()]);
                 res.storeInAlignedArray(&ptr_res[idx+2*VecType::GetVecLength()]);
-                res=vec_ptr1.setFromAlignedArray(&ptr1[idx+3*VecType::GetVecLength()])*vec_ptr2.setFromAlignedArray(&ptr2[idx+4*VecType::GetVecLength()]);
+                res=vec_ptr1.setFromAlignedArray(&ptr1[idx+3*VecType::GetVecLength()])*vec_ptr2.setFromAlignedArray(&ptr2[idx+3*VecType::GetVecLength()]);
                 res.storeInAlignedArray(&ptr_res[idx+3*VecType::GetVecLength()]);
             }
         }
         else {
-            for(long int idx = 0 ; idx < nbValuesRounded4 ; idx += 4*VecType::GetVecLength()){
+            for(unsigned long idx = 0 ; idx < nbValuesRounded4 ; idx += 4*VecType::GetVecLength()){
                 res=vec_ptr1.setFromArray(&ptr1[idx])*vec_ptr2.setFromArray(&ptr2[idx]);
                 res.storeInArray(&ptr_res[idx]);
                 res=vec_ptr1.setFromArray(&ptr1[idx+VecType::GetVecLength()])*vec_ptr2.setFromArray(&ptr2[idx+VecType::GetVecLength()]);
                 res.storeInArray(&ptr_res[idx+VecType::GetVecLength()]);
-                res=vec_ptr1.setFromArray(&ptr1[idx+2*VecType::GetVecLength()])*vec_ptr2.setFromArray(&ptr2[idx+3*VecType::GetVecLength()]);
+                res=vec_ptr1.setFromArray(&ptr1[idx+2*VecType::GetVecLength()])*vec_ptr2.setFromArray(&ptr2[idx+2*VecType::GetVecLength()]);
                 res.storeInArray(&ptr_res[idx+2*VecType::GetVecLength()]);
-                res=vec_ptr1.setFromArray(&ptr1[idx+3*VecType::GetVecLength()])*vec_ptr2.setFromArray(&ptr2[idx+4*VecType::GetVecLength()]);
+                res=vec_ptr1.setFromArray(&ptr1[idx+3*VecType::GetVecLength()])*vec_ptr2.setFromArray(&ptr2[idx+3*VecType::GetVecLength()]);
                 res.storeInArray(&ptr_res[idx+3*VecType::GetVecLength()]);
             }
         }
 
-        for(long int idx = nbValuesRounded4 ; idx < nbValues ; ++idx){
+        for(unsigned long idx = nbValuesRounded4 ; idx < nbValues ; ++idx){
             ptr_res[idx] = ptr1[idx] * ptr2[idx];
         }
 
@@ -193,40 +192,39 @@ public:
     }
 
 
-    inline RealType* AddTermToTerm(RealType* ptr1, RealType* ptr2, const long int nbValues){
+    inline RealType* AddTermToTerm(RealType* ptr1, RealType* ptr2, const unsigned long nbValues){
         VecType vec_ptr1, vec_ptr2, res;
 
-        alignas(512) char buff2[VecType::GetVecLength()*sizeof(RealType)+1];
-        RealType* ptr_res = reinterpret_cast<RealType*>(&buff2[1]);
+        RealType* ptr_res = new RealType[nbValues];
 
-        const long int nbValuesRounded4 = nbValues - (nbValues%(4*VecType::GetVecLength()));
+        const unsigned long nbValuesRounded4 = nbValues - (nbValues%(4*VecType::GetVecLength()));
 
         if((std::ptrdiff_t (ptr1) & (Alignement-1)) == 0) {
-            for(long int idx = 0 ; idx < nbValuesRounded4 ; idx += 4*VecType::GetVecLength()){
+            for(unsigned long idx = 0 ; idx < nbValuesRounded4 ; idx += 4*VecType::GetVecLength()){
                 res=vec_ptr1.setFromAlignedArray(&ptr1[idx])+vec_ptr2.setFromAlignedArray(&ptr2[idx]);
                 res.storeInAlignedArray(&ptr_res[idx]);
                 res=vec_ptr1.setFromAlignedArray(&ptr1[idx+VecType::GetVecLength()])+vec_ptr2.setFromAlignedArray(&ptr2[idx+VecType::GetVecLength()]);
                 res.storeInAlignedArray(&ptr_res[idx+VecType::GetVecLength()]);
-                res=vec_ptr1.setFromAlignedArray(&ptr1[idx+2*VecType::GetVecLength()])+vec_ptr2.setFromAlignedArray(&ptr2[idx+3*VecType::GetVecLength()]);
+                res=vec_ptr1.setFromAlignedArray(&ptr1[idx+2*VecType::GetVecLength()])+vec_ptr2.setFromAlignedArray(&ptr2[idx+2*VecType::GetVecLength()]);
                 res.storeInAlignedArray(&ptr_res[idx+2*VecType::GetVecLength()]);
-                res=vec_ptr1.setFromAlignedArray(&ptr1[idx+3*VecType::GetVecLength()])+vec_ptr2.setFromAlignedArray(&ptr2[idx+4*VecType::GetVecLength()]);
+                res=vec_ptr1.setFromAlignedArray(&ptr1[idx+3*VecType::GetVecLength()])+vec_ptr2.setFromAlignedArray(&ptr2[idx+3*VecType::GetVecLength()]);
                 res.storeInAlignedArray(&ptr_res[idx+3*VecType::GetVecLength()]);
             }
         }
         else {
-            for(long int idx = 0 ; idx < nbValuesRounded4 ; idx += 4*VecType::GetVecLength()){
+            for(unsigned long idx = 0 ; idx < nbValuesRounded4 ; idx += 4*VecType::GetVecLength()){
                 res=vec_ptr1.setFromArray(&ptr1[idx])+vec_ptr2.setFromArray(&ptr2[idx]);
                 res.storeInArray(&ptr_res[idx]);
                 res=vec_ptr1.setFromArray(&ptr1[idx+VecType::GetVecLength()])+vec_ptr2.setFromArray(&ptr2[idx+VecType::GetVecLength()]);
                 res.storeInArray(&ptr_res[idx+VecType::GetVecLength()]);
-                res=vec_ptr1.setFromArray(&ptr1[idx+2*VecType::GetVecLength()])+vec_ptr2.setFromArray(&ptr2[idx+3*VecType::GetVecLength()]);
+                res=vec_ptr1.setFromArray(&ptr1[idx+2*VecType::GetVecLength()])+vec_ptr2.setFromArray(&ptr2[idx+2*VecType::GetVecLength()]);
                 res.storeInArray(&ptr_res[idx+2*VecType::GetVecLength()]);
-                res=vec_ptr1.setFromArray(&ptr1[idx+3*VecType::GetVecLength()])+vec_ptr2.setFromArray(&ptr2[idx+4*VecType::GetVecLength()]);
+                res=vec_ptr1.setFromArray(&ptr1[idx+3*VecType::GetVecLength()])+vec_ptr2.setFromArray(&ptr2[idx+3*VecType::GetVecLength()]);
                 res.storeInArray(&ptr_res[idx+3*VecType::GetVecLength()]);
             }
         }
 
-        for(long int idx = nbValuesRounded4 ; idx < nbValues ; ++idx){
+        for(unsigned long idx = nbValuesRounded4 ; idx < nbValues ; ++idx){
             ptr_res[idx] = ptr1[idx] + ptr2[idx];
         }
 
