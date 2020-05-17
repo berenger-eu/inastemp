@@ -309,7 +309,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
         }
 
         // MULT TERM TO TERM
-        {
+        /*{
             alignas(512) RealType reals[VecType::GetVecLength()];
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx] = RealType(50);
@@ -369,7 +369,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
             equalToScalar(VecType(15), reals2[46]);
 
-        }
+        }*/
 
     }
 
