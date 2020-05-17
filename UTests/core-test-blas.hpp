@@ -214,7 +214,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
             VecType vec(reals);
 
-            RealType* reals2 = newArray(0, 37);
+            //RealType* reals2 = newArray(0, 37);
 
             alignas(512) char buff[VecType::GetVecLength()*sizeof(RealType)+1];
             RealType* ptr_test = reinterpret_cast<RealType*>(&buff[1]);
@@ -225,7 +225,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             // NB VALUE = 37
             blas.setZero(ptr_test, 37);
 
-            equalArrayToArray(reals2, ptr_test, 37);
+            //equalArrayToArray(reals2, ptr_test, 37);
             equalToArray(vec, ptr_test);
             equalToScalar(VecType::GetZero(), ptr_test[36]);
         }
@@ -240,7 +240,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
             VecType vec(reals);
 
-            RealType* reals2 = newArray(5, 45);
+            //RealType* reals2 = newArray(5, 45);
 
             InaBlas<VecType> blas{};
 
@@ -250,7 +250,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             // NB VALUE = 45
             blas.setScalar(ptr_test, 5, 45);
 
-            equalArrayToArray(reals2, ptr_test, 45);
+            //equalArrayToArray(reals2, ptr_test, 45);
             equalToArray(vec, ptr_test);
             equalToScalar(VecType(5), ptr_test[44]);
         }
@@ -264,7 +264,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
             VecType vec(reals);
 
-            RealType* reals2 = newArray(15, 16);
+            //RealType* reals2 = newArray(15, 16);
 
             InaBlas<VecType> blas{};
 
@@ -276,7 +276,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
             blas.VecMultScalar(ptr_test, 3, 16);
 
-            equalArrayToArray(reals2, ptr_test, 16);
+            //equalArrayToArray(reals2, ptr_test, 16);
             equalToArray(vec, ptr_test);
             equalToScalar(VecType(15), ptr_test[15]);
         }
@@ -291,7 +291,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
             VecType vec(reals);
 
-            RealType* reals2 = newArray(12, 45);
+            //RealType* reals2 = newArray(12, 45);
 
             InaBlas<VecType> blas{};
 
@@ -303,7 +303,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
             blas.VecAddScalar(ptr_test, 7, 45);
 
-            equalArrayToArray(reals2, ptr_test, 45);
+            //equalArrayToArray(reals2, ptr_test, 45);
             equalToArray(vec, ptr_test);
             equalToScalar(VecType(12), ptr_test[44]);
         }
