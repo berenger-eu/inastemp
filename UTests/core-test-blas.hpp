@@ -264,7 +264,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
             RealType* ptr_test = new RealType[45];
 
-            // NB VALUE = 16
+            // NB VALUE = 45
             blas.setScalar(ptr_test, 5, 45);
 
             blas.VecMultScalar(ptr_test, 4, 45);
@@ -359,6 +359,22 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             equalToScalar(VecType(17), res[255]);
 
             equalToScalar(VecType(17), reals2[31]);
+        }
+
+        // SCALAR PRODUCT
+        {
+            InaBlas<VecType> blas{};
+
+            RealType* ptr_test1 = new RealType[257];
+            RealType* ptr_test2 = new RealType[257];
+
+            // NB VALUE = 257
+            blas.setScalar(ptr_test1, 5, 257);
+            blas.setScalar(ptr_test2, 12, 257);
+
+            RealType scalarProduct = blas.ScalarProduct(ptr_test1, ptr_test2, 257);
+
+            equalToScalar(VecType(15420), scalarProduct);
         }
 
     }

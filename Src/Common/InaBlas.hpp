@@ -46,24 +46,24 @@ public:
 
 
     inline void setScalar(RealType* ptr, const RealType inVal, const long int nbValues){
-        VecType vec = inVal;
+        VecType vect = inVal;
 
         const long int nbValuesRounded4 = nbValues - (nbValues%(4*VecType::GetVecLength()));
 
         if((std::ptrdiff_t (ptr) & (Alignement-1)) == 0) {
             for(long int idx = 0 ; idx < nbValuesRounded4 ; idx += 4*VecType::GetVecLength()){
-                vec.storeInAlignedArray(&ptr[idx]);
-                vec.storeInAlignedArray(&ptr[idx+VecType::GetVecLength()]);
-                vec.storeInAlignedArray(&ptr[idx+2*VecType::GetVecLength()]);
-                vec.storeInAlignedArray(&ptr[idx+3*VecType::GetVecLength()]);
+                vect.storeInAlignedArray(&ptr[idx]);
+                vect.storeInAlignedArray(&ptr[idx+VecType::GetVecLength()]);
+                vect.storeInAlignedArray(&ptr[idx+2*VecType::GetVecLength()]);
+                vect.storeInAlignedArray(&ptr[idx+3*VecType::GetVecLength()]);
             }
         }
         else {
             for(long int idx = 0 ; idx < nbValuesRounded4 ; idx += 4*VecType::GetVecLength()){
-                vec.storeInArray(&ptr[idx]);
-                vec.storeInArray(&ptr[idx+VecType::GetVecLength()]);
-                vec.storeInArray(&ptr[idx+2*VecType::GetVecLength()]);
-                vec.storeInArray(&ptr[idx+3*VecType::GetVecLength()]);
+                vect.storeInArray(&ptr[idx]);
+                vect.storeInArray(&ptr[idx+VecType::GetVecLength()]);
+                vect.storeInArray(&ptr[idx+2*VecType::GetVecLength()]);
+                vect.storeInArray(&ptr[idx+3*VecType::GetVecLength()]);
             }
         }
 
@@ -229,6 +229,46 @@ public:
         }
 
         return ptr_res;
+
+    }
+
+
+    inline RealType ScalarProduct(RealType* ptr1, RealType* ptr2, const unsigned long nbValues){
+        VecType vec_ptr1, vec_ptr2, res;
+        RealType scalarProduct = RealType(0);
+
+        const unsigned long nbValuesRounded4 = nbValues - (nbValues%(4*VecType::GetVecLength()));
+
+        if((std::ptrdiff_t (ptr1) & (Alignement-1)) == 0) {
+            for(unsigned long idx = 0 ; idx < nbValuesRounded4 ; idx += 4*VecType::GetVecLength()){
+                res=vec_ptr1.setFromAlignedArray(&ptr1[idx])*vec_ptr2.setFromAlignedArray(&ptr2[idx]);
+                scalarProduct+=res.horizontalSum();
+                res=vec_ptr1.setFromAlignedArray(&ptr1[idx+VecType::GetVecLength()])*vec_ptr2.setFromAlignedArray(&ptr2[idx+VecType::GetVecLength()]);
+                scalarProduct+=res.horizontalSum();
+                res=vec_ptr1.setFromAlignedArray(&ptr1[idx+2*VecType::GetVecLength()])*vec_ptr2.setFromAlignedArray(&ptr2[idx+2*VecType::GetVecLength()]);
+                scalarProduct+=res.horizontalSum();
+                res=vec_ptr1.setFromAlignedArray(&ptr1[idx+3*VecType::GetVecLength()])*vec_ptr2.setFromAlignedArray(&ptr2[idx+3*VecType::GetVecLength()]);
+                scalarProduct+=res.horizontalSum();
+            }
+        }
+        else {
+            for(unsigned long idx = 0 ; idx < nbValuesRounded4 ; idx += 4*VecType::GetVecLength()){
+                res=vec_ptr1.setFromArray(&ptr1[idx])*vec_ptr2.setFromArray(&ptr2[idx]);
+                scalarProduct+=res.horizontalSum();
+                res=vec_ptr1.setFromArray(&ptr1[idx+VecType::GetVecLength()])*vec_ptr2.setFromArray(&ptr2[idx+VecType::GetVecLength()]);
+                scalarProduct+=res.horizontalSum();
+                res=vec_ptr1.setFromArray(&ptr1[idx+2*VecType::GetVecLength()])*vec_ptr2.setFromArray(&ptr2[idx+2*VecType::GetVecLength()]);
+                scalarProduct+=res.horizontalSum();
+                res=vec_ptr1.setFromArray(&ptr1[idx+3*VecType::GetVecLength()])*vec_ptr2.setFromArray(&ptr2[idx+3*VecType::GetVecLength()]);
+                scalarProduct+=res.horizontalSum();
+            }
+        }
+
+        for(unsigned long idx = nbValuesRounded4 ; idx < nbValues ; ++idx){
+            scalarProduct += ptr1[idx] * ptr2[idx];
+        }
+
+        return scalarProduct;
 
     }
 
