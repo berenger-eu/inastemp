@@ -272,6 +272,23 @@ public:
 
     }
 
+
+    inline RealType* ProductVecMat(RealType* vect, RealType* mat,
+                                    const unsigned long nbRows, const unsigned long nbCols,
+                                    const unsigned long nbValues){
+
+        RealType* subMat = new RealType[nbValues];
+        RealType* ptrRes = new RealType[nbRows];
+
+        for(unsigned long idx = 0 ; idx < nbRows ; idx ++){
+            memcpy(subMat, mat+(idx*nbCols), nbCols*sizeof(RealType));
+            ptrRes[idx]=ScalarProduct(vect, subMat, nbValues);
+        }
+
+        return ptrRes;
+
+    }
+
 };
 
 
