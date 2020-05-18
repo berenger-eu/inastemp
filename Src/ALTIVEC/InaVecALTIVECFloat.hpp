@@ -15,6 +15,8 @@
 
 #include "Common/InaFastExp.hpp"
 
+#include "Common/InaMath.hpp"
+
 #include <altivec.h>
 #undef bool
 #undef vector
@@ -676,6 +678,18 @@ public:
         return InaUtils::FastPow<InaVecALTIVEC<float>>(vec, power);
     }
 
+    inline InaVecALTIVEC<float> log() const{
+        InaMath<InaVecALTIVEC<float>> a;
+        return a.log(*this);
+    }
+    inline InaVecALTIVEC<float> log2() const{
+        InaMath<InaVecALTIVEC<float>> a;
+        return a.log2(*this);
+    }
+    inline InaVecALTIVEC<float> log10() const{
+        InaMath<InaVecALTIVEC<float>> a;
+        return a.log10(*this);
+    }
     // Multiple sum
     template <class ... Args>
     inline static void MultiHorizontalSum(float sumRes[], const InaVecALTIVEC<float>& inVec, Args ...args){

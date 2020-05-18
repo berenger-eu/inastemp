@@ -9,6 +9,7 @@
 
 #include "Common/InaUtils.hpp"
 
+
 class InaVecFLOPSStats {
     size_t mulop;
     size_t divop;
@@ -71,7 +72,7 @@ public:
  * It simply help to implement each type.
  */
 template < class VecType >
-class InaVecFLOPS : public VecType {
+class InaVecFLOPS : public VecType{
     static InaVecFLOPSStats FlopsStats;
 
 public:
@@ -316,7 +317,39 @@ public:
         }
         return Parent::exp2LowAcc();
     }
+    
+    inline VecType log() const {
+        FlopsStats.incAddOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
+        std::size_t pownumber = 0;
+        for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
+            pownumber += InaUtils::FastPowNbMul(i);
+        FlopsStats.incMulOp((pownumber + ( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
+        FlopsStats.incSubOp((1)*size_t(GetVecLength()));
+        FlopsStats.incDivOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
+        return Parent::log();
+    }
 
+    inline VecType log2() const {
+        FlopsStats.incAddOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
+        std::size_t pownumber = 0;
+        for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
+            pownumber += InaUtils::FastPowNbMul(i);
+        FlopsStats.incMulOp((pownumber + ( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
+        FlopsStats.incSubOp((1)*size_t(GetVecLength()));
+        FlopsStats.incDivOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1 + 1)*size_t(GetVecLength()));
+        return Parent::log2();
+    }
+
+    inline VecType log10() const {
+        FlopsStats.incAddOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
+        std::size_t pownumber = 0;
+        for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
+            pownumber += InaUtils::FastPowNbMul(i);
+        FlopsStats.incMulOp((pownumber + ( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
+        FlopsStats.incSubOp((1)*size_t(GetVecLength()));
+        FlopsStats.incDivOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1 + 1)*size_t(GetVecLength()));
+        return Parent::log10();
+    }
     //! Apply 1/Sqrt to all values from inVec
     //! @code idx in [0:last-val-idx] => resVec[idx] = 1/Sqrt(inVec[idx])
     inline VecType rsqrt() const {

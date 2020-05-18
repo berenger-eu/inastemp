@@ -15,6 +15,8 @@
 
 #include "Common/InaFastExp.hpp"
 
+#include "Common/InaMath.hpp"
+
 #include <immintrin.h>
 
 #include <cmath>
@@ -733,6 +735,18 @@ public:
         return InaUtils::FastPow<InaVecAVX512COMMON<float>>(*this, power);
     }
 
+    inline InaVecAVX512COMMON<float> log() const{
+        InaMath<InaVecAVX512COMMON<float>> a;
+        return a.log(*this);
+    }
+    inline InaVecAVX512COMMON<float> log2() const{
+        InaMath<InaVecAVX512COMMON<float>> a;
+        return a.log2(*this);
+    }
+    inline InaVecAVX512COMMON<float> log10() const{
+        InaMath<InaVecAVX512COMMON<float>> a;
+        return a.log10(*this);
+    }
     // Multiple sum
     template <class ... Args>
     inline static void MultiHorizontalSum(float sumRes[], const InaVecAVX512COMMON<float>& inVec1,

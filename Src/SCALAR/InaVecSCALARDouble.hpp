@@ -237,6 +237,18 @@ public:
          return std::pow(10.,vec);
     }
 
+    inline InaVecSCALAR log() const {
+         return std::log(vec);
+    }
+
+    inline InaVecSCALAR log2() const {
+         return std::log2(vec);
+    }
+
+    inline InaVecSCALAR log10() const {
+         return std::log10(vec);
+    }
+
     inline InaVecSCALAR exp10LowAcc() const {
          return std::pow(10.,vec);
     }

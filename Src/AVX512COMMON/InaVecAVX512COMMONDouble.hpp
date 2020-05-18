@@ -15,6 +15,8 @@
 
 #include "Common/InaFastExp.hpp"
 
+#include "Common/InaMath.hpp"
+
 #include <immintrin.h>
 
 #include <cmath>
@@ -783,6 +785,20 @@ public:
 
     inline InaVecAVX512COMMON<double> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecAVX512COMMON<double>>(*this, power);
+    }
+    inline InaVecAVX512COMMON<double> log() const{
+        InaMath<InaVecAVX512COMMON<double>> a;
+        return a.log(*this);
+    }
+
+    inline InaVecAVX512COMMON<double> log2() const{
+        InaMath<InaVecAVX512COMMON<double>> a;
+        return a.log2(*this);
+    }
+
+    inline InaVecAVX512COMMON<double> log10() const{
+        InaMath<InaVecAVX512COMMON<double>> a;
+        return a.log10(*this);
     }
 
     // Multiple sum

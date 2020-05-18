@@ -201,6 +201,33 @@ public:
         return _mm_castsi128_ps(castedInteger);
     }
 
+    inline InaVecSSE41<float> log() const{
+#ifdef __INTEL_COMPILER
+        return _mm_log_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.log(*this);
+#endif
+    }
+
+    inline InaVecSSE41<float> log2() const{
+#ifdef __INTEL_COMPILER
+        return _mm_log2_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.log2(*this);
+#endif
+    }
+
+    inline InaVecSSE41<float> log10() const{
+#ifdef __INTEL_COMPILER
+        return _mm_log10_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.log10(*this);
+#endif
+    }
+    
     inline InaVecSSE41<float> floor() const {
         return _mm_floor_ps(Parent::vec);
     }

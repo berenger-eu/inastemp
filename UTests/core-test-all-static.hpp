@@ -141,18 +141,26 @@ class TestAll : public UTester< TestAll< VecType > > {
     }
 
     bool approxEqual(const float v1, const float v2) {
+        if(v2 == 0)
+            return std::abs(v1 - v2) <= 9.9999999999E-6f;
         return (std::abs(v1 - v2) / v2) <= 9.9999999999E-6f;
     }
 
     bool approxEqual(const double v1, const double v2) {
+        if(v2 == 0)
+            return std::abs(v1 - v2) <= 9.999999999999999E-12;
         return (std::abs(v1 - v2) / v2) <= 9.999999999999999E-12;
     }
 
     bool approxEqualLowAcc(const float v1, const float v2) {
+        if(v2 == 0)
+            return std::abs(v1 - v2) <= 9.9999999999E-2f;
         return (std::abs(v1 - v2) / v2) <= 9.9999999999E-2f;
     }
 
     bool approxEqualLowAcc(const double v1, const double v2) {
+        if(v2 == 0)
+            return std::abs(v1 - v2) <= 9.999999999999999E-5;
         return (std::abs(v1 - v2) / v2) <= 9.999999999999999E-5;
     }
 
@@ -160,6 +168,8 @@ class TestAll : public UTester< TestAll< VecType > > {
                              const RealType inReal) {
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(vec.at(int(idx)), inReal));
+            // if(!approxEqual(vec.at(int(idx)), inReal))
+                // throw std::exception();
         }
 
         RealType reals[VecType::GetVecLength()];
@@ -167,6 +177,8 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(reals[idx], inReal));
+            // if(!approxEqual(reals[idx], inReal))
+                // throw std::exception();
         }
 
         default_alignas RealType realsalign[VecType::GetVecLength()];
@@ -174,13 +186,18 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(realsalign[idx], inReal));
+            // if(!approxEqual(realsalign[idx], inReal))
+                // throw std::exception();
         }
     }
+
 
     void approxEqualToArray(const VecType vec,
                             const RealType inReals[]) {
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(vec.at(int(idx)), inReals[idx]));
+            // if(!approxEqual(vec.at(int(idx)), inReals[idx]))
+                // throw std::exception();
         }
 
         RealType reals[VecType::GetVecLength()];
@@ -188,6 +205,8 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(reals[idx], inReals[idx]));
+            // if(!approxEqual(reals[idx], inReals[idx]))
+                // throw std::exception();
         }
 
         default_alignas RealType realsalign[VecType::GetVecLength()];
@@ -195,13 +214,17 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(realsalign[idx], inReals[idx]));
+            // if(!approxEqual(realsalign[idx], inReals[idx]))
+                // throw std::exception();
         }
     }
 
     void approxLowAccEqualToArray(const VecType vec,
                             const RealType inReals[]) {
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
-            UASSERTETRUE(approxEqualLowAcc(vec.at(int(idx)), inReals[idx]));
+                UASSERTETRUE(approxEqualLowAcc(vec.at(int(idx)), inReals[idx]));
+            // if(!approxEqualLowAcc(vec.at(int(idx)), inReals[idx]))
+                // throw std::exception();
         }
 
         RealType reals[VecType::GetVecLength()];
@@ -209,6 +232,8 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqualLowAcc(reals[idx], inReals[idx]));
+            // if(!approxEqualLowAcc(reals[idx], inReals[idx]))
+                // throw std::exception();
         }
 
         default_alignas RealType realsalign[VecType::GetVecLength()];
@@ -216,6 +241,8 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqualLowAcc(realsalign[idx], inReals[idx]));
+            // if(!approxEqualLowAcc(realsalign[idx], inReals[idx]))
+                // throw std::exception();
         }
     }
 
@@ -469,6 +496,9 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType exp2reslowacc[VecType::GetVecLength()];
             RealType sqrtres[VecType::GetVecLength()];
             RealType rsqrtres[VecType::GetVecLength()];
+            RealType logres[VecType::GetVecLength()];
+            RealType log2res[VecType::GetVecLength()];
+            RealType log10res[VecType::GetVecLength()];
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx]    = RealType((idx%10) + 1);
                 expres[idx]   = RealType(exp(reals[idx]));
@@ -479,6 +509,9 @@ class TestAll : public UTester< TestAll< VecType > > {
                 exp2reslowacc[idx]   = RealType(exp2(reals[idx]));
                 sqrtres[idx]  = RealType(sqrt(reals[idx]));
                 rsqrtres[idx] = RealType(1 / sqrt(reals[idx]));
+                logres[idx] = RealType(log(reals[idx]));
+                log2res[idx] = RealType(log2(reals[idx]));
+                log10res[idx] = RealType(log10(reals[idx]));
             }
 
             approxEqualToArray(VecType(reals).exp(), expres);
@@ -489,10 +522,15 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxLowAccEqualToArray(VecType(reals).exp2LowAcc(), exp2reslowacc);
             approxEqualToArray(VecType(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType(reals).rsqrt(), rsqrtres);
+            approxEqualToArray(VecType(reals).log(), logres);
+            approxEqualToArray(VecType(reals).log2(), log2res);
+            approxEqualToArray(VecType(reals).log10(), log10res);
 
             approxEqualToScalar(VecType(RealType(0)).exp(), std::exp(RealType(0)));
             approxEqualToScalar(VecType(RealType(0)).exp10(), std::pow(RealType(10),RealType(0)));
             approxEqualToScalar(VecType(RealType(0)).exp2(), std::exp2(RealType(0)));
+            approxEqualToScalar(VecType(RealType(1)).exp() - VecType(RealType(1)), std::expm1(RealType(1)));
+            approxEqualToScalar(VecType(RealType(1)).log(), std::log1p(RealType(0)));
         }
 
 
@@ -507,6 +545,9 @@ class TestAll : public UTester< TestAll< VecType > > {
             default_alignas RealType exp10reslowacc[VecType::GetVecLength()];
             default_alignas RealType sqrtres[VecType::GetVecLength()];
             default_alignas RealType rsqrtres[VecType::GetVecLength()];
+            default_alignas RealType logres[VecType::GetVecLength()];
+            default_alignas RealType log2res[VecType::GetVecLength()];
+            default_alignas RealType log10res[VecType::GetVecLength()];
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx]    = RealType((idx%10) + 1);
                 expres[idx]   = RealType(exp(reals[idx]));
@@ -517,6 +558,9 @@ class TestAll : public UTester< TestAll< VecType > > {
                 exp2reslowacc[idx]   = RealType(exp2(reals[idx]));
                 sqrtres[idx]  = RealType(sqrt(reals[idx]));
                 rsqrtres[idx] = RealType(1 / sqrt(reals[idx]));
+                logres[idx] = RealType(log(reals[idx]));
+                log2res[idx] = RealType(log2(reals[idx]));
+                log10res[idx] = RealType(log10(reals[idx]));
             }
 
             approxEqualToArray(VecType().setFromAlignedArray(reals).exp(), expres);
@@ -527,6 +571,9 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxLowAccEqualToArray(VecType().setFromAlignedArray(reals).exp2LowAcc(), exp2reslowacc);
             approxEqualToArray(VecType().setFromAlignedArray(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType().setFromAlignedArray(reals).rsqrt(), rsqrtres);
+            approxEqualToArray(VecType().setFromAlignedArray(reals).log(), logres);
+            approxEqualToArray(VecType().setFromAlignedArray(reals).log2(), log2res);
+            approxEqualToArray(VecType().setFromAlignedArray(reals).log10(), log10res);
         }
 
         {

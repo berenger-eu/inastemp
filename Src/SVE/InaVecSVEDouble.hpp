@@ -15,6 +15,8 @@
 
 #include "Common/InaFastExp.hpp"
 
+#include "Common/InaMath.hpp"
+
 #include <arm_sve.h>
 #include <cmath>
 #include <initializer_list>
@@ -687,6 +689,18 @@ public:
         return InaUtils::FastPow<InaVecSVE<double>>(*this, power);
     }
 
+    inline InaVecSVE<double> log() const{
+        InaMath<InaVecSVE<double>> a;
+        return a.log(*this);
+    }
+    inline InaVecSVE<double> log2() const{
+        InaMath<InaVecSVE<double>> a;
+        return a.log2(*this);
+    }
+    inline InaVecSVE<double> log10() const{
+        InaMath<InaVecSVE<double>> a;
+        return a.log10(*this);
+    }
     // Multiple sum
     template <class ... Args>
     inline static void MultiHorizontalSum(double sumRes[], const InaVecSVE<double>& inVec1,

@@ -249,6 +249,33 @@ public:
         return _mm_castsi128_pd(_mm_set_epi64x(allvalint[1], allvalint[0]));
     }
 
+    inline InaVecSSE41<double> log() const{
+#ifdef __INTEL_COMPILER
+        return _mm_log_pd(Parent::vec);
+#else
+        InaMath<InaVecSSE41<double>> a;
+        return a.log(*this);
+#endif
+    }
+
+    inline InaVecSSE41<double> log2() const{
+#ifdef __INTEL_COMPILER
+        return _mm_log2_pd(Parent::vec);
+#else
+        InaMath<InaVecSSE41<double>> a;
+        return a.log2(*this);
+#endif
+    }
+
+    inline InaVecSSE41<double> log10() const{
+#ifdef __INTEL_COMPILER
+        return _mm_log10_pd(Parent::vec);
+#else
+        InaMath<InaVecSSE41<double>> a;
+        return a.log10(*this);
+#endif
+    }
+    
     inline InaVecSSE41<double> floor() const {
         return _mm_floor_pd(Parent::vec);
     }
