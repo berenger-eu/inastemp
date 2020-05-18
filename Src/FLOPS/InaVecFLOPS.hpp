@@ -322,7 +322,7 @@ public:
         FlopsStats.incAddOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
         std::size_t pownumber = 0;
         for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
-            pownumber += InaUtils::FastPowNbMul(i);
+            pownumber += std::size_t(InaUtils::FastPowNbMul(i));
         FlopsStats.incMulOp((pownumber + 1)*size_t(GetVecLength()));
         FlopsStats.incSubOp((1)*size_t(GetVecLength()));
         FlopsStats.incDivOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
@@ -333,7 +333,7 @@ public:
         FlopsStats.incAddOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
         std::size_t pownumber = 0;
         for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
-            pownumber += InaUtils::FastPowNbMul(i);
+            pownumber += std::size_t(InaUtils::FastPowNbMul(i));
         FlopsStats.incMulOp((pownumber + 1)*size_t(GetVecLength()));
         FlopsStats.incSubOp((1)*size_t(GetVecLength()));
         FlopsStats.incDivOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1 + 1)*size_t(GetVecLength()));
@@ -344,7 +344,7 @@ public:
         FlopsStats.incAddOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
         std::size_t pownumber = 0;
         for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
-            pownumber += InaUtils::FastPowNbMul(i);
+            pownumber += std::size_t(InaUtils::FastPowNbMul(i));
         FlopsStats.incMulOp((pownumber + 1)*size_t(GetVecLength()));
         FlopsStats.incSubOp((1)*size_t(GetVecLength()));
         FlopsStats.incDivOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1 + 1)*size_t(GetVecLength()));
@@ -355,7 +355,7 @@ public:
         FlopsStats.incAddOp(( std::numeric_limits<RealType>::max_digits10)*size_t(GetVecLength()));
         std::size_t pownumber = 0;
         for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
-            pownumber += InaUtils::FastPowNbMul(i);
+            pownumber += std::size_t(InaUtils::FastPowNbMul(i));
         FlopsStats.incMulOp((pownumber + (std::numeric_limits<RealType>::max_digits10 * 2))*size_t(GetVecLength()));
         FlopsStats.incSubOp((std::numeric_limits<RealType>::max_digits10)*size_t(GetVecLength()));
         FlopsStats.incDivOp((std::numeric_limits<RealType>::max_digits10 * 2)*size_t(GetVecLength()));
@@ -366,7 +366,7 @@ public:
         FlopsStats.incAddOp(( std::numeric_limits<RealType>::max_digits10)*size_t(GetVecLength()));
         std::size_t pownumber = 0;
         for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
-            pownumber += InaUtils::FastPowNbMul(i);
+            pownumber += std::size_t(InaUtils::FastPowNbMul(i));
         FlopsStats.incMulOp((pownumber + (std::numeric_limits<RealType>::max_digits10 * 2))*size_t(GetVecLength()));
         FlopsStats.incSubOp((std::numeric_limits<RealType>::max_digits10)*size_t(GetVecLength()));
         FlopsStats.incDivOp((std::numeric_limits<RealType>::max_digits10 * 2)*size_t(GetVecLength()));
@@ -377,7 +377,7 @@ public:
         FlopsStats.incAddOp(( std::numeric_limits<RealType>::max_digits10 * 2)*size_t(GetVecLength()));
         std::size_t pownumber = 0;
         for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2 * 2); i++)
-            pownumber += InaUtils::FastPowNbMul(i);
+            pownumber += std::size_t(InaUtils::FastPowNbMul(i));
         FlopsStats.incMulOp(((pownumber + (std::numeric_limits<RealType>::max_digits10 * 2)) * 2)*size_t(GetVecLength()));
         FlopsStats.incSubOp((std::numeric_limits<RealType>::max_digits10 * 2)*size_t(GetVecLength()));
         FlopsStats.incDivOp((std::numeric_limits<RealType>::max_digits10 * 2 * 2 + 1)*size_t(GetVecLength()));
