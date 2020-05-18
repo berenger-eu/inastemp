@@ -60,7 +60,7 @@ int main() {
 
     // Just to check results (we compare bits here)
     for (int idx = 0; idx < Size; ++idx) {
-        assert(arrayRes[idx] == static_cast<double>(2 * idx));
+        assert(arrayRes[std::size_t(idx)] == static_cast<double>(2 * idx));
     }
 
     std::cout << "Done." << std::endl;

@@ -540,12 +540,12 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxLowAccEqualToArray(VecType(reals).exp2LowAcc(), exp2reslowacc);
             approxEqualToArray(VecType(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType(reals).rsqrt(), rsqrtres);
-            approxEqualToArray(VecType(reals).log(), logres);
-            approxEqualToArray(VecType(reals).log2(), log2res);
-            approxEqualToArray(VecType(reals).log10(), log10res);
-            approxEqualToArray(VecType(realstrygo).cos(), cosres);
-            approxEqualToArray(VecType(realstrygo).sin(), sinres);
-            approxEqualToArray(VecType(realstrygo).tan(), tanres);
+            approxLowAccEqualToArray(VecType(reals).log(), logres);
+            approxLowAccEqualToArray(VecType(reals).log2(), log2res);
+            approxLowAccEqualToArray(VecType(reals).log10(), log10res);
+            approxLowAccEqualToArray(VecType(realstrygo).cos(), cosres);
+            approxLowAccEqualToArray(VecType(realstrygo).sin(), sinres);
+            approxLowAccEqualToArray(VecType(realstrygo).tan(), tanres);
 
             approxEqualToScalar(VecType(RealType(0)).exp(), std::exp(RealType(0)));
             approxEqualToScalar(VecType(RealType(0)).exp10(), std::pow(RealType(10),RealType(0)));
@@ -610,12 +610,12 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxLowAccEqualToArray(VecType(reals).exp2LowAcc(), exp2reslowacc);
             approxEqualToArray(VecType(reals).sqrt(), sqrtres);
             approxEqualToArray(VecType(reals).rsqrt(), rsqrtres);
-            approxEqualToArray(VecType(reals).log(), logres);
-            approxEqualToArray(VecType(reals).log2(), log2res);
-            approxEqualToArray(VecType(reals).log10(), log10res);
-            approxEqualToArray(VecType(realstrygo).cos(), cosres);
-            approxEqualToArray(VecType(realstrygo).sin(), sinres);
-            approxEqualToArray(VecType(realstrygo).tan(), tanres);
+            approxLowAccEqualToArray(VecType(reals).log(), logres);
+            approxLowAccEqualToArray(VecType(reals).log2(), log2res);
+            approxLowAccEqualToArray(VecType(reals).log10(), log10res);
+            approxLowAccEqualToArray(VecType(realstrygo).cos(), cosres);
+            approxLowAccEqualToArray(VecType(realstrygo).sin(), sinres);
+            approxLowAccEqualToArray(VecType(realstrygo).tan(), tanres);
 
         }
 
