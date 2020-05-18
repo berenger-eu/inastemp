@@ -62,7 +62,7 @@ public:
         VecType q = (inVec - VecType(RealType(1)))/(inVec + VecType(RealType(1)));
         VecType restmp = VecType(RealType(0));
         for(int i = 1; i < (std::numeric_limits<RealType>::max_digits10 * precisionNumber); i+=2){
-            restmp += (VecType(q).pow(i) / VecType(RealType(i))) ;
+            restmp += (VecType(q).pow(std::size_t(i)) / VecType(RealType(i))) ;
         }
         res *= restmp;
         return res;
@@ -82,7 +82,7 @@ public:
         VecType curTermValue;
         for (int curTerm=1; curTerm<=((std::numeric_limits<RealType>::max_digits10 * precisionNumber)/2)-1; curTerm++)
         {
-            curTermValue = inVec.pow(curTerm*2);
+            curTermValue = inVec.pow(std::size_t(curTerm*2));
             curTermValue /= VecType(factorials[ (curTerm*2) - 1 ]);
             if (curTerm & 0x01)
                 res -= curTermValue;
@@ -98,7 +98,7 @@ public:
         VecType curTermValue;
         for (int curTerm=1; curTerm<=((std::numeric_limits<RealType>::max_digits10 * precisionNumber)/2)-1; curTerm++)
         {
-            curTermValue = inVec.pow( (curTerm*2) + 1);
+            curTermValue = inVec.pow( std::size_t((curTerm*2) + 1) );
             curTermValue /= VecType(factorials[ (curTerm*2) ]);
             if (curTerm & 0x01)
                 res -= curTermValue;
