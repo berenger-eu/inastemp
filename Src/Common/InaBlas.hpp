@@ -6,6 +6,7 @@
 #define INAVECINTERFACE_HPP
 
 #include <cstdio>
+#include <cstring>
 #include <vector>
 
 template < class VecType >

@@ -435,7 +435,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
 
             // NB COLS = NB LINES VECTOR (NB Value)
-            const unsigned long sizeVect=256;
+            /*const unsigned long sizeVect=256;
             const unsigned long nbRows=128;
             const unsigned long nbCols=256;
 
@@ -447,7 +447,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             blas.setScalar(mat, 12, nbCols*nbRows);
 
             RealType* res = blas.ProductVecMat(vect, mat, nbRows, nbCols, sizeVect);
-
+            */
         }
 
     }
