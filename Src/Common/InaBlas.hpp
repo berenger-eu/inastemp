@@ -6,7 +6,6 @@
 #define INAVECINTERFACE_HPP
 
 #include <cstdio>
-#include <cstring>
 #include <vector>
 
 template < class VecType >
@@ -274,19 +273,45 @@ public:
     }
 
 
-    inline RealType* ProductVecMat(RealType* vect, RealType* mat,
-                                    const unsigned long nbRows, const unsigned long nbCols,
+    inline RealType* ProductVecMat(RealType* vect, RealType** mat,
+                                    const unsigned long nbRows,
                                     const unsigned long nbValues){
 
-        RealType* subMat = new RealType[nbValues];
         RealType* ptrRes = new RealType[nbRows];
 
         for(unsigned long idx = 0 ; idx < nbRows ; idx ++){
-            memcpy(subMat, mat+(idx*nbCols), nbCols*sizeof(RealType));
-            ptrRes[idx]=ScalarProduct(vect, subMat, nbValues);
+            ptrRes[idx]=ScalarProduct(vect, mat[idx], nbValues);
         }
 
         return ptrRes;
+
+    }
+
+
+    inline RealType** ProductMatMat(RealType** mat1, RealType** mat2,
+                                    const unsigned long nbRows1, const unsigned long nbCols,
+                                    const unsigned long nbCols2){
+
+        //RealType* subMat1 = new RealType[nbCols];
+        RealType* subMat2 = new RealType[nbCols];
+
+        RealType **matRes = new RealType*[nbRows1];
+        for (unsigned long i=0; i < nbRows1; i++)
+          matRes[i] = new RealType[nbCols2];
+
+        for(unsigned long idx_row = 0 ; idx_row < nbRows1 ; idx_row ++){
+            for(unsigned long idx_col = 0 ; idx_col < nbCols2 ; idx_col ++){
+
+                // TODO: vec submat2
+                for(unsigned long idx_row2 = 0 ; idx_row2 < nbCols ; idx_row2 ++){
+                    subMat2[idx_row2] = mat2[idx_row2][idx_col];
+                }
+
+                matRes[idx_row][idx_col]=ScalarProduct(mat1[idx_row], subMat2, nbCols);
+            }
+        }
+
+        return matRes;
 
     }
 

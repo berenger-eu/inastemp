@@ -397,59 +397,61 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             vectCalc[1] = RealType(4);
             vectCalc[2] = RealType(3);
 
-            RealType* matCalc = new RealType[2*3];
-            matCalc[0] = RealType(1);
-            matCalc[1] = RealType(3);
-            matCalc[2] = RealType(5);
-            matCalc[3] = RealType(5);
-            matCalc[4] = RealType(5);
-            matCalc[5] = RealType(2);
 
-            RealType* resCalc = blas.ProductVecMat(vectCalc, matCalc, 2, 3, 3);
+            RealType **matCalc = new RealType* [2];
+            for (int i=0; i < 2; i++)
+              matCalc[i] = new RealType[3];
+
+            matCalc[0][0] = RealType(1);
+            matCalc[0][1] = RealType(3);
+            matCalc[0][2] = RealType(5);
+            matCalc[1][0] = RealType(5);
+            matCalc[1][1] = RealType(5);
+            matCalc[1][2] = RealType(2);
+
+            RealType* resCalc = blas.ProductVecMat(vectCalc, matCalc, 2, 3);
 
             equalToScalar(VecType(30), resCalc[0]);
             equalToScalar(VecType(41), resCalc[1]);
 
-            // SECOND
-            RealType* vectCalc2 = new RealType[3];
-            vectCalc2[0] = RealType(1);
-            vectCalc2[1] = RealType(-2);
-            vectCalc2[2] = RealType(0.5);
 
-            RealType* matCalc2 = new RealType[3*3];
-            matCalc2[0] = RealType(1);
-            matCalc2[1] = RealType(2);
-            matCalc2[2] = RealType(3);
-            matCalc2[3] = RealType(4);
-            matCalc2[4] = RealType(5);
-            matCalc2[5] = RealType(6);
-            matCalc2[6] = RealType(7);
-            matCalc2[7] = RealType(8);
-            matCalc2[8] = RealType(9);
-
-            RealType* resCalc2 = blas.ProductVecMat(vectCalc2, matCalc2, 3, 3, 3);
-
-            equalToScalar(VecType(-1.5), resCalc2[0]);
-            equalToScalar(VecType(-3), resCalc2[1]);
-            equalToScalar(VecType(-4.5), resCalc2[2]);
-
-
-            // NB COLS = NB LINES VECTOR (NB Value)
-            /*const unsigned long sizeVect=256;
-            const unsigned long nbRows=128;
-            const unsigned long nbCols=256;
-
-
-            RealType* vect = new RealType[sizeVect];
-            RealType* mat = new RealType[nbRows*nbCols];
-
-            blas.setScalar(vect, 5, sizeVect);
-            blas.setScalar(mat, 12, nbCols*nbRows);
-
-            RealType* res = blas.ProductVecMat(vect, mat, nbRows, nbCols, sizeVect);
-            */
         }
 
+        // MULT MATRIX MATRIX
+        {
+            InaBlas<VecType> blas{};
+
+            RealType **mat1 = new RealType* [2];
+            for (int i=0; i < 2; i++)
+              mat1[i] = new RealType[3];
+
+            mat1[0][0] = RealType(1);
+            mat1[0][1] = RealType(2);
+            mat1[0][2] = RealType(3);
+            mat1[1][0] = RealType(4);
+            mat1[1][1] = RealType(5);
+            mat1[1][2] = RealType(6);
+
+
+            RealType **mat2 = new RealType* [3];
+            for (int i=0; i < 3; i++)
+              mat2[i] = new RealType[2];
+
+            mat2[0][0] = RealType(1);
+            mat2[0][1] = RealType(2);
+            mat2[1][0] = RealType(3);
+            mat2[1][1] = RealType(4);
+            mat2[2][0] = RealType(5);
+            mat2[2][1] = RealType(6);
+
+            RealType** resCalc = blas.ProductMatMat(mat1, mat2, 2, 3, 3);
+
+            equalToScalar(VecType(22), resCalc[0][0]);
+            equalToScalar(VecType(28), resCalc[0][1]);
+            equalToScalar(VecType(49), resCalc[1][0]);
+            equalToScalar(VecType(64), resCalc[1][1]);
+
+        }
     }
 
     void SetTests() {
