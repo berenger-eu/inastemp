@@ -762,11 +762,11 @@ public:
     inline InaVecAVX<double> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecAVX<double>>(*this, power);
     }
+
     inline InaVecAVX<double> log() const{
         InaMath<InaVecAVX<double>> a;
         return a.log(*this);
     }
-
     inline InaVecAVX<double> log2() const{
         InaMath<InaVecAVX<double>> a;
         return a.log2(*this);
@@ -774,6 +774,19 @@ public:
     inline InaVecAVX<double> log10() const{
         InaMath<InaVecAVX<double>> a;
         return a.log10(*this);
+    }
+
+    inline InaVecAVX<double> cos() const{
+        InaMath<InaVecAVX<double>> a;
+        return a.cos(*this);
+    }
+    inline InaVecAVX<double> sin() const{
+        InaMath<InaVecAVX<double>> a;
+        return a.sin(*this);
+    }
+    inline InaVecAVX<double> tan() const{
+        InaMath<InaVecAVX<double>> a;
+        return a.tan(*this);
     }
     // Multiple sum
     template <class ... Args>

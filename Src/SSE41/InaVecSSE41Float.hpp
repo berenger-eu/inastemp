@@ -227,6 +227,32 @@ public:
         return a.log10(*this);
 #endif
     }
+
+    inline InaVecSSE41<float> cos() const{
+#ifdef __INTEL_COMPILER
+        return _mm_cos_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.cos(*this);
+#endif
+    }
+    inline InaVecSSE41<float> sin() const{
+#ifdef __INTEL_COMPILER
+        return _mm_sin_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.sin(*this);
+#endif
+    }
+    inline InaVecSSE41<float> tan() const{
+#ifdef __INTEL_COMPILER
+        return _mm_tan_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.tan(*this);
+#endif
+    }
+    
     
     inline InaVecSSE41<float> floor() const {
         return _mm_floor_ps(Parent::vec);

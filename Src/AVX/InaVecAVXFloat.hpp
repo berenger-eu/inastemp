@@ -713,6 +713,19 @@ public:
         InaMath<InaVecAVX<float>> a;
         return a.log10(*this);
     }
+
+    inline InaVecAVX<float> cos() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.cos(*this);
+    }
+    inline InaVecAVX<float> sin() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.sin(*this);
+    }
+    inline InaVecAVX<float> tan() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.tan(*this);
+    }
     // Multiple sum
     template <class ... Args>
     inline static void MultiHorizontalSum(float sumRes[], const InaVecAVX<float>& inVec1,

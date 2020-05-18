@@ -692,6 +692,19 @@ public:
         InaMath<InaVecSSE3<float>> a;
         return a.log10(*this);
     }
+
+    inline InaVecSSE3<float> cos() const{
+        InaMath<InaVecSSE3<float>> a;
+        return a.cos(*this);
+    }
+    inline InaVecSSE3<float> sin() const{
+        InaMath<InaVecSSE3<float>> a;
+        return a.sin(*this);
+    }
+    inline InaVecSSE3<float> tan() const{
+        InaMath<InaVecSSE3<float>> a;
+        return a.tan(*this);
+    }
     // Multiple sum
     template <class ... Args>
     inline static void MultiHorizontalSum(float sumRes[], const InaVecSSE3<float>& inVec1,

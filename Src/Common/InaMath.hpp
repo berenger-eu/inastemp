@@ -22,6 +22,7 @@ class InaMath : public VecType{
     }
 
 public:
+    constexpr static int precisionNumber = 4;
     using Parent               = VecType;
     using VecRawType           = typename VecType::VecRawType;
     using MaskType             = typename VecType::MaskType;
@@ -29,13 +30,39 @@ public:
 
     using VecType::VecType;
 
+    RealType factorials[(std::numeric_limits<RealType>::max_digits10 * precisionNumber)];
+
+    RealType factorial(int n)
+    {
+        if (n==1)
+            return 1;
+        else
+            return RealType(n) * factorial(n - 1);
+    }
+
+    void precalcFactorials()
+    {
+        for (int i=1; i<(std::numeric_limits<RealType>::max_digits10 * precisionNumber)+1; i++)
+        {
+            factorials[i-1] = factorial(i);
+        }
+    }
+    VecType mod(VecType a1, RealType b)
+    {
+        RealType r[a1.GetVecLength()];
+        RealType a[a1.GetVecLength()];
+        a1.storeInArray(a);
+        for(int i=0; i < a1.GetVecLength(); i++){
+            r[i] = std::fmod(a[i], b);
+        }
+        return VecType(r);
+    }
     inline VecType log(const VecType& inVec){
-        VecType one = VecType(RealType(1));
         VecType res = VecType(RealType(2));
-        VecType q = (inVec - one)/(inVec + one);
+        VecType q = (inVec - VecType(RealType(1)))/(inVec + VecType(RealType(1)));
         VecType restmp = VecType(RealType(0));
-        for(int i = 1; i < (std::numeric_limits<RealType>::max_digits10 * 4); i+=2){
-            restmp += (one / VecType(RealType(i))) * q.pow(i);
+        for(int i = 1; i < (std::numeric_limits<RealType>::max_digits10 * precisionNumber); i+=2){
+            restmp += (VecType(q).pow(i) / VecType(RealType(i))) ;
         }
         res *= restmp;
         return res;
@@ -47,6 +74,42 @@ public:
 
     inline VecType log10(const VecType& inVec){
         return log(inVec) / VecType(RealType(CoeffLog10()));
+    }
+
+    inline VecType cos(const VecType& inVec){
+        precalcFactorials();
+        VecType res = VecType(RealType(1));
+        VecType curTermValue;
+        for (int curTerm=1; curTerm<=((std::numeric_limits<RealType>::max_digits10 * precisionNumber)/2)-1; curTerm++)
+        {
+            curTermValue = inVec.pow(curTerm*2);
+            curTermValue /= VecType(factorials[ (curTerm*2) - 1 ]);
+            if (curTerm & 0x01)
+                res -= curTermValue;
+            else
+                res += curTermValue;
+        }
+        return res;
+    }
+
+    inline VecType sin(const VecType& inVec){
+        precalcFactorials();
+        VecType res = inVec;
+        VecType curTermValue;
+        for (int curTerm=1; curTerm<=((std::numeric_limits<RealType>::max_digits10 * precisionNumber)/2)-1; curTerm++)
+        {
+            curTermValue = inVec.pow( (curTerm*2) + 1);
+            curTermValue /= VecType(factorials[ (curTerm*2) ]);
+            if (curTerm & 0x01)
+                res -= curTermValue;
+            else
+                res += curTermValue;
+        }
+        return res;
+    }
+
+    inline VecType tan(const VecType& inVec){
+        return sin(inVec)/cos(inVec);
     }
 };
 

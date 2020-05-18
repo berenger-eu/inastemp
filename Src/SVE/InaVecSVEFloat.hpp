@@ -655,9 +655,22 @@ public:
         InaMath<InaVecSVE<float>> a;
         return a.log2(*this);
     }
-    inline InaVecSVE<float> log1010() const{
+    inline InaVecSVE<float> log10() const{
         InaMath<InaVecSVE<float>> a;
-        return a.log1010(*this);
+        return a.log10(*this);
+    }
+
+    inline InaVecSVE<float> cos() const{
+        InaMath<InaVecSVE<float>> a;
+        return a.cos(*this);
+    }
+    inline InaVecSVE<float> sin() const{
+        InaMath<InaVecSVE<float>> a;
+        return a.sin(*this);
+    }
+    inline InaVecSVE<float> tan() const{
+        InaMath<InaVecSVE<float>> a;
+        return a.tan(*this);
     }
     // Multiple sum
     template <class ... Args>

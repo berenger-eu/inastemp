@@ -249,6 +249,17 @@ public:
          return std::log10(vec);
     }
 
+
+    inline InaVecSCALAR cos() const{
+        return std::cos(vec);
+    }
+    inline InaVecSCALAR sin() const{
+        return std::sin(vec);
+    }
+    inline InaVecSCALAR tan() const{
+        return std::tan(vec);
+    }
+
     inline InaVecSCALAR exp10LowAcc() const {
          return std::pow(10.,vec);
     }

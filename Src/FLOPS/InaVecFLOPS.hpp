@@ -323,7 +323,7 @@ public:
         std::size_t pownumber = 0;
         for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
             pownumber += InaUtils::FastPowNbMul(i);
-        FlopsStats.incMulOp((pownumber + ( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
+        FlopsStats.incMulOp((pownumber + 1)*size_t(GetVecLength()));
         FlopsStats.incSubOp((1)*size_t(GetVecLength()));
         FlopsStats.incDivOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
         return Parent::log();
@@ -334,7 +334,7 @@ public:
         std::size_t pownumber = 0;
         for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
             pownumber += InaUtils::FastPowNbMul(i);
-        FlopsStats.incMulOp((pownumber + ( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
+        FlopsStats.incMulOp((pownumber + 1)*size_t(GetVecLength()));
         FlopsStats.incSubOp((1)*size_t(GetVecLength()));
         FlopsStats.incDivOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1 + 1)*size_t(GetVecLength()));
         return Parent::log2();
@@ -345,10 +345,43 @@ public:
         std::size_t pownumber = 0;
         for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
             pownumber += InaUtils::FastPowNbMul(i);
-        FlopsStats.incMulOp((pownumber + ( std::numeric_limits<RealType>::max_digits10 * 2) + 1)*size_t(GetVecLength()));
+        FlopsStats.incMulOp((pownumber + 1)*size_t(GetVecLength()));
         FlopsStats.incSubOp((1)*size_t(GetVecLength()));
         FlopsStats.incDivOp((( std::numeric_limits<RealType>::max_digits10 * 2) + 1 + 1)*size_t(GetVecLength()));
         return Parent::log10();
+    }
+
+    inline VecType cos() const {
+        FlopsStats.incAddOp(( std::numeric_limits<RealType>::max_digits10)*size_t(GetVecLength()));
+        std::size_t pownumber = 0;
+        for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
+            pownumber += InaUtils::FastPowNbMul(i);
+        FlopsStats.incMulOp((pownumber + (std::numeric_limits<RealType>::max_digits10 * 2))*size_t(GetVecLength()));
+        FlopsStats.incSubOp((std::numeric_limits<RealType>::max_digits10)*size_t(GetVecLength()));
+        FlopsStats.incDivOp((std::numeric_limits<RealType>::max_digits10 * 2)*size_t(GetVecLength()));
+        return Parent::cos();
+    }
+
+    inline VecType sin() const {
+        FlopsStats.incAddOp(( std::numeric_limits<RealType>::max_digits10)*size_t(GetVecLength()));
+        std::size_t pownumber = 0;
+        for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2); i++)
+            pownumber += InaUtils::FastPowNbMul(i);
+        FlopsStats.incMulOp((pownumber + (std::numeric_limits<RealType>::max_digits10 * 2))*size_t(GetVecLength()));
+        FlopsStats.incSubOp((std::numeric_limits<RealType>::max_digits10)*size_t(GetVecLength()));
+        FlopsStats.incDivOp((std::numeric_limits<RealType>::max_digits10 * 2)*size_t(GetVecLength()));
+        return Parent::sin();
+    }
+
+    inline VecType tan() const {
+        FlopsStats.incAddOp(( std::numeric_limits<RealType>::max_digits10 * 2)*size_t(GetVecLength()));
+        std::size_t pownumber = 0;
+        for(int i = 0; i < ( std::numeric_limits<RealType>::max_digits10 * 2 * 2); i++)
+            pownumber += InaUtils::FastPowNbMul(i);
+        FlopsStats.incMulOp(((pownumber + (std::numeric_limits<RealType>::max_digits10 * 2)) * 2)*size_t(GetVecLength()));
+        FlopsStats.incSubOp((std::numeric_limits<RealType>::max_digits10 * 2)*size_t(GetVecLength()));
+        FlopsStats.incDivOp((std::numeric_limits<RealType>::max_digits10 * 2 * 2 + 1)*size_t(GetVecLength()));
+        return Parent::tan();
     }
     //! Apply 1/Sqrt to all values from inVec
     //! @code idx in [0:last-val-idx] => resVec[idx] = 1/Sqrt(inVec[idx])
