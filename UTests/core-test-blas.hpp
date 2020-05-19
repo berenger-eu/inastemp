@@ -236,6 +236,22 @@ class TestBlas : public UTester< TestBlas< VecType > > {
     }
 
 
+    RealType* MatTransposee(RealType* mat,
+                       const unsigned long nbRows,
+                       const unsigned long nbCols){
+
+       RealType* matRes = new RealType[nbRows*nbCols];
+
+        for(unsigned long idxCol = 0 ; idxCol < nbCols ; idxCol++) {
+            for(unsigned long idxRow = 0; idxRow < nbRows ; idxRow++){
+                matRes[idxCol*nbRows+idxRow] = mat[idxRow*nbCols+idxCol];
+            }
+        }
+
+        return matRes;
+    }
+
+
     void equalMatrixToMatrix(RealType** mat1, RealType** mat2,
                                     const unsigned long nbRows,
                                     const unsigned long nbCols) {
@@ -519,12 +535,11 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
         // TRANSPOSEE
         {
-
-
             InaBlas<VecType> blas{};
 
-            const unsigned long nbRows = 57;
-            const unsigned long nbCols = 36;
+            const unsigned long nbRows = 37;
+            const unsigned long nbCols = 23;
+            const unsigned long size = nbRows * nbCols;
 
             RealType* mat = new RealType[nbRows*nbCols];
 
@@ -535,13 +550,14 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             }
 
             RealType* matTrans = blas.Transposee(mat, nbRows, nbCols);
-
             equalToScalar(mat[0], matTrans[0]);
             equalToScalar(mat[nbRows*nbCols-1], matTrans[nbRows*nbCols-1]);
 
+            RealType* matTransNoVect = MatTransposee(mat, nbRows, nbCols);
+            equalArrayToArray(matTransNoVect, matTrans, size);
 
-            //equalArrayToArray(mat, matTrans, size);
-
+            RealType* matTrans2 = blas.TransposeeOpti(mat, nbRows, nbCols);
+            equalArrayToArray(matTransNoVect, matTrans2, size);
 
         }
     }

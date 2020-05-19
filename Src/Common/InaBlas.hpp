@@ -274,8 +274,8 @@ public:
 
 
     inline RealType* ProductVecMat(RealType* vect, RealType** mat,
-                                    const unsigned long nbRows,
-                                    const unsigned long nbValues){
+        const unsigned long nbRows,
+        const unsigned long nbValues){
 
         RealType* ptrRes = new RealType[nbRows];
 
@@ -289,15 +289,15 @@ public:
 
 
     inline RealType** ProductMatMat(RealType** mat1, RealType** mat2,
-                                    const unsigned long nbRows1, const unsigned long nbCols,
-                                    const unsigned long nbCols2){
+        const unsigned long nbRows1, const unsigned long nbCols,
+        const unsigned long nbCols2){
 
         //RealType* subMat1 = new RealType[nbCols];
         RealType* subMat2 = new RealType[nbCols];
 
         RealType **matRes = new RealType*[nbRows1];
         for (unsigned long i=0; i < nbRows1; i++)
-          matRes[i] = new RealType[nbCols2];
+        matRes[i] = new RealType[nbCols2];
 
         for(unsigned long idx_row = 0 ; idx_row < nbRows1 ; idx_row ++){
             for(unsigned long idx_col = 0 ; idx_col < nbCols2 ; idx_col ++){
@@ -321,7 +321,7 @@ public:
         VecType vecMat;
         RealType* matRes = new RealType[nbRows*nbCols];
 
-        //const unsigned long nbRowsTr = nbCols;
+        const unsigned long nbRowsTr = nbCols;
         const unsigned long nbColsTr = nbRows;
 
         int indirect[VecType::GetVecLength()];
@@ -338,10 +338,49 @@ public:
             }
         }
 
+        for(unsigned long idxCol = 0 ; idxCol < nbRowsTr ; idxCol++) {
+            for(unsigned long idxRow = nbValuesRounded; idxRow < nbRows ; idxRow++){
+                matRes[idxCol*nbColsTr+idxRow] = mat[idxRow*nbRowsTr+idxCol];
+            }
+        }
+
+        return matRes;
+
+    }
+
+
+    inline RealType* TransposeeOpti(RealType* mat, const unsigned long nbRows, const unsigned long nbCols){
+
+        VecType vecMat, vecMatTr;
+        RealType* matRes = new RealType[nbRows*nbCols];
+
+        const unsigned long nbRowsTr = nbCols;
+        const unsigned long nbColsTr = nbRows;
+
+        int indirect[4*VecType::GetVecLength()];
+
+        const unsigned long nbValuesRounded4 = nbRows - (nbRows%(4*VecType::GetVecLength()));
 
         for(unsigned long idxCol = 0 ; idxCol < nbCols ; idxCol++) {
-            for(unsigned long idxRow = nbValuesRounded; idxRow < nbRows ; idxRow++){
-                matRes[idxCol*nbColsTr+idxRow] = mat[idxRow*nbCols+idxCol];
+            for(unsigned long idxRow = 0 ; idxRow < nbValuesRounded4 ; idxRow += 4*VecType::GetVecLength()){
+                for(unsigned long idx = 0; idx<size_t(4*VecType::GetVecLength()); idx++){
+                    indirect[idx] = static_cast<int>((idx+idxRow)*nbCols+idxCol);
+
+                }
+                vecMat.setFromIndirectArray(mat, &indirect[0]);
+                vecMat.storeInArray(&matRes[idxCol*nbColsTr+idxRow]);
+                vecMat.setFromIndirectArray(mat, &indirect[VecType::GetVecLength()]);
+                vecMat.storeInArray(&matRes[idxCol*nbColsTr+idxRow+VecType::GetVecLength()]);
+                vecMat.setFromIndirectArray(mat, &indirect[2*VecType::GetVecLength()]);
+                vecMat.storeInArray(&matRes[idxCol*nbColsTr+idxRow+2*VecType::GetVecLength()]);
+                vecMat.setFromIndirectArray(mat, &indirect[3*VecType::GetVecLength()]);
+                vecMat.storeInArray(&matRes[idxCol*nbColsTr+idxRow+3*VecType::GetVecLength()]);
+            }
+        }
+
+        for(unsigned long idxCol = 0 ; idxCol < nbRowsTr ; idxCol++) {
+            for(unsigned long idxRow = nbValuesRounded4; idxRow < nbRows ; idxRow++){
+                matRes[idxCol*nbColsTr+idxRow] = mat[idxRow*nbRowsTr+idxCol];
             }
         }
 
@@ -350,7 +389,6 @@ public:
     }
 
 };
-
 
 
 
