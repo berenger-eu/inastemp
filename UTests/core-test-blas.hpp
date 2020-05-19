@@ -204,6 +204,50 @@ class TestBlas : public UTester< TestBlas< VecType > > {
        }
     }
 
+
+    RealType** newMatrix(const unsigned long rows,
+                       const unsigned long columns){
+
+       RealType** newMat = new RealType* [rows];
+
+       for (unsigned long i=0; i < rows; i++)
+         newMat[i] = new RealType[columns];
+
+       return newMat;
+    }
+
+    RealType** MultMatMat(RealType** mat1, RealType** mat2,
+                                    const unsigned long nbRows1, const unsigned long nbCols,
+                                    const unsigned long nbCols2){
+
+        RealType** matRes = newMatrix(nbRows1, nbCols2);
+
+        for(unsigned long idx_row = 0 ; idx_row < nbRows1; idx_row++){
+            for(unsigned long idx_col = 0 ; idx_col < nbCols2; idx_col++){
+                for(unsigned long idx_row2 = 0 ; idx_row2 < nbCols; idx_row2++){
+                    std::cout << std::endl;
+                    matRes[idx_row][idx_col] = matRes[idx_row][idx_col]+mat1[idx_row][idx_row2]*mat2[idx_row2][idx_col];
+                }
+            }
+        }
+
+        return matRes;
+
+    }
+
+
+    void equalMatrixToMatrix(RealType** mat1, RealType** mat2,
+                                    const unsigned long nbRows,
+                                    const unsigned long nbCols) {
+
+        for(unsigned long idx_row = 0 ; idx_row < nbRows; idx_row++){
+            for(unsigned long idx_col = 0 ; idx_col < nbCols; idx_col++){
+                UASSERTEEQUAL(mat1[idx_row][idx_col], mat2[idx_row][idx_col]);
+            }
+        }
+
+   }
+
     void TestBasic() {
 
         // ZERO
@@ -444,12 +488,60 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             mat2[2][0] = RealType(5);
             mat2[2][1] = RealType(6);
 
-            RealType** resCalc = blas.ProductMatMat(mat1, mat2, 2, 3, 3);
+
+            RealType** resCalc = blas.ProductMatMat(mat1, mat2, 2, 3, 2);
+            //RealType** resCalcNoVect = MultMatMat(mat1, mat2, 2, 3, 2);
+
+            //equalMatrixToMatrix(resCalc, resCalcNoVect, 2, 2);
+            //RealType** test = newMatrix(3,3);
+
 
             equalToScalar(VecType(22), resCalc[0][0]);
             equalToScalar(VecType(28), resCalc[0][1]);
             equalToScalar(VecType(49), resCalc[1][0]);
             equalToScalar(VecType(64), resCalc[1][1]);
+
+
+        /*    RealType ** test = newMatrix(8,8);
+
+            mat2[1][0] = RealType(1);
+            mat2[1][1] = RealType(2);
+            mat2[1][2] = RealType(3);
+            mat2[1][3] = RealType(4);
+            mat2[1][4] = RealType(5);
+            mat2[1][5] = RealType(6);
+            mat2[1][6] = RealType(7);
+            mat2[1][7] = RealType(8);
+
+*/
+
+        }
+
+        // TRANSPOSEE
+        {
+
+
+            InaBlas<VecType> blas{};
+
+            const unsigned long nbRows = 57;
+            const unsigned long nbCols = 36;
+
+            RealType* mat = new RealType[nbRows*nbCols];
+
+            for(unsigned long idxRow = 0 ; idxRow < nbRows ; idxRow++) {
+                for(unsigned long idxCol = 0 ; idxCol < nbCols ; idxCol++){
+                    mat[(idxRow*nbCols)+idxCol]=(idxRow*idxCol)+idxCol+idxRow;
+                }
+            }
+
+            RealType* matTrans = blas.Transposee(mat, nbRows, nbCols);
+
+            equalToScalar(mat[0], matTrans[0]);
+            equalToScalar(mat[nbRows*nbCols-1], matTrans[nbRows*nbCols-1]);
+
+
+            //equalArrayToArray(mat, matTrans, size);
+
 
         }
     }

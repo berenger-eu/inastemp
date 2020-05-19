@@ -315,6 +315,40 @@ public:
 
     }
 
+
+    inline RealType* Transposee(RealType* mat, const unsigned long nbRows, const unsigned long nbCols){
+
+        VecType vecMat;
+        RealType* matRes = new RealType[nbRows*nbCols];
+
+        //const unsigned long nbRowsTr = nbCols;
+        const unsigned long nbColsTr = nbRows;
+
+        int indirect[VecType::GetVecLength()];
+
+        const unsigned long nbValuesRounded = nbRows - (nbRows%VecType::GetVecLength());
+
+        for(unsigned long idxCol = 0 ; idxCol < nbCols ; idxCol++) {
+            for(unsigned long idxRow = 0 ; idxRow < nbValuesRounded ; idxRow += VecType::GetVecLength()){
+                for(unsigned long idx = 0; idx<size_t(VecType::GetVecLength()); idx++){
+                    indirect[idx] = static_cast<int>((idx+idxRow)*nbCols+idxCol);
+                }
+                vecMat.setFromIndirectArray(mat, indirect);
+                vecMat.storeInArray(&matRes[idxCol*nbColsTr+idxRow]);
+            }
+        }
+
+
+        for(unsigned long idxCol = 0 ; idxCol < nbCols ; idxCol++) {
+            for(unsigned long idxRow = nbValuesRounded; idxRow < nbRows ; idxRow++){
+                matRes[idxCol*nbColsTr+idxRow] = mat[idxRow*nbCols+idxCol];
+            }
+        }
+
+        return matRes;
+
+    }
+
 };
 
 
