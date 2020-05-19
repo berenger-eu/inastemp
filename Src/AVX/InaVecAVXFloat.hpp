@@ -714,17 +714,53 @@ public:
         return a.log10(*this);
     }
 
-    inline InaVecAVX<float> cos() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.cos(*this);
-    }
     inline InaVecAVX<float> sin() const{
         InaMath<InaVecAVX<float>> a;
         return a.sin(*this);
     }
+    inline InaVecAVX<float> cos() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.cos(*this);
+    }
     inline InaVecAVX<float> tan() const{
         InaMath<InaVecAVX<float>> a;
         return a.tan(*this);
+    }
+    inline InaVecAVX<float> asin() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.asin(*this);
+    }
+    inline InaVecAVX<float> acos() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.acos(*this);
+    }
+    inline InaVecAVX<float> atan() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.atan(*this);
+    }
+    inline InaVecAVX<float> sinh() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.sinh(*this);
+    }
+    inline InaVecAVX<float> cosh() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.cosh(*this);
+    }
+    inline InaVecAVX<float> tanh() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.tanh(*this);
+    }
+    inline InaVecAVX<float> asinh() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.asinh(*this);
+    }
+    inline InaVecAVX<float> acosh() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.acosh(*this);
+    }
+    inline InaVecAVX<float> atanh() const{
+        InaMath<InaVecAVX<float>> a;
+        return a.atanh(*this);
     }
     // Multiple sum
     template <class ... Args>

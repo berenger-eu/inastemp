@@ -30,7 +30,7 @@ public:
 
     using VecType::VecType;
 
-    RealType factorials[(std::numeric_limits<RealType>::max_digits10 * precisionNumber)];
+    RealType factorials[(std::numeric_limits<RealType>::max_digits10 * precisionNumber * 2)];
 
     RealType factorial(int n)
     {
@@ -42,7 +42,7 @@ public:
 
     void precalcFactorials()
     {
-        for (int i=1; i<(std::numeric_limits<RealType>::max_digits10 * precisionNumber)+1; i++)
+        for (int i=1; i<(std::numeric_limits<RealType>::max_digits10 * precisionNumber * 2)+1; i++)
         {
             factorials[i-1] = factorial(i);
         }
@@ -80,7 +80,7 @@ public:
         precalcFactorials();
         VecType res = VecType(RealType(1));
         VecType curTermValue;
-        for (int curTerm=1; curTerm<=((std::numeric_limits<RealType>::max_digits10 * precisionNumber)/2)-1; curTerm++)
+        for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * precisionNumber); curTerm++)
         {
             curTermValue = inVec.pow(std::size_t(curTerm*2));
             curTermValue /= VecType(factorials[ (curTerm*2) - 1 ]);
@@ -96,7 +96,7 @@ public:
         precalcFactorials();
         VecType res = inVec;
         VecType curTermValue;
-        for (int curTerm=1; curTerm<=((std::numeric_limits<RealType>::max_digits10 * precisionNumber)/2)-1; curTerm++)
+        for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * precisionNumber); curTerm++)
         {
             curTermValue = inVec.pow( std::size_t((curTerm*2) + 1) );
             curTermValue /= VecType(factorials[ (curTerm*2) ]);
@@ -110,6 +110,82 @@ public:
 
     inline VecType tan(const VecType& inVec){
         return sin(inVec)/cos(inVec);
+    }
+
+    inline VecType asin(const VecType& inVec){
+        VecType res = inVec;
+        VecType curTermValue;
+        VecType curTermValue2 = VecType(RealType(0.5));
+        for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * precisionNumber); curTerm++)
+        {
+            curTermValue = inVec.pow( std::size_t((curTerm*2) + 1) );
+            curTermValue /= VecType(RealType((curTerm*2) + 1));
+            curTermValue *= curTermValue2;
+            res += curTermValue;
+            curTermValue2 *= VecType(RealType((curTerm*2) + 1) / RealType(curTerm*2));
+        }
+        return res;
+    }
+
+    inline VecType acos(const VecType& inVec){
+        return VecType(RealType(M_PI_2)) - asin(inVec);
+    }
+
+    inline VecType atan(const VecType& inVec){
+        VecType res = inVec;
+        VecType curTermValue;
+        for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * precisionNumber); curTerm++)
+        {
+            curTermValue = inVec.pow( std::size_t((curTerm*2) + 1) );
+            curTermValue /= VecType(RealType((curTerm*2) + 1));
+            if (curTerm & 0x01)
+                res -= curTermValue;
+            else
+                res += curTermValue;
+        }
+        return res;
+    }
+
+    inline VecType cosh(const VecType& inVec){
+        precalcFactorials();
+        VecType res = VecType(RealType(1));
+        VecType curTermValue;
+        for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * precisionNumber); curTerm++)
+        {
+            curTermValue = inVec.pow(std::size_t(curTerm*2));
+            curTermValue /= VecType(factorials[ (curTerm*2) - 1 ]);
+            res += curTermValue;
+        }
+        return res;
+    }
+
+    inline VecType sinh(const VecType& inVec){
+        precalcFactorials();
+        VecType res = inVec;
+        VecType curTermValue;
+        for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * precisionNumber); curTerm++)
+        {
+            curTermValue = inVec.pow( std::size_t((curTerm*2) + 1) );
+            curTermValue /= VecType(factorials[ (curTerm*2) ]);
+            res += curTermValue;
+        }
+        return res;
+    }
+
+    inline VecType tanh(const VecType& inVec){
+        return sinh(inVec)/cosh(inVec);
+    }
+
+    inline VecType asinh(const VecType& inVec){
+        return log(inVec + (VecType(RealType(1)) +  inVec.pow( std::size_t(2) )).sqrt() );
+    }
+
+    inline VecType acosh(const VecType& inVec){
+        return log(inVec + ( (inVec + VecType(RealType(1))).sqrt() * (inVec - VecType(RealType(1))).sqrt() ) );
+    }
+
+    inline VecType atanh(const VecType& inVec){
+        return VecType(RealType(0.5)) * log( (VecType(RealType(1)) + inVec) / (VecType(RealType(1)) - inVec) );
     }
 };
 

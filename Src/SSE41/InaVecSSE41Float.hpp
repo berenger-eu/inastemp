@@ -228,14 +228,6 @@ public:
 #endif
     }
 
-    inline InaVecSSE41<float> cos() const{
-#ifdef __INTEL_COMPILER
-        return _mm_cos_ps(Parent::vec);
-#else
-        InaMath<InaVecSSE41<float>> a;
-        return a.cos(*this);
-#endif
-    }
     inline InaVecSSE41<float> sin() const{
 #ifdef __INTEL_COMPILER
         return _mm_sin_ps(Parent::vec);
@@ -244,12 +236,93 @@ public:
         return a.sin(*this);
 #endif
     }
+    inline InaVecSSE41<float> cos() const{
+#ifdef __INTEL_COMPILER
+        return _mm_cos_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.cos(*this);
+#endif
+    }
     inline InaVecSSE41<float> tan() const{
 #ifdef __INTEL_COMPILER
         return _mm_tan_ps(Parent::vec);
 #else
         InaMath<InaVecSSE41<float>> a;
         return a.tan(*this);
+#endif
+    }
+    inline InaVecSSE41<float> asin() const{
+#ifdef __INTEL_COMPILER
+        return _mm_asin_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.asin(*this);
+#endif
+    }
+    inline InaVecSSE41<float> acos() const{
+#ifdef __INTEL_COMPILER
+        return _mm_acos_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.acos(*this);
+#endif
+    }
+    inline InaVecSSE41<float> atan() const{
+#ifdef __INTEL_COMPILER
+        return _mm_atan_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.atan(*this);
+#endif
+    }
+    
+    inline InaVecSSE41<float> sinh() const{
+#ifdef __INTEL_COMPILER
+        return _mm_sinh_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.sinh(*this);
+#endif
+    }
+    inline InaVecSSE41<float> cosh() const{
+#ifdef __INTEL_COMPILER
+        return _mm_cosh_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.cosh(*this);
+#endif
+    }
+    inline InaVecSSE41<float> tanh() const{
+#ifdef __INTEL_COMPILER
+        return _mm_tanh_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.tanh(*this);
+#endif
+    }
+    inline InaVecSSE41<float> asinh() const{
+#ifdef __INTEL_COMPILER
+        return _mm_asinh_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.asinh(*this);
+#endif
+    }
+    inline InaVecSSE41<float> acosh() const{
+#ifdef __INTEL_COMPILER
+        return _mm_acosh_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.acosh(*this);
+#endif
+    }
+    inline InaVecSSE41<float> atanh() const{
+#ifdef __INTEL_COMPILER
+        return _mm_atanh_ps(Parent::vec);
+#else
+        InaMath<InaVecSSE41<float>> a;
+        return a.atanh(*this);
 #endif
     }
     

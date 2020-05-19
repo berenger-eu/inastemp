@@ -486,6 +486,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             equalToScalar(VecType::GetOne(), 1);
         }
 
+
         {
             RealType reals[VecType::GetVecLength()];
             RealType realstrygo[VecType::GetVecLength()];
@@ -500,12 +501,21 @@ class TestAll : public UTester< TestAll< VecType > > {
             RealType logres[VecType::GetVecLength()];
             RealType log2res[VecType::GetVecLength()];
             RealType log10res[VecType::GetVecLength()];
-            RealType cosres[VecType::GetVecLength()];
             RealType sinres[VecType::GetVecLength()];
+            RealType cosres[VecType::GetVecLength()];
             RealType tanres[VecType::GetVecLength()];
+            RealType asinres[VecType::GetVecLength()];
+            RealType acosres[VecType::GetVecLength()];
+            RealType atanres[VecType::GetVecLength()];
+            RealType sinhres[VecType::GetVecLength()];
+            RealType coshres[VecType::GetVecLength()];
+            RealType tanhres[VecType::GetVecLength()];
+            RealType asinhres[VecType::GetVecLength()];
+            RealType acoshres[VecType::GetVecLength()];
+            RealType atanhres[VecType::GetVecLength()];
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx]    = RealType((idx%10) + 1);
-                realstrygo[idx] = RealType(double(idx + 1)*0.5);
+                realstrygo[idx] = RealType(double(idx + 1)*0.001);
                 expres[idx]   = RealType(exp(reals[idx]));
                 expreslowacc[idx]   = RealType(exp(reals[idx]));
                 exp10res[idx]   = RealType(exp10(reals[idx]));
@@ -517,9 +527,18 @@ class TestAll : public UTester< TestAll< VecType > > {
                 logres[idx] = RealType(log(reals[idx]));
                 log2res[idx] = RealType(log2(reals[idx]));
                 log10res[idx] = RealType(log10(reals[idx]));
-                cosres[idx] = RealType(cos(realstrygo[idx]));
                 sinres[idx] = RealType(sin(realstrygo[idx]));
+                cosres[idx] = RealType(cos(realstrygo[idx]));
                 tanres[idx] = RealType(tan(realstrygo[idx]));
+                asinres[idx] = RealType(asin(realstrygo[idx]));
+                acosres[idx] = RealType(acos(realstrygo[idx]));
+                atanres[idx] = RealType(atan(realstrygo[idx]));;
+                sinhres[idx] = RealType(sinh(realstrygo[idx]));
+                coshres[idx] = RealType(cosh(realstrygo[idx]));
+                tanhres[idx] = RealType(tanh(realstrygo[idx]));
+                asinhres[idx] = RealType(asinh(realstrygo[idx]));
+                acoshres[idx] = RealType(acosh(reals[idx]));
+                atanhres[idx] = RealType(atanh(realstrygo[idx]));
                 // std::cout.precision(std::numeric_limits< RealType >::max_digits10);
                 // std::cout << logres[idx] << " " << log2res[idx] << " " << log10res[idx] << " " << std::endl;
             }
@@ -543,9 +562,18 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxLowAccEqualToArray(VecType(reals).log(), logres);
             approxLowAccEqualToArray(VecType(reals).log2(), log2res);
             approxLowAccEqualToArray(VecType(reals).log10(), log10res);
-            approxLowAccEqualToArray(VecType(realstrygo).cos(), cosres);
             approxLowAccEqualToArray(VecType(realstrygo).sin(), sinres);
+            approxLowAccEqualToArray(VecType(realstrygo).cos(), cosres);
             approxLowAccEqualToArray(VecType(realstrygo).tan(), tanres);
+            approxLowAccEqualToArray(VecType(realstrygo).asin(), asinres);
+            approxLowAccEqualToArray(VecType(realstrygo).acos(), acosres);
+            approxLowAccEqualToArray(VecType(realstrygo).atan(), atanres);
+            approxLowAccEqualToArray(VecType(realstrygo).sinh(), sinhres);
+            approxLowAccEqualToArray(VecType(realstrygo).cosh(), coshres);
+            approxLowAccEqualToArray(VecType(realstrygo).tanh(), tanhres);
+            approxLowAccEqualToArray(VecType(realstrygo).asinh(), asinhres);
+            approxLowAccEqualToArray(VecType(reals).acosh(), acoshres);
+            approxLowAccEqualToArray(VecType(realstrygo).atanh(), atanhres);
 
             approxEqualToScalar(VecType(RealType(0)).exp(), std::exp(RealType(0)));
             approxEqualToScalar(VecType(RealType(0)).exp10(), std::pow(RealType(10),RealType(0)));
@@ -561,21 +589,30 @@ class TestAll : public UTester< TestAll< VecType > > {
             default_alignas RealType realstrygo[VecType::GetVecLength()];
             default_alignas RealType expres[VecType::GetVecLength()];
             default_alignas RealType expreslowacc[VecType::GetVecLength()];
-            default_alignas RealType exp2res[VecType::GetVecLength()];
-            default_alignas RealType exp2reslowacc[VecType::GetVecLength()];
             default_alignas RealType exp10res[VecType::GetVecLength()];
             default_alignas RealType exp10reslowacc[VecType::GetVecLength()];
+            default_alignas RealType exp2res[VecType::GetVecLength()];
+            default_alignas RealType exp2reslowacc[VecType::GetVecLength()];
             default_alignas RealType sqrtres[VecType::GetVecLength()];
             default_alignas RealType rsqrtres[VecType::GetVecLength()];
             default_alignas RealType logres[VecType::GetVecLength()];
             default_alignas RealType log2res[VecType::GetVecLength()];
             default_alignas RealType log10res[VecType::GetVecLength()];
-            default_alignas RealType cosres[VecType::GetVecLength()];
             default_alignas RealType sinres[VecType::GetVecLength()];
+            default_alignas RealType cosres[VecType::GetVecLength()];
             default_alignas RealType tanres[VecType::GetVecLength()];
+            default_alignas RealType asinres[VecType::GetVecLength()];
+            default_alignas RealType acosres[VecType::GetVecLength()];
+            default_alignas RealType atanres[VecType::GetVecLength()];
+            default_alignas RealType sinhres[VecType::GetVecLength()];
+            default_alignas RealType coshres[VecType::GetVecLength()];
+            default_alignas RealType tanhres[VecType::GetVecLength()];
+            default_alignas RealType asinhres[VecType::GetVecLength()];
+            default_alignas RealType acoshres[VecType::GetVecLength()];
+            default_alignas RealType atanhres[VecType::GetVecLength()];
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx]    = RealType((idx%10) + 1);
-                realstrygo[idx] = RealType(double(idx + 1)*0.5);
+                realstrygo[idx] = RealType(double(idx + 1)*0.001);
                 expres[idx]   = RealType(exp(reals[idx]));
                 expreslowacc[idx]   = RealType(exp(reals[idx]));
                 exp10res[idx]   = RealType(exp10(reals[idx]));
@@ -587,9 +624,18 @@ class TestAll : public UTester< TestAll< VecType > > {
                 logres[idx] = RealType(log(reals[idx]));
                 log2res[idx] = RealType(log2(reals[idx]));
                 log10res[idx] = RealType(log10(reals[idx]));
-                cosres[idx] = RealType(cos(realstrygo[idx]));
                 sinres[idx] = RealType(sin(realstrygo[idx]));
+                cosres[idx] = RealType(cos(realstrygo[idx]));
                 tanres[idx] = RealType(tan(realstrygo[idx]));
+                asinres[idx] = RealType(asin(realstrygo[idx]));
+                acosres[idx] = RealType(acos(realstrygo[idx]));
+                atanres[idx] = RealType(atan(realstrygo[idx]));;
+                sinhres[idx] = RealType(sinh(realstrygo[idx]));
+                coshres[idx] = RealType(cosh(realstrygo[idx]));
+                tanhres[idx] = RealType(tanh(realstrygo[idx]));
+                asinhres[idx] = RealType(asinh(realstrygo[idx]));
+                acoshres[idx] = RealType(acosh(reals[idx]));
+                atanhres[idx] = RealType(atanh(realstrygo[idx]));
                 // std::cout.precision(std::numeric_limits< RealType >::max_digits10);
                 // std::cout << logres[idx] << " " << log2res[idx] << " " << log10res[idx] << " " << std::endl;
             }
@@ -613,10 +659,18 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxLowAccEqualToArray(VecType(reals).log(), logres);
             approxLowAccEqualToArray(VecType(reals).log2(), log2res);
             approxLowAccEqualToArray(VecType(reals).log10(), log10res);
-            approxLowAccEqualToArray(VecType(realstrygo).cos(), cosres);
             approxLowAccEqualToArray(VecType(realstrygo).sin(), sinres);
+            approxLowAccEqualToArray(VecType(realstrygo).cos(), cosres);
             approxLowAccEqualToArray(VecType(realstrygo).tan(), tanres);
-
+            approxLowAccEqualToArray(VecType(realstrygo).asin(), asinres);
+            approxLowAccEqualToArray(VecType(realstrygo).acos(), acosres);
+            approxLowAccEqualToArray(VecType(realstrygo).atan(), atanres);
+            approxLowAccEqualToArray(VecType(realstrygo).sinh(), sinhres);
+            approxLowAccEqualToArray(VecType(realstrygo).cosh(), coshres);
+            approxLowAccEqualToArray(VecType(realstrygo).tanh(), tanhres);
+            approxLowAccEqualToArray(VecType(realstrygo).asinh(), asinhres);
+            approxLowAccEqualToArray(VecType(reals).acosh(), acoshres);
+            approxLowAccEqualToArray(VecType(realstrygo).atanh(), atanhres);
         }
 
         {

@@ -250,14 +250,41 @@ public:
     }
 
 
-    inline InaVecSCALAR cos() const{
-        return std::cos(vec);
-    }
     inline InaVecSCALAR sin() const{
         return std::sin(vec);
     }
+    inline InaVecSCALAR cos() const{
+        return std::cos(vec);
+    }
     inline InaVecSCALAR tan() const{
         return std::tan(vec);
+    }
+    inline InaVecSCALAR asin() const{
+        return std::asin(vec);
+    }
+    inline InaVecSCALAR acos() const{
+        return std::acos(vec);
+    }
+    inline InaVecSCALAR atan() const{
+        return std::atan(vec);
+    }
+    inline InaVecSCALAR sinh() const{
+        return std::sinh(vec);
+    }
+    inline InaVecSCALAR cosh() const{
+        return std::cosh(vec);
+    }
+    inline InaVecSCALAR tanh() const{
+        return std::tanh(vec);
+    }
+    inline InaVecSCALAR asinh() const{
+        return std::asinh(vec);
+    }
+    inline InaVecSCALAR acosh() const{
+        return std::acosh(vec);
+    }
+    inline InaVecSCALAR atanh() const{
+        return std::atanh(vec);
     }
 
     inline InaVecSCALAR exp10LowAcc() const {
