@@ -573,7 +573,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
         }
 
         // MULT  TRANSPOSEE MATRIX
-        {
+        /*{
             InaBlas<VecType> blas{};
 
             // cond: NB ROWS1 = NBROWS2
@@ -639,7 +639,43 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             RealType* multMatNoVect = MultMatMat2(mat, MatTransposee(mat2, nbRows2, nbCols2), nbRows, nbCols, nbRows2);
 
             equalArrayToArray(multMatMatTr, multMatNoVect, nbRows*nbRows2);
+        }*/
+
+
+        // MULT Trans Trans
+        {
+            InaBlas<VecType> blas{};
+
+            // NBROWS = NBCOLS2
+            const unsigned long nbRows = 33;
+            const unsigned long nbCols = 21;
+            const unsigned long size = nbRows * nbCols;
+            const unsigned long nbRows2 = 25;
+            const unsigned long nbCols2 = nbRows;
+
+            RealType* mat = new RealType[size];
+
+            for(unsigned long idxRow = 0 ; idxRow < nbRows ; idxRow++) {
+                for(unsigned long idxCol = 0 ; idxCol < nbCols ; idxCol++){
+                    mat[(idxRow*nbCols)+idxCol]=(idxRow*idxCol)+idxCol+idxRow+RealType(10);
+                }
+            }
+
+            RealType* mat2 = new RealType[nbRows2*nbCols2];
+
+            for(unsigned long idxRow = 0 ; idxRow < nbRows2 ; idxRow++) {
+                for(unsigned long idxCol = 0 ; idxCol < nbCols2 ; idxCol++){
+                    mat2[(idxRow*nbCols2)+idxCol]=(idxRow*idxCol)+idxCol+idxRow+RealType(10);
+                }
+            }
+
+            RealType* multMat = blas.ProductTranspoTranspo(mat, mat2, nbCols, nbRows, nbRows2);
+            RealType* multMatNoVect = MultMatMat2(MatTransposee(mat, nbRows, nbCols),
+                                                  MatTransposee(mat2, nbRows2, nbCols2), nbCols, nbRows, nbRows2);
+
+            equalArrayToArray(multMat, multMatNoVect, nbCols*nbRows2);
         }
+
     }
 
     void SetTests() {

@@ -464,6 +464,30 @@ public:
 
     }
 
+
+    inline RealType* ProductTranspoTranspo(RealType* mat1, RealType* mat2,
+                                    const unsigned long nbRows1, const unsigned long nbCols,
+                                    const unsigned long nbCols2){
+
+        RealType* matRes = new RealType[nbRows1*nbCols2];
+        RealType* subMat1 = new RealType[nbCols];
+        RealType* subMat2 = new RealType[nbCols];
+
+        // transposee to simplify the multiplication
+        RealType* matTrans = TransposeeOpti(mat1, nbCols, nbRows1);
+
+        for(unsigned long idx=0 ; idx < nbRows1 ; idx++){
+            memcpy(subMat1, matTrans+(idx*nbCols), nbCols*sizeof(RealType));
+            for(unsigned long idx2=0 ; idx2 < nbCols2 ; idx2++){
+                memcpy(subMat2, mat2+(idx2*nbCols), nbCols*sizeof(RealType));
+                matRes[idx*nbCols2+idx2]=ScalarProduct(subMat1, subMat2, nbCols);
+            }
+        }
+
+        return matRes;
+
+    }
+
 };
 
 
