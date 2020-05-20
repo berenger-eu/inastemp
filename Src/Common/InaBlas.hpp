@@ -412,6 +412,58 @@ public:
 
     }
 
+
+    inline RealType* ProductTransposeeMat(RealType* mat1, RealType* mat2,
+                                    const unsigned long nbRows1, const unsigned long nbCols,
+                                    const unsigned long nbCols2){
+
+        RealType* matRes = new RealType[nbRows1*nbCols2];
+        RealType* subMat1 = new RealType[nbCols];
+        RealType* subMat2 = new RealType[nbCols];
+
+
+        // transposition of the left mat
+        RealType* matTrans1 = TransposeeOpti(mat1, nbCols, nbRows1);
+
+        // transposee to simplify the multiplication
+        RealType* matTrans = TransposeeOpti(mat2, nbCols, nbCols2);
+
+        for(unsigned long idx=0 ; idx < nbRows1 ; idx++){
+            memcpy(subMat1, matTrans1+(idx*nbCols), nbCols*sizeof(RealType));
+            for(unsigned long idx2=0 ; idx2 < nbCols2 ; idx2++){
+                memcpy(subMat2, matTrans+(idx2*nbCols), nbCols*sizeof(RealType));
+                matRes[idx*nbCols2+idx2]=ScalarProduct(subMat1, subMat2, nbCols);
+            }
+        }
+
+        return matRes;
+
+    }
+
+
+    inline RealType* ProductMatTransposee(RealType* mat1, RealType* mat2,
+                                    const unsigned long nbRows1, const unsigned long nbCols,
+                                    const unsigned long nbCols2){
+
+        RealType* matRes = new RealType[nbRows1*nbCols2];
+        RealType* subMat1 = new RealType[nbCols];
+        RealType* subMat2 = new RealType[nbCols];
+
+
+        // for simplify, it's not necessary to transpose mat2
+        // but the result will be mat1*mat2(Tr)
+        for(unsigned long idx=0 ; idx < nbRows1 ; idx++){
+            memcpy(subMat1, mat1+(idx*nbCols), nbCols*sizeof(RealType));
+            for(unsigned long idx2=0 ; idx2 < nbCols2 ; idx2++){
+                memcpy(subMat2, mat2+(idx2*nbCols), nbCols*sizeof(RealType));
+                matRes[idx*nbCols2+idx2]=ScalarProduct(subMat1, subMat2, nbCols);
+            }
+        }
+
+        return matRes;
+
+    }
+
 };
 
 
