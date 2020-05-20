@@ -586,11 +586,11 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             InaBlas<VecType> blas{};
 
             // cond: NB ROWS1 = NBROWS2
-            const unsigned long nbRows = 23;
-            const unsigned long nbCols = 12;
+            const unsigned long nbRows = 17;
+            const unsigned long nbCols = 15;
             const unsigned long size = nbRows * nbCols;
             const unsigned long nbRows2 = nbRows;
-            const unsigned long nbCols2 = 37;
+            const unsigned long nbCols2 = 21;
 
             RealType* mat = new RealType[size];
 
@@ -622,10 +622,10 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             InaBlas<VecType> blas{};
 
             // cond: NB COLS1 = NBCOLS2
-            const unsigned long nbRows = 22;
-            const unsigned long nbCols = 9;
+            const unsigned long nbRows = 17;
+            const unsigned long nbCols = 13;
             const unsigned long size = nbRows * nbCols;
-            const unsigned long nbRows2 = 17;
+            const unsigned long nbRows2 = 21;
             const unsigned long nbCols2 = nbCols;
 
             RealType* mat = new RealType[size];
@@ -656,10 +656,10 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             InaBlas<VecType> blas{};
 
             // NBROWS = NBCOLS2
-            const unsigned long nbRows = 55;
-            const unsigned long nbCols = 45;
+            const unsigned long nbRows = 18;
+            const unsigned long nbCols = 14;
             const unsigned long size = nbRows * nbCols;
-            const unsigned long nbRows2 = 49;
+            const unsigned long nbRows2 = 22;
             const unsigned long nbCols2 = nbRows;
 
             RealType* mat = new RealType[size];
