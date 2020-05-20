@@ -205,6 +205,15 @@ class TestBlas : public UTester< TestBlas< VecType > > {
     }
 
 
+    void equalApprowLowAccArrayToArray(const RealType reals1[],
+                           const RealType reals2[],
+                           const long int size) {
+       for (long int idx = 0; idx < size ; ++idx) {
+           UASSERTETRUE(approxEqualLowAcc(reals1[idx], reals2[idx]));
+       }
+    }
+
+
     RealType** newMatrix(const unsigned long rows,
                        const unsigned long columns){
 
@@ -541,7 +550,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             RealType* multMat = blas.ProductMatMat2(mat, mat2, nbRows, nbCols, nbCols2);
             RealType* multMatNoVect = MultMatMat2(mat, mat2, nbRows, nbCols, nbCols2);
 
-            equalArrayToArray(multMat, multMatNoVect, nbRows*nbCols2);
+            equalApprowLowAccArrayToArray(multMat, multMatNoVect, nbRows*nbCols2);
         }
 
         // TRANSPOSEE
@@ -573,7 +582,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
         }
 
         // MULT  TRANSPOSEE MATRIX
-        /*{
+        {
             InaBlas<VecType> blas{};
 
             // cond: NB ROWS1 = NBROWS2
@@ -604,7 +613,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
             RealType* multMatNoVect = MultMatMat2(MatTransposee(mat, nbRows, nbCols), mat2, nbCols, nbRows, nbCols2);
 
-            equalArrayToArray(multMat, multMatNoVect, nbCols*nbCols2);
+            equalApprowLowAccArrayToArray(multMat, multMatNoVect, nbCols*nbCols2);
         }
 
         // MULT MATRIX TRANSPOSEE
@@ -638,19 +647,19 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             RealType* multMatMatTr = blas.ProductMatTransposee(mat, mat2, nbRows, nbCols, nbRows2);
             RealType* multMatNoVect = MultMatMat2(mat, MatTransposee(mat2, nbRows2, nbCols2), nbRows, nbCols, nbRows2);
 
-            equalArrayToArray(multMatMatTr, multMatNoVect, nbRows*nbRows2);
-        }*/
+            equalApprowLowAccArrayToArray(multMatMatTr, multMatNoVect, nbRows*nbRows2);
+        }
 
 
         // MULT Trans Trans
-        /*{
+        {
             InaBlas<VecType> blas{};
 
             // NBROWS = NBCOLS2
-            const unsigned long nbRows = 33;
-            const unsigned long nbCols = 21;
+            const unsigned long nbRows = 55;
+            const unsigned long nbCols = 45;
             const unsigned long size = nbRows * nbCols;
-            const unsigned long nbRows2 = 25;
+            const unsigned long nbRows2 = 49;
             const unsigned long nbCols2 = nbRows;
 
             RealType* mat = new RealType[size];
@@ -673,8 +682,8 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             RealType* multMatNoVect = MultMatMat2(MatTransposee(mat, nbRows, nbCols),
                                                   MatTransposee(mat2, nbRows2, nbCols2), nbCols, nbRows, nbRows2);
 
-            equalArrayToArray(multMat, multMatNoVect, nbCols*nbRows2);
-        }*/
+            equalApprowLowAccArrayToArray(multMat, multMatNoVect, nbCols*nbRows2);
+        }
 
     }
 
