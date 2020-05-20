@@ -582,7 +582,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
         }
 
         // MULT  TRANSPOSEE MATRIX
-        {
+        /*{
             InaBlas<VecType> blas{};
 
             // cond: NB ROWS1 = NBROWS2
@@ -614,10 +614,10 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             RealType* multMatNoVect = MultMatMat2(MatTransposee(mat, nbRows, nbCols), mat2, nbCols, nbRows, nbCols2);
 
             equalApproxLowAccArrayToArray(multMat, multMatNoVect, nbCols*nbCols2);
-        }
+        }*/
 
         // MULT MATRIX TRANSPOSEE
-        {
+        /*{
 
             InaBlas<VecType> blas{};
 
@@ -648,11 +648,11 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             RealType* multMatNoVect = MultMatMat2(mat, MatTransposee(mat2, nbRows2, nbCols2), nbRows, nbCols, nbRows2);
 
             equalApproxLowAccArrayToArray(multMatMatTr, multMatNoVect, nbRows*nbRows2);
-        }
+        }*/
 
 
         // MULT Trans Trans
-        {
+        /*{
             InaBlas<VecType> blas{};
 
             // NBROWS = NBCOLS2
@@ -683,7 +683,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
                                                   MatTransposee(mat2, nbRows2, nbCols2), nbCols, nbRows, nbRows2);
 
             equalApproxLowAccArrayToArray(multMat, multMatNoVect, nbCols*nbRows2);
-        }
+        }*/
 
     }
 
