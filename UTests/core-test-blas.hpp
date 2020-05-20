@@ -205,7 +205,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
     }
 
 
-    void equalApprowLowAccArrayToArray(const RealType reals1[],
+    void equalApproxLowAccArrayToArray(const RealType reals1[],
                            const RealType reals2[],
                            const long int size) {
        for (long int idx = 0; idx < size ; ++idx) {
@@ -550,7 +550,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             RealType* multMat = blas.ProductMatMat2(mat, mat2, nbRows, nbCols, nbCols2);
             RealType* multMatNoVect = MultMatMat2(mat, mat2, nbRows, nbCols, nbCols2);
 
-            equalApprowLowAccArrayToArray(multMat, multMatNoVect, nbRows*nbCols2);
+            equalApproxLowAccArrayToArray(multMat, multMatNoVect, nbRows*nbCols2);
         }
 
         // TRANSPOSEE
@@ -613,7 +613,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
             RealType* multMatNoVect = MultMatMat2(MatTransposee(mat, nbRows, nbCols), mat2, nbCols, nbRows, nbCols2);
 
-            equalApprowLowAccArrayToArray(multMat, multMatNoVect, nbCols*nbCols2);
+            equalApproxLowAccArrayToArray(multMat, multMatNoVect, nbCols*nbCols2);
         }
 
         // MULT MATRIX TRANSPOSEE
@@ -647,7 +647,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             RealType* multMatMatTr = blas.ProductMatTransposee(mat, mat2, nbRows, nbCols, nbRows2);
             RealType* multMatNoVect = MultMatMat2(mat, MatTransposee(mat2, nbRows2, nbCols2), nbRows, nbCols, nbRows2);
 
-            equalApprowLowAccArrayToArray(multMatMatTr, multMatNoVect, nbRows*nbRows2);
+            equalApproxLowAccArrayToArray(multMatMatTr, multMatNoVect, nbRows*nbRows2);
         }
 
 
@@ -682,7 +682,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
             RealType* multMatNoVect = MultMatMat2(MatTransposee(mat, nbRows, nbCols),
                                                   MatTransposee(mat2, nbRows2, nbCols2), nbCols, nbRows, nbRows2);
 
-            equalApprowLowAccArrayToArray(multMat, multMatNoVect, nbCols*nbRows2);
+            equalApproxLowAccArrayToArray(multMat, multMatNoVect, nbCols*nbRows2);
         }
 
     }
