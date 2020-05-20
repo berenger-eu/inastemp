@@ -7,6 +7,7 @@
 
 #include <cstdio>
 #include <vector>
+#include <cstring>
 
 template < class VecType >
 class InaBlas : public VecType {
@@ -316,6 +317,30 @@ public:
     }
 
 
+    inline RealType* ProductMatMat2(RealType* mat1, RealType* mat2,
+                                    const unsigned long nbRows1, const unsigned long nbCols,
+                                    const unsigned long nbCols2){
+
+        RealType* matRes = new RealType[nbRows1*nbCols2];
+        RealType* subMat1 = new RealType[nbCols];
+        RealType* subMat2 = new RealType[nbCols];
+
+        // transposee to simplify the multiplication
+        RealType* matTrans = TransposeeOpti(mat2, nbCols, nbCols2);
+
+        for(unsigned long idx=0 ; idx < nbRows1 ; idx++){
+            memcpy(subMat1, mat1+(idx*nbCols), nbCols*sizeof(RealType));
+            for(unsigned long idx2=0 ; idx2 < nbCols2 ; idx2++){
+                memcpy(subMat2, matTrans+(idx2*nbCols), nbCols*sizeof(RealType));
+                matRes[idx*nbCols2+idx2]=ScalarProduct(subMat1, subMat2, nbCols);
+            }
+        }
+
+        return matRes;
+
+    }
+
+
     inline RealType* Transposee(RealType* mat, const unsigned long nbRows, const unsigned long nbCols){
 
         VecType vecMat;
@@ -365,7 +390,6 @@ public:
             for(unsigned long idxRow = 0 ; idxRow < nbValuesRounded4 ; idxRow += 4*VecType::GetVecLength()){
                 for(unsigned long idx = 0; idx<size_t(4*VecType::GetVecLength()); idx++){
                     indirect[idx] = static_cast<int>((idx+idxRow)*nbCols+idxCol);
-
                 }
                 vecMat.setFromIndirectArray(mat, &indirect[0]);
                 vecMat.storeInArray(&matRes[idxCol*nbColsTr+idxRow]);
