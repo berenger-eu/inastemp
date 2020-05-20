@@ -643,7 +643,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
 
 
         // MULT Trans Trans
-        {
+        /*{
             InaBlas<VecType> blas{};
 
             // NBROWS = NBCOLS2
@@ -674,7 +674,7 @@ class TestBlas : public UTester< TestBlas< VecType > > {
                                                   MatTransposee(mat2, nbRows2, nbCols2), nbCols, nbRows, nbRows2);
 
             equalArrayToArray(multMat, multMatNoVect, nbCols*nbRows2);
-        }
+        }*/
 
     }
 
