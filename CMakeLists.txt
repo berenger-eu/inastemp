@@ -176,6 +176,10 @@ else()
     set(AVX2_DEP "AVX")
     set(AVX512KNL_DEP "AVX512COMMON")
     set(AVX512SKL_DEP "AVX512COMMON")
+    
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} -m64")
+    endif()
 endif()
 
 # Enforce rules
@@ -274,10 +278,6 @@ if(NOT INASTEMP_AS_SUBPROJECT)
     if(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "ARM")
         # Builting functions are not correctly making variables/parameters used
         set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} -Wno-vla-extension")
-    endif()
-
-    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(INASTEMP_CXX_FLAGS  "${INASTEMP_CXX_FLAGS} -m64")
     endif()
 
     OPTION( INASTEMP_ATTACHE_SOURCE "Set to on to add -g flag" OFF )
