@@ -701,67 +701,53 @@ public:
         return InaUtils::FastPow<InaVecAVX<float>>(*this, power);
     }
 
-    inline InaVecAVX<float> log() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.log(*this);
+    // Other Math functions
+    inline InaVecAVX<RealType> log() const{
+        return InaMath<InaVecAVX<RealType>>::log(*this);
     }
-    inline InaVecAVX<float> log2() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.log2(*this);
+    inline InaVecAVX<RealType> log2() const{
+        return InaMath<InaVecAVX<RealType>>::log2(*this);
     }
-    inline InaVecAVX<float> log10() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.log10(*this);
+    inline InaVecAVX<RealType> log10() const{
+        return InaMath<InaVecAVX<RealType>>::log10(*this);
+    }
+    inline InaVecAVX<RealType> sin() const{
+        return InaMath<InaVecAVX<RealType>>::sin(*this);
+    }
+    inline InaVecAVX<RealType> cos() const{
+        return InaMath<InaVecAVX<RealType>>::cos(*this);
+    }
+    inline InaVecAVX<RealType> tan() const{
+        return InaMath<InaVecAVX<RealType>>::tan(*this);
+    }
+    inline InaVecAVX<RealType> asin() const{
+        return InaMath<InaVecAVX<RealType>>::asin(*this);
+    }
+    inline InaVecAVX<RealType> acos() const{
+        return InaMath<InaVecAVX<RealType>>::acos(*this);
+    }
+    inline InaVecAVX<RealType> atan() const{
+        return InaMath<InaVecAVX<RealType>>::atan(*this);
+    }
+    inline InaVecAVX<RealType> sinh() const{
+        return InaMath<InaVecAVX<RealType>>::sinh(*this);
+    }
+    inline InaVecAVX<RealType> cosh() const{
+        return InaMath<InaVecAVX<RealType>>::cosh(*this);
+    }
+    inline InaVecAVX<RealType> tanh() const{
+        return InaMath<InaVecAVX<RealType>>::tanh(*this);
+    }
+    inline InaVecAVX<RealType> asinh() const{
+        return InaMath<InaVecAVX<RealType>>::asinh(*this);
+    }
+    inline InaVecAVX<RealType> acosh() const{
+        return InaMath<InaVecAVX<RealType>>::acosh(*this);
+    }
+    inline InaVecAVX<RealType> atanh() const{
+        return InaMath<InaVecAVX<RealType>>::atanh(*this);
     }
 
-    inline InaVecAVX<float> sin() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.sin(*this);
-    }
-    inline InaVecAVX<float> cos() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.cos(*this);
-    }
-    inline InaVecAVX<float> tan() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.tan(*this);
-    }
-    inline InaVecAVX<float> asin() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.asin(*this);
-    }
-    inline InaVecAVX<float> acos() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.acos(*this);
-    }
-    inline InaVecAVX<float> atan() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.atan(*this);
-    }
-    inline InaVecAVX<float> sinh() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.sinh(*this);
-    }
-    inline InaVecAVX<float> cosh() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.cosh(*this);
-    }
-    inline InaVecAVX<float> tanh() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.tanh(*this);
-    }
-    inline InaVecAVX<float> asinh() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.asinh(*this);
-    }
-    inline InaVecAVX<float> acosh() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.acosh(*this);
-    }
-    inline InaVecAVX<float> atanh() const{
-        InaMath<InaVecAVX<float>> a;
-        return a.atanh(*this);
-    }
     // Multiple sum
     template <class ... Args>
     inline static void MultiHorizontalSum(float sumRes[], const InaVecAVX<float>& inVec1,

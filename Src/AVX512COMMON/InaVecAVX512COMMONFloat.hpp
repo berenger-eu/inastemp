@@ -735,66 +735,51 @@ public:
         return InaUtils::FastPow<InaVecAVX512COMMON<float>>(*this, power);
     }
 
-    inline InaVecAVX512COMMON<float> log() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.log(*this);
+    // Other math functions
+    inline InaVecAVX512COMMON<RealType> log() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::log(*this);
     }
-    inline InaVecAVX512COMMON<float> log2() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.log2(*this);
+    inline InaVecAVX512COMMON<RealType> log2() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::log2(*this);
     }
-    inline InaVecAVX512COMMON<float> log10() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.log10(*this);
+    inline InaVecAVX512COMMON<RealType> log10() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::log10(*this);
     }
-
-    inline InaVecAVX512COMMON<float> sin() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.sin(*this);
+    inline InaVecAVX512COMMON<RealType> sin() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::sin(*this);
     }
-    inline InaVecAVX512COMMON<float> cos() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.cos(*this);
+    inline InaVecAVX512COMMON<RealType> cos() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::cos(*this);
     }
-    inline InaVecAVX512COMMON<float> tan() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.tan(*this);
+    inline InaVecAVX512COMMON<RealType> tan() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::tan(*this);
     }
-    inline InaVecAVX512COMMON<float> asin() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.asin(*this);
+    inline InaVecAVX512COMMON<RealType> asin() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::asin(*this);
     }
-    inline InaVecAVX512COMMON<float> acos() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.acos(*this);
+    inline InaVecAVX512COMMON<RealType> acos() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::acos(*this);
     }
-    inline InaVecAVX512COMMON<float> atan() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.atan(*this);
+    inline InaVecAVX512COMMON<RealType> atan() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::atan(*this);
     }
-    inline InaVecAVX512COMMON<float> sinh() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.sinh(*this);
+    inline InaVecAVX512COMMON<RealType> sinh() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::sinh(*this);
     }
-    inline InaVecAVX512COMMON<float> cosh() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.cosh(*this);
+    inline InaVecAVX512COMMON<RealType> cosh() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::cosh(*this);
     }
-    inline InaVecAVX512COMMON<float> tanh() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.tanh(*this);
+    inline InaVecAVX512COMMON<RealType> tanh() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::tanh(*this);
     }
-    inline InaVecAVX512COMMON<float> asinh() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.asinh(*this);
+    inline InaVecAVX512COMMON<RealType> asinh() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::asinh(*this);
     }
-    inline InaVecAVX512COMMON<float> acosh() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.acosh(*this);
+    inline InaVecAVX512COMMON<RealType> acosh() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::acosh(*this);
     }
-    inline InaVecAVX512COMMON<float> atanh() const{
-        InaMath<InaVecAVX512COMMON<float>> a;
-        return a.atanh(*this);
+    inline InaVecAVX512COMMON<RealType> atanh() const{
+        return InaMath<InaVecAVX512COMMON<RealType>>::atanh(*this);
     }
 
     // Multiple sum
