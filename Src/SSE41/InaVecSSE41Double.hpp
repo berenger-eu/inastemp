@@ -248,6 +248,116 @@ public:
 
         return _mm_castsi128_pd(_mm_set_epi64x(allvalint[1], allvalint[0]));
     }
+
+    inline InaVecSSE41<double> log() const{
+#ifdef __INTEL_COMPILER
+        return _mm_log_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::log(*this);
+#endif
+    }
+
+    inline InaVecSSE41<double> log2() const{
+#ifdef __INTEL_COMPILER
+        return _mm_log2_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::log2(*this);
+#endif
+    }
+
+    inline InaVecSSE41<double> log10() const{
+#ifdef __INTEL_COMPILER
+        return _mm_log10_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::log10(*this);
+#endif
+    }
+
+    inline InaVecSSE41<double> sin() const{
+#ifdef __INTEL_COMPILER
+        return _mm_sin_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::sin(*this);
+#endif
+    }
+    inline InaVecSSE41<double> cos() const{
+#ifdef __INTEL_COMPILER
+        return _mm_cos_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::cos(*this);
+#endif
+    }
+    inline InaVecSSE41<double> tan() const{
+#ifdef __INTEL_COMPILER
+        return _mm_tan_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::tan(*this);
+#endif
+    }
+    inline InaVecSSE41<double> asin() const{
+#ifdef __INTEL_COMPILER
+        return _mm_asin_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::asin(*this);
+#endif
+    }
+    inline InaVecSSE41<double> acos() const{
+#ifdef __INTEL_COMPILER
+        return _mm_acos_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::acos(*this);
+#endif
+    }
+    inline InaVecSSE41<double> atan() const{
+#ifdef __INTEL_COMPILER
+        return _mm_atan_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::atan(*this);
+#endif
+    }
+
+    inline InaVecSSE41<double> sinh() const{
+#ifdef __INTEL_COMPILER
+        return _mm_sinh_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::sinh(*this);
+#endif
+    }
+    inline InaVecSSE41<double> cosh() const{
+#ifdef __INTEL_COMPILER
+        return _mm_cosh_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::cosh(*this);
+#endif
+    }
+    inline InaVecSSE41<double> tanh() const{
+#ifdef __INTEL_COMPILER
+        return _mm_tanh_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::tanh(*this);
+#endif
+    }
+    inline InaVecSSE41<double> asinh() const{
+#ifdef __INTEL_COMPILER
+        return _mm_asinh_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::asinh(*this);
+#endif
+    }
+    inline InaVecSSE41<double> acosh() const{
+#ifdef __INTEL_COMPILER
+        return _mm_acosh_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::acosh(*this);
+#endif
+    }
+    inline InaVecSSE41<double> atanh() const{
+#ifdef __INTEL_COMPILER
+        return _mm_atanh_pd(Parent::vec);
+#else
+        return InaMath<InaVecSSE41<RealType>>::atanh(*this);
+#endif
+    }
     
     inline InaVecSSE41<double> floor() const {
         return _mm_floor_pd(Parent::vec);
