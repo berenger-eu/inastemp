@@ -168,8 +168,6 @@ class TestAll : public UTester< TestAll< VecType > > {
                              const RealType inReal) {
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(vec.at(int(idx)), inReal));
-            // if(!approxEqual(vec.at(int(idx)), inReal))
-                // throw std::exception();
         }
 
         RealType reals[VecType::GetVecLength()];
@@ -177,8 +175,6 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(reals[idx], inReal));
-            // if(!approxEqual(reals[idx], inReal))
-                // throw std::exception();
         }
 
         default_alignas RealType realsalign[VecType::GetVecLength()];
@@ -186,8 +182,6 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(realsalign[idx], inReal));
-            // if(!approxEqual(realsalign[idx], inReal))
-                // throw std::exception();
         }
     }
 
@@ -196,8 +190,6 @@ class TestAll : public UTester< TestAll< VecType > > {
                             const RealType inReals[]) {
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(vec.at(int(idx)), inReals[idx]));
-            // if(!approxEqual(vec.at(int(idx)), inReals[idx]))
-                // throw std::exception();
         }
 
         RealType reals[VecType::GetVecLength()];
@@ -205,8 +197,6 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(reals[idx], inReals[idx]));
-            // if(!approxEqual(reals[idx], inReals[idx]))
-                // throw std::exception();
         }
 
         default_alignas RealType realsalign[VecType::GetVecLength()];
@@ -214,8 +204,6 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqual(realsalign[idx], inReals[idx]));
-            // if(!approxEqual(realsalign[idx], inReals[idx]))
-                // throw std::exception();
         }
     }
 
@@ -223,8 +211,6 @@ class TestAll : public UTester< TestAll< VecType > > {
                             const RealType inReals[]) {
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 UASSERTETRUE(approxEqualLowAcc(vec.at(int(idx)), inReals[idx]));
-            // if(!approxEqualLowAcc(vec.at(int(idx)), inReals[idx]))
-                // throw std::exception();
         }
 
         RealType reals[VecType::GetVecLength()];
@@ -232,8 +218,6 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqualLowAcc(reals[idx], inReals[idx]));
-            // if(!approxEqualLowAcc(reals[idx], inReals[idx]))
-                // throw std::exception();
         }
 
         default_alignas RealType realsalign[VecType::GetVecLength()];
@@ -241,8 +225,6 @@ class TestAll : public UTester< TestAll< VecType > > {
 
         for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
             UASSERTETRUE(approxEqualLowAcc(realsalign[idx], inReals[idx]));
-            // if(!approxEqualLowAcc(realsalign[idx], inReals[idx]))
-                // throw std::exception();
         }
     }
 
@@ -539,18 +521,8 @@ class TestAll : public UTester< TestAll< VecType > > {
                 asinhres[idx] = RealType(asinh(realstrygo[idx]));
                 acoshres[idx] = RealType(acosh(reals[idx]));
                 atanhres[idx] = RealType(atanh(realstrygo[idx]));
-                // std::cout.precision(std::numeric_limits< RealType >::max_digits10);
-                // std::cout << logres[idx] << " " << log2res[idx] << " " << log10res[idx] << " " << std::endl;
             }
-        //    VecType l1 = VecType(reals).log();
-        //    VecType l2 = VecType(reals).log2();
-        //    VecType l10 = VecType(reals).log10();
-        //     for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx){
-        //         printf("%zu %zu %zu\n", (RealType)l1.at(idx), (RealType)l2.at(idx), (RealType)l10.at(idx));
 
-        //     }
-        // // throw std::exception();
-        //    std::cout << "Our :" << std::endl;
             approxEqualToArray(VecType(reals).exp(), expres);
             approxLowAccEqualToArray(VecType(reals).expLowAcc(), expreslowacc);
             approxEqualToArray(VecType(reals).exp10(), exp10res);
@@ -636,18 +608,8 @@ class TestAll : public UTester< TestAll< VecType > > {
                 asinhres[idx] = RealType(asinh(realstrygo[idx]));
                 acoshres[idx] = RealType(acosh(reals[idx]));
                 atanhres[idx] = RealType(atanh(realstrygo[idx]));
-                // std::cout.precision(std::numeric_limits< RealType >::max_digits10);
-                // std::cout << logres[idx] << " " << log2res[idx] << " " << log10res[idx] << " " << std::endl;
             }
-        //    VecType l1 = VecType(reals).log();
-        //    VecType l2 = VecType(reals).log2();
-        //    VecType l10 = VecType(reals).log10();
-        //     for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx){
-        //         printf("%zu %zu %zu\n", (RealType)l1.at(idx), (RealType)l2.at(idx), (RealType)l10.at(idx));
 
-        //     }
-        // // throw std::exception();
-        //    std::cout << "Our :" << std::endl;
             approxEqualToArray(VecType(reals).exp(), expres);
             approxLowAccEqualToArray(VecType(reals).expLowAcc(), expreslowacc);
             approxEqualToArray(VecType(reals).exp10(), exp10res);
