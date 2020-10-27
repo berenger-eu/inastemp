@@ -50,14 +50,15 @@ private:
 
 public:
     inline static VecType log(const VecType& inVec){
-        VecType res = VecType(RealType(2));
         VecType q = (inVec - VecType(RealType(1)))/(inVec + VecType(RealType(1)));
-        VecType restmp = VecType(RealType(0));
+        VecType qpow2 = q*q;
+        VecType qpowx = q;
+        VecType res = VecType(RealType(0));
         for(int i = 1; i < (std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber); i+=2){
-            restmp += (VecType(q).pow(std::size_t(i)) / VecType(RealType(i))) ;
+            res += qpowx  / VecType(RealType(i)) ;
+            qpowx *= qpow2;
         }
-        res *= restmp;
-        return res;
+        return res * VecType(RealType(2));
     }
 
     inline static VecType log2(const VecType& inVec){
@@ -104,15 +105,14 @@ public:
 
     inline static VecType asin(const VecType& inVec){
         VecType res = inVec;
-        VecType curTermValue;
-        VecType curTermValue2 = VecType(RealType(0.5));
+        VecType coeff = VecType(RealType(0.5));
+        VecType vecPow2 = inVec*inVec;
+        VecType vecPow2C = vecPow2*inVec;
         for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber); curTerm++)
         {
-            curTermValue = inVec.pow( std::size_t((curTerm*2) + 1) );
-            curTermValue /= VecType(RealType((curTerm*2) + 1));
-            curTermValue *= curTermValue2;
-            res += curTermValue;
-            curTermValue2 *= VecType(RealType((curTerm*2) + 1) / RealType(curTerm*2));
+            res += (vecPow2C / VecType(RealType((curTerm*2) + 1))) * coeff;
+            coeff *= VecType(RealType((curTerm*2) + 1) / RealType(curTerm*2));
+            vecPow2C *= vecPow2;
         }
         return res;
     }
@@ -138,24 +138,24 @@ public:
 
     inline static VecType cosh(const VecType& inVec){
         VecType res = VecType(RealType(1));
-        VecType curTermValue;
+        VecType vecPow2 = (inVec*inVec);
+        VecType vecPow2C = vecPow2;
         for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber); curTerm++)
         {
-            curTermValue = inVec.pow(std::size_t(curTerm*2));
-            curTermValue /= VecType(Factorials[ (curTerm*2) - 1 ]);
-            res += curTermValue;
+            res += vecPow2C / VecType(Factorials[ (curTerm*2) - 1 ]);
+            vecPow2C *= vecPow2;
         }
         return res;
     }
 
     inline static VecType sinh(const VecType& inVec){
         VecType res = inVec;
-        VecType curTermValue;
+        VecType vecPow2 = (inVec*inVec);
+        VecType vecPow3C = vecPow2*inVec;
         for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber); curTerm++)
         {
-            curTermValue = inVec.pow( std::size_t((curTerm*2) + 1) );
-            curTermValue /= VecType(Factorials[ (curTerm*2) ]);
-            res += curTermValue;
+            res += vecPow3C / VecType(Factorials[ (curTerm*2) ]);
+            vecPow3C *= vecPow2;
         }
         return res;
     }
@@ -165,7 +165,7 @@ public:
     }
 
     inline static VecType asinh(const VecType& inVec){
-        return log(inVec + (VecType(RealType(1)) +  inVec.pow( std::size_t(2) )).sqrt() );
+        return log(inVec + (VecType(RealType(1)) +  (inVec*inVec)).sqrt() );
     }
 
     inline static VecType acosh(const VecType& inVec){
