@@ -72,30 +72,30 @@ public:
 
     inline static VecType cos(const VecType& inVec){
         VecType res = VecType(RealType(1));
-        VecType curTermValue;
-        for (int curTerm=1; curTerm < NbIterations; curTerm++)
+        VecType vecPow2 = inVec*inVec;
+        VecType vecPow2C = vecPow2;
+        for (int idx=1; idx < NbIterations; idx++)
         {
-            curTermValue = inVec.pow(std::size_t(curTerm*2));
-            curTermValue /= VecType(Factorials[ (curTerm*2) - 1 ]);
-            if (curTerm & 0x01)
-                res -= curTermValue;
+            if (idx & 0x01)
+                res -= vecPow2C / VecType(Factorials[ (idx*2) - 1 ]);
             else
-                res += curTermValue;
+                res += vecPow2C / VecType(Factorials[ (idx*2) - 1 ]);
+            vecPow2 *= vecPow2;
         }
         return res;
     }
 
     inline static VecType sin(const VecType& inVec){
         VecType res = inVec;
-        VecType curTermValue;
-        for (int curTerm=1; curTerm < NbIterations; curTerm++)
+        VecType vecPow2 = inVec*inVec;
+        VecType vecPow2C = vecPow2 * inVec;
+        for (int idx=1; idx < NbIterations; idx++)
         {
-            curTermValue = inVec.pow( std::size_t((curTerm*2) + 1) );
-            curTermValue /= VecType(Factorials[ (curTerm*2) ]);
-            if (curTerm & 0x01)
-                res -= curTermValue;
+            if (idx & 0x01)
+                res -= vecPow2C / VecType(Factorials[ (idx*2) ]);
             else
-                res += curTermValue;
+                res += vecPow2C / VecType(Factorials[ (idx*2) ]);
+            vecPow2 *= vecPow2;
         }
         return res;
     }
@@ -109,10 +109,10 @@ public:
         VecType coeff = VecType(RealType(0.5));
         VecType vecPow2 = inVec*inVec;
         VecType vecPow2C = vecPow2*inVec;
-        for (int curTerm=1; curTerm < NbIterations; curTerm++)
+        for (int idx=1; idx < NbIterations; idx++)
         {
-            res += (vecPow2C / VecType(RealType((curTerm*2) + 1))) * coeff;
-            coeff *= VecType(RealType((curTerm*2) + 1) / RealType(curTerm*2));
+            res += (vecPow2C / VecType(RealType((idx*2) + 1))) * coeff;
+            coeff *= VecType(RealType((idx*2) + 1) / RealType(idx*2));
             vecPow2C *= vecPow2;
         }
         return res;
@@ -124,15 +124,15 @@ public:
 
     inline static VecType atan(const VecType& inVec){
         VecType res = inVec;
-        VecType curTermValue;
-        for (int curTerm=1; curTerm < NbIterations; curTerm++)
+        VecType vecPow2 = inVec*inVec;
+        VecType vecPow2C = vecPow2 * inVec;
+        for (int idx=1; idx < NbIterations; idx++)
         {
-            curTermValue = inVec.pow( std::size_t((curTerm*2) + 1) );
-            curTermValue /= VecType(RealType((curTerm*2) + 1));
-            if (curTerm & 0x01)
-                res -= curTermValue;
+            if (idx & 0x01)
+                res -= vecPow2C / VecType(RealType((idx*2) + 1));
             else
-                res += curTermValue;
+                res += vecPow2C / VecType(RealType((idx*2) + 1));
+            vecPow2C *= vecPow2;
         }
         return res;
     }
@@ -141,9 +141,9 @@ public:
         VecType res = VecType(RealType(1));
         VecType vecPow2 = (inVec*inVec);
         VecType vecPow2C = vecPow2;
-        for (int curTerm=1; curTerm < NbIterations; curTerm++)
+        for (int idx=1; idx < NbIterations; idx++)
         {
-            res += vecPow2C / VecType(Factorials[ (curTerm*2) - 1 ]);
+            res += vecPow2C / VecType(Factorials[ (idx*2) - 1 ]);
             vecPow2C *= vecPow2;
         }
         return res;
@@ -153,9 +153,9 @@ public:
         VecType res = inVec;
         VecType vecPow2 = (inVec*inVec);
         VecType vecPow3C = vecPow2*inVec;
-        for (int curTerm=1; curTerm < NbIterations; curTerm++)
+        for (int idx=1; idx < NbIterations; idx++)
         {
-            res += vecPow3C / VecType(Factorials[ (curTerm*2) ]);
+            res += vecPow3C / VecType(Factorials[ (idx*2) ]);
             vecPow3C *= vecPow2;
         }
         return res;
