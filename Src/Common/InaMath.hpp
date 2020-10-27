@@ -74,13 +74,15 @@ public:
         VecType res = VecType(RealType(1));
         VecType vecPow2 = inVec*inVec;
         VecType vecPow2C = vecPow2;
-        for (int idx=1; idx < NbIterations; idx++)
+        for (int idx=1; idx < NbIterations-1; idx += 2)
         {
-            if (idx & 0x01)
-                res -= vecPow2C / VecType(Factorials[ (idx*2) - 1 ]);
-            else
-                res += vecPow2C / VecType(Factorials[ (idx*2) - 1 ]);
+            res -= vecPow2C / VecType(Factorials[ (idx*2) - 1 ]);
             vecPow2 *= vecPow2;
+            res += vecPow2C / VecType(Factorials[ ((idx+1)*2) - 1 ]);
+            vecPow2 *= vecPow2;
+        }
+        if (NbIterations%2 == 0){
+            res -= vecPow2C / VecType(Factorials[ ((NbIterations-1)*2) - 1 ]);
         }
         return res;
     }
@@ -89,13 +91,15 @@ public:
         VecType res = inVec;
         VecType vecPow2 = inVec*inVec;
         VecType vecPow2C = vecPow2 * inVec;
-        for (int idx=1; idx < NbIterations; idx++)
+        for (int idx=1; idx < NbIterations-1 ; idx += 2)
         {
-            if (idx & 0x01)
-                res -= vecPow2C / VecType(Factorials[ (idx*2) ]);
-            else
-                res += vecPow2C / VecType(Factorials[ (idx*2) ]);
+            res -= vecPow2C / VecType(Factorials[ (idx*2) ]);
             vecPow2 *= vecPow2;
+            res += vecPow2C / VecType(Factorials[ ((idx+1)*2) ]);
+            vecPow2 *= vecPow2;
+        }
+        if (NbIterations%2 == 0){
+            res -= vecPow2C / VecType(Factorials[ ((NbIterations-1)*2) ]);
         }
         return res;
     }
@@ -126,13 +130,15 @@ public:
         VecType res = inVec;
         VecType vecPow2 = inVec*inVec;
         VecType vecPow2C = vecPow2 * inVec;
-        for (int idx=1; idx < NbIterations; idx++)
+        for (int idx=1; idx < NbIterations-1 ; idx += 2)
         {
-            if (idx & 0x01)
-                res -= vecPow2C / VecType(RealType((idx*2) + 1));
-            else
-                res += vecPow2C / VecType(RealType((idx*2) + 1));
+            res -= vecPow2C / VecType(RealType((idx*2) + 1));
             vecPow2C *= vecPow2;
+            res += vecPow2C / VecType(RealType(((idx+1)*2) + 1));
+            vecPow2C *= vecPow2;
+        }
+        if (NbIterations%2 == 0){
+            res -= vecPow2C / VecType(RealType(((NbIterations-1)*2) + 1));
         }
         return res;
     }
