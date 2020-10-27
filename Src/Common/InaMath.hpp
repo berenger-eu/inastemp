@@ -45,7 +45,8 @@ private:
     }
 
     constexpr static int MaxPrecisionNumber = (sizeof(RealType) == 4 ? 1 : 2);
-    constexpr static int MaxFactorial = (std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber * 2);
+    constexpr static int NbIterations = std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber;
+    constexpr static int MaxFactorial = (NbIterations * 2);
     const static inline std::array<RealType, MaxFactorial> Factorials { ComputeFactorial<MaxFactorial>() };
 
 public:
@@ -54,7 +55,7 @@ public:
         VecType qpow2 = q*q;
         VecType qpowx = q;
         VecType res = VecType(RealType(0));
-        for(int i = 1; i < (std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber); i+=2){
+        for(int i = 1; i < NbIterations; i+=2){
             res += qpowx  / VecType(RealType(i)) ;
             qpowx *= qpow2;
         }
@@ -72,7 +73,7 @@ public:
     inline static VecType cos(const VecType& inVec){
         VecType res = VecType(RealType(1));
         VecType curTermValue;
-        for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber); curTerm++)
+        for (int curTerm=1; curTerm < NbIterations; curTerm++)
         {
             curTermValue = inVec.pow(std::size_t(curTerm*2));
             curTermValue /= VecType(Factorials[ (curTerm*2) - 1 ]);
@@ -87,7 +88,7 @@ public:
     inline static VecType sin(const VecType& inVec){
         VecType res = inVec;
         VecType curTermValue;
-        for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber); curTerm++)
+        for (int curTerm=1; curTerm < NbIterations; curTerm++)
         {
             curTermValue = inVec.pow( std::size_t((curTerm*2) + 1) );
             curTermValue /= VecType(Factorials[ (curTerm*2) ]);
@@ -108,7 +109,7 @@ public:
         VecType coeff = VecType(RealType(0.5));
         VecType vecPow2 = inVec*inVec;
         VecType vecPow2C = vecPow2*inVec;
-        for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber); curTerm++)
+        for (int curTerm=1; curTerm < NbIterations; curTerm++)
         {
             res += (vecPow2C / VecType(RealType((curTerm*2) + 1))) * coeff;
             coeff *= VecType(RealType((curTerm*2) + 1) / RealType(curTerm*2));
@@ -124,7 +125,7 @@ public:
     inline static VecType atan(const VecType& inVec){
         VecType res = inVec;
         VecType curTermValue;
-        for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber); curTerm++)
+        for (int curTerm=1; curTerm < NbIterations; curTerm++)
         {
             curTermValue = inVec.pow( std::size_t((curTerm*2) + 1) );
             curTermValue /= VecType(RealType((curTerm*2) + 1));
@@ -140,7 +141,7 @@ public:
         VecType res = VecType(RealType(1));
         VecType vecPow2 = (inVec*inVec);
         VecType vecPow2C = vecPow2;
-        for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber); curTerm++)
+        for (int curTerm=1; curTerm < NbIterations; curTerm++)
         {
             res += vecPow2C / VecType(Factorials[ (curTerm*2) - 1 ]);
             vecPow2C *= vecPow2;
@@ -152,7 +153,7 @@ public:
         VecType res = inVec;
         VecType vecPow2 = (inVec*inVec);
         VecType vecPow3C = vecPow2*inVec;
-        for (int curTerm=1; curTerm < (std::numeric_limits<RealType>::max_digits10 * MaxPrecisionNumber); curTerm++)
+        for (int curTerm=1; curTerm < NbIterations; curTerm++)
         {
             res += vecPow3C / VecType(Factorials[ (curTerm*2) ]);
             vecPow3C *= vecPow2;
