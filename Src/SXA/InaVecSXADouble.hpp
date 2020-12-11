@@ -383,7 +383,7 @@ public:
     }
 
     inline InaVecSXA exp10() const {
-        const __vr COEFF_LOG210E = _vel_vbrdd_vsl(double(InaFastExp::CoeffLog210E()), 256);
+        const __vr COEFF_LOG210 = _vel_vbrdd_vsl(double(InaFastExp::CoeffLog210()), 256);
         const __vr COEFF_A     = _vel_vbrdd_vsl(double(InaFastExp::CoeffA64()), 256);
         const __vr COEFF_B     = _vel_vbrdd_vsl(double(InaFastExp::CoeffB64()), 256);
         const __vr COEFF_P5_X  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_8()), 256);
@@ -396,7 +396,7 @@ public:
         const __vr COEFF_P5_E  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_1()), 256);
         const __vr COEFF_P5_F  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_0()), 256);
 
-        __vr x = _vel_vfmuld_vvvl(vec, COEFF_LOG210E, 256);
+        __vr x = _vel_vfmuld_vvvl(vec, COEFF_LOG210, 256);
 
         const __vr fractional_part = _vel_vfsubd_vvvl(x, InaVecSXA(x).floor().vec, 256);
 
@@ -420,7 +420,7 @@ public:
     }
 
     inline InaVecSXA exp10LowAcc() const {
-        const __vr COEFF_LOG102E = _vel_vbrdd_vsl(double(InaFastExp::CoeffLog210E()), 256);
+        const __vr COEFF_LOG210 = _vel_vbrdd_vsl(double(InaFastExp::CoeffLog210()), 256);
         const __vr COEFF_A     = _vel_vbrdd_vsl(double(InaFastExp::CoeffA64()), 256);
         const __vr COEFF_B     = _vel_vbrdd_vsl(double(InaFastExp::CoeffB64()), 256);
         const __vr COEFF_P5_C  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient4_3()), 256);
@@ -428,7 +428,7 @@ public:
         const __vr COEFF_P5_E  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient4_1()), 256);
         const __vr COEFF_P5_F  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient4_0()), 256);
 
-        __vr x = _vel_vfmuld_vvvl(vec, COEFF_LOG102E, 256);
+        __vr x = _vel_vfmuld_vvvl(vec, COEFF_LOG210, 256);
 
         const __vr fractional_part = _vel_vfsubd_vvvl(x, InaVecSXA(x).floor().vec, 256);
 
