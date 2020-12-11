@@ -176,7 +176,7 @@ public:
     }
 
     inline static VecType acosh(const VecType& inVec){
-        return log(inVec + ( (inVec + VecType(RealType(1))).sqrt() * (inVec - VecType(RealType(1))).sqrt() ) );
+        return log(inVec + (inVec*inVec - VecType(RealType(1))).sqrt());
     }
 
     inline static VecType atanh(const VecType& inVec){

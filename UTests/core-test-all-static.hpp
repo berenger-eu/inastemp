@@ -472,6 +472,7 @@ class TestAll : public UTester< TestAll< VecType > > {
         {
             RealType reals[VecType::GetVecLength()];
             RealType realstrygo[VecType::GetVecLength()];
+            RealType realsacosh[VecType::GetVecLength()];
             RealType expres[VecType::GetVecLength()];
             RealType expreslowacc[VecType::GetVecLength()];
             RealType exp10res[VecType::GetVecLength()];
@@ -498,6 +499,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx]    = RealType((idx%10) + 1);
                 realstrygo[idx] = RealType(double(idx + 1)*0.001);
+                realsacosh[idx] = RealType(double(idx)*0.5/double(VecType::GetVecLength()) + 1.1);
                 expres[idx]   = RealType(exp(reals[idx]));
                 expreslowacc[idx]   = RealType(exp(reals[idx]));
                 exp10res[idx]   = RealType(exp10(reals[idx]));
@@ -519,7 +521,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                 coshres[idx] = RealType(cosh(realstrygo[idx]));
                 tanhres[idx] = RealType(tanh(realstrygo[idx]));
                 asinhres[idx] = RealType(asinh(realstrygo[idx]));
-                acoshres[idx] = RealType(acosh(reals[idx]));
+                acoshres[idx] = RealType(acosh(realsacosh[idx]));
                 atanhres[idx] = RealType(atanh(realstrygo[idx]));
             }
 
@@ -544,7 +546,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxLowAccEqualToArray(VecType(realstrygo).cosh(), coshres);
             approxLowAccEqualToArray(VecType(realstrygo).tanh(), tanhres);
             approxLowAccEqualToArray(VecType(realstrygo).asinh(), asinhres);
-            approxLowAccEqualToArray(VecType(reals).acosh(), acoshres);
+            approxLowAccEqualToArray(VecType(realsacosh).acosh(), acoshres);
             approxLowAccEqualToArray(VecType(realstrygo).atanh(), atanhres);
 
             approxEqualToScalar(VecType(RealType(0)).exp(), std::exp(RealType(0)));
@@ -559,6 +561,7 @@ class TestAll : public UTester< TestAll< VecType > > {
         {
             default_alignas RealType reals[VecType::GetVecLength()];
             default_alignas RealType realstrygo[VecType::GetVecLength()];
+            default_alignas RealType realsacosh[VecType::GetVecLength()];
             default_alignas RealType expres[VecType::GetVecLength()];
             default_alignas RealType expreslowacc[VecType::GetVecLength()];
             default_alignas RealType exp10res[VecType::GetVecLength()];
@@ -585,6 +588,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             for (size_t idx = 0; idx < size_t(VecType::GetVecLength()) ; ++idx) {
                 reals[idx]    = RealType((idx%10) + 1);
                 realstrygo[idx] = RealType(double(idx + 1)*0.001);
+                realsacosh[idx] = RealType(double(idx)*0.5/double(VecType::GetVecLength()) + 1.1);
                 expres[idx]   = RealType(exp(reals[idx]));
                 expreslowacc[idx]   = RealType(exp(reals[idx]));
                 exp10res[idx]   = RealType(exp10(reals[idx]));
@@ -606,7 +610,7 @@ class TestAll : public UTester< TestAll< VecType > > {
                 coshres[idx] = RealType(cosh(realstrygo[idx]));
                 tanhres[idx] = RealType(tanh(realstrygo[idx]));
                 asinhres[idx] = RealType(asinh(realstrygo[idx]));
-                acoshres[idx] = RealType(acosh(reals[idx]));
+                acoshres[idx] = RealType(acosh(realsacosh[idx]));
                 atanhres[idx] = RealType(atanh(realstrygo[idx]));
             }
 
@@ -631,7 +635,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             approxLowAccEqualToArray(VecType(realstrygo).cosh(), coshres);
             approxLowAccEqualToArray(VecType(realstrygo).tanh(), tanhres);
             approxLowAccEqualToArray(VecType(realstrygo).asinh(), asinhres);
-            approxLowAccEqualToArray(VecType(reals).acosh(), acoshres);
+            approxLowAccEqualToArray(VecType(realsacosh).acosh(), acoshres);
             approxLowAccEqualToArray(VecType(realstrygo).atanh(), atanhres);
         }
 
