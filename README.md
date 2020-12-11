@@ -39,6 +39,8 @@ Inastemp paper has been published in the Scientific Programming Journal (Hindawi
 The pdf can be found at https://www.hindawi.com/journals/sp/2017/5482468/
 We will appreciate that any use or discussion of Inastemp refers to this document.
 
+* Note: the mathematical functions (other than exp) are in an experimental state, and provided with even less guarantee than the rest.*
+
 
 ### Templates --- Breaking the Genericity/Optimization Opposition
 
