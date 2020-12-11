@@ -382,6 +382,136 @@ public:
         return (castedInteger); // Automatically reinterpret not cast
     }
 
+    inline InaVecSXA exp10() const {
+        const __vr COEFF_LOG210E = _vel_vbrdd_vsl(double(InaFastExp::CoeffLog210E()), 256);
+        const __vr COEFF_A     = _vel_vbrdd_vsl(double(InaFastExp::CoeffA64()), 256);
+        const __vr COEFF_B     = _vel_vbrdd_vsl(double(InaFastExp::CoeffB64()), 256);
+        const __vr COEFF_P5_X  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_8()), 256);
+        const __vr COEFF_P5_Y  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_7()), 256);
+        const __vr COEFF_P5_Z  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_6()), 256);
+        const __vr COEFF_P5_A  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_5()), 256);
+        const __vr COEFF_P5_B  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_4()), 256);
+        const __vr COEFF_P5_C  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_3()), 256);
+        const __vr COEFF_P5_D  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_2()), 256);
+        const __vr COEFF_P5_E  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_1()), 256);
+        const __vr COEFF_P5_F  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_0()), 256);
+
+        __vr x = _vel_vfmuld_vvvl(vec, COEFF_LOG210E, 256);
+
+        const __vr fractional_part = _vel_vfsubd_vvvl(x, InaVecSXA(x).floor().vec, 256);
+
+        __vr factor = _vel_vfaddd_vvvl(_vel_vfmuld_vvvl(_vel_vfaddd_vvvl(
+                         _vel_vfmuld_vvvl(_vel_vfaddd_vvvl( _vel_vfmuld_vvvl(_vel_vfaddd_vvvl(
+                         _vel_vfmuld_vvvl(_vel_vfaddd_vvvl( _vel_vfmuld_vvvl(_vel_vfaddd_vvvl(
+                         _vel_vfmuld_vvvl(_vel_vfaddd_vvvl( _vel_vfmuld_vvvl(_vel_vfaddd_vvvl(_vel_vfmuld_vvvl(
+                         COEFF_P5_X, fractional_part, 256), COEFF_P5_Y, 256), fractional_part, 256),
+                         COEFF_P5_Z, 256),fractional_part, 256), COEFF_P5_A, 256), fractional_part, 256),
+                         COEFF_P5_B, 256), fractional_part, 256), COEFF_P5_C, 256),fractional_part, 256),
+                         COEFF_P5_D, 256), fractional_part, 256), COEFF_P5_E, 256),fractional_part, 256),
+                         COEFF_P5_F, 256);
+
+        x = _vel_vfsubd_vvvl(x,factor, 256);
+
+        x = _vel_vfaddd_vvvl(_vel_vfmuld_vvvl(COEFF_A, x, 256), COEFF_B, 256);
+
+        __vr castedInteger = _vel_vcvtldrz_vvl(x, 256);
+
+        return (castedInteger); // Automatically reinterpret not cast
+    }
+
+    inline InaVecSXA exp10LowAcc() const {
+        const __vr COEFF_LOG102E = _vel_vbrdd_vsl(double(InaFastExp::CoeffLog210E()), 256);
+        const __vr COEFF_A     = _vel_vbrdd_vsl(double(InaFastExp::CoeffA64()), 256);
+        const __vr COEFF_B     = _vel_vbrdd_vsl(double(InaFastExp::CoeffB64()), 256);
+        const __vr COEFF_P5_C  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient4_3()), 256);
+        const __vr COEFF_P5_D  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient4_2()), 256);
+        const __vr COEFF_P5_E  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient4_1()), 256);
+        const __vr COEFF_P5_F  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient4_0()), 256);
+
+        __vr x = _vel_vfmuld_vvvl(vec, COEFF_LOG102E, 256);
+
+        const __vr fractional_part = _vel_vfsubd_vvvl(x, InaVecSXA(x).floor().vec, 256);
+
+        __vr factor = _vel_vfaddd_vvvl(_vel_vfmuld_vvvl(_vel_vfaddd_vvvl(
+                         _vel_vfmuld_vvvl(_vel_vfaddd_vvvl(_vel_vfmuld_vvvl(
+                                         COEFF_P5_C, fractional_part, 256),
+                                         COEFF_P5_D, 256), fractional_part, 256),
+                                         COEFF_P5_E, 256), fractional_part, 256),
+                                         COEFF_P5_F, 256);
+
+        x = _vel_vfsubd_vvvl(x,factor, 256);
+
+        x = _vel_vfaddd_vvvl(_vel_vfmuld_vvvl(COEFF_A, x, 256), COEFF_B, 256);
+
+        __vr castedInteger = _vel_vcvtldrz_vvl(x, 256);
+
+        return (castedInteger); // Automatically reinterpret not cast
+    }
+
+    inline InaVecSXA exp2() const {
+        const __vr COEFF_A     = _vel_vbrdd_vsl(double(InaFastExp::CoeffA64()), 256);
+        const __vr COEFF_B     = _vel_vbrdd_vsl(double(InaFastExp::CoeffB64()), 256);
+        const __vr COEFF_P5_X  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_8()), 256);
+        const __vr COEFF_P5_Y  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_7()), 256);
+        const __vr COEFF_P5_Z  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_6()), 256);
+        const __vr COEFF_P5_A  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_5()), 256);
+        const __vr COEFF_P5_B  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_4()), 256);
+        const __vr COEFF_P5_C  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_3()), 256);
+        const __vr COEFF_P5_D  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_2()), 256);
+        const __vr COEFF_P5_E  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_1()), 256);
+        const __vr COEFF_P5_F  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient9_0()), 256);
+
+        __vr x = vec;
+
+        const __vr fractional_part = _vel_vfsubd_vvvl(x, InaVecSXA(x).floor().vec, 256);
+
+        __vr factor = _vel_vfaddd_vvvl(_vel_vfmuld_vvvl(_vel_vfaddd_vvvl(
+                         _vel_vfmuld_vvvl(_vel_vfaddd_vvvl( _vel_vfmuld_vvvl(_vel_vfaddd_vvvl(
+                         _vel_vfmuld_vvvl(_vel_vfaddd_vvvl( _vel_vfmuld_vvvl(_vel_vfaddd_vvvl(
+                         _vel_vfmuld_vvvl(_vel_vfaddd_vvvl( _vel_vfmuld_vvvl(_vel_vfaddd_vvvl(_vel_vfmuld_vvvl(
+                         COEFF_P5_X, fractional_part, 256), COEFF_P5_Y, 256), fractional_part, 256),
+                         COEFF_P5_Z, 256),fractional_part, 256), COEFF_P5_A, 256), fractional_part, 256),
+                         COEFF_P5_B, 256), fractional_part, 256), COEFF_P5_C, 256),fractional_part, 256),
+                         COEFF_P5_D, 256), fractional_part, 256), COEFF_P5_E, 256),fractional_part, 256),
+                         COEFF_P5_F, 256);
+
+        x = _vel_vfsubd_vvvl(x,factor, 256);
+
+        x = _vel_vfaddd_vvvl(_vel_vfmuld_vvvl(COEFF_A, x, 256), COEFF_B, 256);
+
+        __vr castedInteger = _vel_vcvtldrz_vvl(x, 256);
+
+        return (castedInteger); // Automatically reinterpret not cast
+    }
+
+    inline InaVecSXA exp2LowAcc() const {
+        const __vr COEFF_A     = _vel_vbrdd_vsl(double(InaFastExp::CoeffA64()), 256);
+        const __vr COEFF_B     = _vel_vbrdd_vsl(double(InaFastExp::CoeffB64()), 256);
+        const __vr COEFF_P5_C  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient4_3()), 256);
+        const __vr COEFF_P5_D  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient4_2()), 256);
+        const __vr COEFF_P5_E  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient4_1()), 256);
+        const __vr COEFF_P5_F  = _vel_vbrdd_vsl(double(InaFastExp::GetCoefficient4_0()), 256);
+
+        __vr x = vec;
+
+        const __vr fractional_part = _vel_vfsubd_vvvl(x, InaVecSXA(x).floor().vec, 256);
+
+        __vr factor = _vel_vfaddd_vvvl(_vel_vfmuld_vvvl(_vel_vfaddd_vvvl(
+                         _vel_vfmuld_vvvl(_vel_vfaddd_vvvl(_vel_vfmuld_vvvl(
+                                         COEFF_P5_C, fractional_part, 256),
+                                         COEFF_P5_D, 256), fractional_part, 256),
+                                         COEFF_P5_E, 256), fractional_part, 256),
+                                         COEFF_P5_F, 256);
+
+        x = _vel_vfsubd_vvvl(x,factor, 256);
+
+        x = _vel_vfaddd_vvvl(_vel_vfmuld_vvvl(COEFF_A, x, 256), COEFF_B, 256);
+
+        __vr castedInteger = _vel_vcvtldrz_vvl(x, 256);
+
+        return (castedInteger); // Automatically reinterpret not cast
+    }
+
     inline InaVecSXA rsqrt() const {
         const __vr one = _vel_vbrdd_vsl(1.0, 256);
         return  _vel_vfsqrtd_vvl(_vel_vfdivd_vvvl(one, vec, 256), 256);
@@ -648,6 +778,53 @@ public:
 
     inline InaVecSXA<double> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecSXA<double>>(*this, power);
+    }
+
+    // Other math functions
+    inline InaVecSXA<RealType> log() const{
+        return InaMath<InaVecSXA<RealType>>::log(*this);
+    }
+    inline InaVecSXA<RealType> log2() const{
+        return InaMath<InaVecSXA<RealType>>::log2(*this);
+    }
+    inline InaVecSXA<RealType> log10() const{
+        return InaMath<InaVecSXA<RealType>>::log10(*this);
+    }
+    inline InaVecSXA<RealType> sin() const{
+        return InaMath<InaVecSXA<RealType>>::sin(*this);
+    }
+    inline InaVecSXA<RealType> cos() const{
+        return InaMath<InaVecSXA<RealType>>::cos(*this);
+    }
+    inline InaVecSXA<RealType> tan() const{
+        return InaMath<InaVecSXA<RealType>>::tan(*this);
+    }
+    inline InaVecSXA<RealType> asin() const{
+        return InaMath<InaVecSXA<RealType>>::asin(*this);
+    }
+    inline InaVecSXA<RealType> acos() const{
+        return InaMath<InaVecSXA<RealType>>::acos(*this);
+    }
+    inline InaVecSXA<RealType> atan() const{
+        return InaMath<InaVecSXA<RealType>>::atan(*this);
+    }
+    inline InaVecSXA<RealType> sinh() const{
+        return InaMath<InaVecSXA<RealType>>::sinh(*this);
+    }
+    inline InaVecSXA<RealType> cosh() const{
+        return InaMath<InaVecSXA<RealType>>::cosh(*this);
+    }
+    inline InaVecSXA<RealType> tanh() const{
+        return InaMath<InaVecSXA<RealType>>::tanh(*this);
+    }
+    inline InaVecSXA<RealType> asinh() const{
+        return InaMath<InaVecSXA<RealType>>::asinh(*this);
+    }
+    inline InaVecSXA<RealType> acosh() const{
+        return InaMath<InaVecSXA<RealType>>::acosh(*this);
+    }
+    inline InaVecSXA<RealType> atanh() const{
+        return InaMath<InaVecSXA<RealType>>::atanh(*this);
     }
 
     // Multiple sum

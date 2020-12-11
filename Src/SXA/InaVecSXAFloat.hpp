@@ -381,6 +381,124 @@ public:
         return (castedInteger); // Automatically reinterpret not cast
     }
 
+    inline InaVecSXA exp10() const {
+        const __vr COEFF_LOG210E = _vel_vbrds_vsl(float(InaFastExp::CoeffLog210E()), 256);
+        const __vr COEFF_A     = _vel_vbrds_vsl(float(InaFastExp::CoeffA32()), 256);
+        const __vr COEFF_B     = _vel_vbrds_vsl(float(InaFastExp::CoeffB32()), 256);
+        const __vr COEFF_P5_A  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_5()), 256);
+        const __vr COEFF_P5_B  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_4()), 256);
+        const __vr COEFF_P5_C  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_3()), 256);
+        const __vr COEFF_P5_D  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_2()), 256);
+        const __vr COEFF_P5_E  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_1()), 256);
+        const __vr COEFF_P5_F  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_0()), 256);
+
+        __vr x = _vel_vfmuls_vvvl(vec, COEFF_LOG210E, 256);
+
+        const __vr fractional_part = _vel_vfsubs_vvvl(x, InaVecSXA(x).floor().vec, 256);
+
+        __vr factor = _vel_vfadds_vvvl(
+                         _vel_vfmuls_vvvl(_vel_vfadds_vvvl( _vel_vfmuls_vvvl(_vel_vfadds_vvvl(
+                         _vel_vfmuls_vvvl(_vel_vfadds_vvvl( _vel_vfmuls_vvvl(_vel_vfadds_vvvl(
+                         _vel_vfmuls_vvvl(COEFF_P5_A, fractional_part, 256),
+                         COEFF_P5_B, 256), fractional_part, 256), COEFF_P5_C, 256),fractional_part, 256),
+                         COEFF_P5_D, 256), fractional_part, 256), COEFF_P5_E, 256),fractional_part, 256),
+                         COEFF_P5_F, 256);
+
+        x = _vel_vfsubs_vvvl(x,factor, 256);
+
+        x = _vel_vfadds_vvvl(_vel_vfmuls_vvvl(COEFF_A, x, 256), COEFF_B, 256);
+
+        __vr castedInteger = _vel_vcvtwssxrz_vvl(x, 256);
+        castedInteger = _vel_vsll_vvsl(castedInteger, 32, 256);
+
+        return (castedInteger); // Automatically reinterpret not cast
+    }
+
+    inline InaVecSXA exp10LowAcc() const {
+        const __vr COEFF_LOG210E = _vel_vbrds_vsl(float(InaFastExp::CoeffLog210E()), 256);
+        const __vr COEFF_A     = _vel_vbrds_vsl(float(InaFastExp::CoeffA32()), 256);
+        const __vr COEFF_B     = _vel_vbrds_vsl(float(InaFastExp::CoeffB32()), 256);
+        const __vr COEFF_P5_D  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient3_2()), 256);
+        const __vr COEFF_P5_E  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient3_1()), 256);
+        const __vr COEFF_P5_F  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient3_0()), 256);
+
+        __vr x = _vel_vfmuls_vvvl(vec, COEFF_LOG210E, 256);
+
+        const __vr fractional_part = _vel_vfsubs_vvvl(x, InaVecSXA(x).floor().vec, 256);
+
+        __vr factor = _vel_vfadds_vvvl(_vel_vfmuls_vvvl(_vel_vfadds_vvvl(
+                         _vel_vfmuls_vvvl(fractional_part, COEFF_P5_D, 256),
+                                         COEFF_P5_E, 256), fractional_part, 256),
+                                         COEFF_P5_F, 256);
+
+        x = _vel_vfsubs_vvvl(x,factor, 256);
+
+        x = _vel_vfadds_vvvl(_vel_vfmuls_vvvl(COEFF_A, x, 256), COEFF_B, 256);
+
+        __vr castedInteger = _vel_vcvtwssxrz_vvl(x, 256);
+        castedInteger = _vel_vsll_vvsl(castedInteger, 32, 256);
+
+        return (castedInteger); // Automatically reinterpret not cast
+    }
+
+    inline InaVecSXA exp2() const {
+        const __vr COEFF_A     = _vel_vbrds_vsl(float(InaFastExp::CoeffA32()), 256);
+        const __vr COEFF_B     = _vel_vbrds_vsl(float(InaFastExp::CoeffB32()), 256);
+        const __vr COEFF_P5_A  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_5()), 256);
+        const __vr COEFF_P5_B  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_4()), 256);
+        const __vr COEFF_P5_C  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_3()), 256);
+        const __vr COEFF_P5_D  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_2()), 256);
+        const __vr COEFF_P5_E  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_1()), 256);
+        const __vr COEFF_P5_F  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_0()), 256);
+
+        __vr x = vec;
+
+        const __vr fractional_part = _vel_vfsubs_vvvl(x, InaVecSXA(x).floor().vec, 256);
+
+        __vr factor = _vel_vfadds_vvvl(
+                         _vel_vfmuls_vvvl(_vel_vfadds_vvvl( _vel_vfmuls_vvvl(_vel_vfadds_vvvl(
+                         _vel_vfmuls_vvvl(_vel_vfadds_vvvl( _vel_vfmuls_vvvl(_vel_vfadds_vvvl(
+                         _vel_vfmuls_vvvl(COEFF_P5_A, fractional_part, 256),
+                         COEFF_P5_B, 256), fractional_part, 256), COEFF_P5_C, 256),fractional_part, 256),
+                         COEFF_P5_D, 256), fractional_part, 256), COEFF_P5_E, 256),fractional_part, 256),
+                         COEFF_P5_F, 256);
+
+        x = _vel_vfsubs_vvvl(x,factor, 256);
+
+        x = _vel_vfadds_vvvl(_vel_vfmuls_vvvl(COEFF_A, x, 256), COEFF_B, 256);
+
+        __vr castedInteger = _vel_vcvtwssxrz_vvl(x, 256);
+        castedInteger = _vel_vsll_vvsl(castedInteger, 32, 256);
+
+        return (castedInteger); // Automatically reinterpret not cast
+    }
+
+    inline InaVecSXA exp2LowAcc() const {
+        const __vr COEFF_A     = _vel_vbrds_vsl(float(InaFastExp::CoeffA32()), 256);
+        const __vr COEFF_B     = _vel_vbrds_vsl(float(InaFastExp::CoeffB32()), 256);
+        const __vr COEFF_P5_D  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient3_2()), 256);
+        const __vr COEFF_P5_E  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient3_1()), 256);
+        const __vr COEFF_P5_F  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient3_0()), 256);
+
+        __vr x = vec;
+
+        const __vr fractional_part = _vel_vfsubs_vvvl(x, InaVecSXA(x).floor().vec, 256);
+
+        __vr factor = _vel_vfadds_vvvl(_vel_vfmuls_vvvl(_vel_vfadds_vvvl(
+                         _vel_vfmuls_vvvl(fractional_part, COEFF_P5_D, 256),
+                                         COEFF_P5_E, 256), fractional_part, 256),
+                                         COEFF_P5_F, 256);
+
+        x = _vel_vfsubs_vvvl(x,factor, 256);
+
+        x = _vel_vfadds_vvvl(_vel_vfmuls_vvvl(COEFF_A, x, 256), COEFF_B, 256);
+
+        __vr castedInteger = _vel_vcvtwssxrz_vvl(x, 256);
+        castedInteger = _vel_vsll_vvsl(castedInteger, 32, 256);
+
+        return (castedInteger); // Automatically reinterpret not cast
+    }
+
     inline InaVecSXA rsqrt() const {
         // svrsqrte_f64(vec); seems low accurate
         return  _vel_vrsqrts_vvl(vec, 256);
@@ -647,6 +765,53 @@ public:
 
     inline InaVecSXA<float> pow(std::size_t power) const{
         return InaUtils::FastPow<InaVecSXA<float>>(*this, power);
+    }
+
+    // Other math functions
+    inline InaVecSXA<RealType> log() const{
+        return InaMath<InaVecSXA<RealType>>::log(*this);
+    }
+    inline InaVecSXA<RealType> log2() const{
+        return InaMath<InaVecSXA<RealType>>::log2(*this);
+    }
+    inline InaVecSXA<RealType> log10() const{
+        return InaMath<InaVecSXA<RealType>>::log10(*this);
+    }
+    inline InaVecSXA<RealType> sin() const{
+        return InaMath<InaVecSXA<RealType>>::sin(*this);
+    }
+    inline InaVecSXA<RealType> cos() const{
+        return InaMath<InaVecSXA<RealType>>::cos(*this);
+    }
+    inline InaVecSXA<RealType> tan() const{
+        return InaMath<InaVecSXA<RealType>>::tan(*this);
+    }
+    inline InaVecSXA<RealType> asin() const{
+        return InaMath<InaVecSXA<RealType>>::asin(*this);
+    }
+    inline InaVecSXA<RealType> acos() const{
+        return InaMath<InaVecSXA<RealType>>::acos(*this);
+    }
+    inline InaVecSXA<RealType> atan() const{
+        return InaMath<InaVecSXA<RealType>>::atan(*this);
+    }
+    inline InaVecSXA<RealType> sinh() const{
+        return InaMath<InaVecSXA<RealType>>::sinh(*this);
+    }
+    inline InaVecSXA<RealType> cosh() const{
+        return InaMath<InaVecSXA<RealType>>::cosh(*this);
+    }
+    inline InaVecSXA<RealType> tanh() const{
+        return InaMath<InaVecSXA<RealType>>::tanh(*this);
+    }
+    inline InaVecSXA<RealType> asinh() const{
+        return InaMath<InaVecSXA<RealType>>::asinh(*this);
+    }
+    inline InaVecSXA<RealType> acosh() const{
+        return InaMath<InaVecSXA<RealType>>::acosh(*this);
+    }
+    inline InaVecSXA<RealType> atanh() const{
+        return InaMath<InaVecSXA<RealType>>::atanh(*this);
     }
 
     // Multiple sum
