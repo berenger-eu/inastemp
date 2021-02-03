@@ -81,6 +81,11 @@ elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "AURORA")
     set(SXA_FLAGS "${ARCH_NATIVE_FLAG}")
 
     set(ALL_TYPES "SXA")
+elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "RISCV")
+    SET( ARCH_NATIVE_FLAG "TODO-RISCV[put the right flag] -std=c++17" CACHE STRING "Additional flag for the compiler capacities detection such as -target ve-linux -v for example"  )
+    set(RISCV_FLAGS "${ARCH_NATIVE_FLAG}")
+
+    set(ALL_TYPES "RISCV")
 else()
     # X86
     SET( ARCH_NATIVE_FLAG "-march=native -mtune=native" CACHE STRING "Additional flag for the compiler capacities detection"  )

@@ -147,6 +147,20 @@ elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "AURORA")
     set(SXA_CPU_RULES "")
 
     set(INASTEMP_USE_SCALAR ON)
+elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "RISCV")
+    if($ENV{VERBOSE})
+        MESSAGE(STATUS "Main -- compile for RISC-V architecture")
+    endif()
+    
+    #  Ask compiler capacities
+    include(GetCompilerInfos)
+    GetCompilerInfos()
+
+    # All types from worse to best (ADD-NEW-HERE)
+    set(ALL_TYPES "RISCV")
+    set(RISCV_CPU_RULES "")
+
+    set(INASTEMP_USE_SCALAR ON)
 else()
     if($ENV{VERBOSE})
         MESSAGE(STATUS "Main -- compile for x86 architecture")
