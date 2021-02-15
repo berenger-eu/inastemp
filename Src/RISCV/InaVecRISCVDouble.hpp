@@ -2,84 +2,85 @@
 // Inastemp - Berenger Bramas MPCDF - 2016
 // Under MIT Licence, please you must read the LICENCE file.
 ///////////////////////////////////////////////////////////////////////////
-#ifndef INAVECSXADOUBLE_HPP
-#define INAVECSXADOUBLE_HPP
+#ifndef INAVECRISCVDOUBLE_HPP
+#define INAVECRISCVDOUBLE_HPP
 
 #include "InastempGlobal.h"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 
-#ifndef INASTEMP_USE_SXA
-#error InaVecSXA<double> is included but SXA is not enable in the configuration
+#ifndef INASTEMP_USE_RISCV
+#error InaVecRISCV<double> is included but RISCV is not enable in the configuration
 #endif
 
 #include "Common/InaFastExp.hpp"
 
-#include <velintrin.h>
-#include <cmath>
-#include <initializer_list>
-#include <limits>
+#include <riscv_vector.h>
+// #include <velintrin.h>
+// #include <cmath>
+// #include <initializer_list>
+// #include <limits>
 
 // Forward declarations
 template <class RealType>
-class InaVecMaskSXA;
+class InaVecMaskRISCV;
 
 template <class RealType>
-class InaVecSXA;
+class InaVecRISCV;
 
 
 // Mask type
 template <>
-class alignas(2048) InaVecMaskSXA<double> {
-    __vm256 mask;
+class alignas(2048) InaVecMaskRISCV<double> {
+    vbool64_t mask;
 
 public:
     // Classic constructors
-    inline InaVecMaskSXA() {
-        mask = _vel_xorm_mmm(mask,mask);
+    inline InaVecMaskRISCV() {
+        mask = vmxor_mm_b64(mask,mask);
     }
 
-    inline InaVecMaskSXA(const InaVecMaskSXA& inMask){
+    inline InaVecMaskRISCV(const InaVecMaskRISCV& inMask){
         mask = inMask.mask;
     }
 
-    inline InaVecMaskSXA& operator=(const InaVecMaskSXA& inMask){
+    inline InaVecMaskRISCV& operator=(const InaVecMaskRISCV& inMask){
         mask = inMask.mask;
         return *this;
     }
 
     // Native data type compatibility
-    inline /*not explicit*/ InaVecMaskSXA(const __vm256 inMask)
-        : InaVecMaskSXA() {
+    inline /*not explicit*/ InaVecMaskRISCV(const vbool64_t inMask)
+        : InaVecMaskRISCV() {
         mask = (inMask);
     }
 
-    inline InaVecMaskSXA& operator=(const __vm256 inMask){
+    inline InaVecMaskRISCV& operator=(const vbool64_t inMask){
         mask = inMask;
         return (*this);
     }
 
-    inline explicit operator __vm256() const{
+    inline explicit operator vbool64_t() const{
         return mask;
     }
 
-    inline __vm256 getMask() const{
+    inline vbool64_t getMask() const{
         return mask;
     }
 
     // Bool data type compatibility
-    inline explicit InaVecMaskSXA(const bool inBool) : InaVecMaskSXA() {
-        mask = (inBool? _vel_negm_mm(_vel_xorm_mmm(mask, mask)) : _vel_xorm_mmm(mask, mask));
+    inline explicit InaVecMaskRISCV(const bool inBool) : InaVecMaskRISCV() {
+        mask = (inBool? vmnot_m_b64(vmxor_mm_b64(mask, mask)) : vmxor_mm_b64(mask, mask));
     }
 
-    inline InaVecMaskSXA& operator=(const bool inBool){
-        mask = (inBool? _vel_negm_mm(_vel_xorm_mmm(mask, mask)) : _vel_xorm_mmm(mask, mask));
+    inline InaVecMaskRISCV& operator=(const bool inBool){
+        mask = (inBool? vmnot_m_b64(vmxor_mm_b64(mask, mask)) : vmxor_mm_b64(mask, mask));
         return (*this);
     }
 
     // Binary methods
-    inline InaVecMaskSXA Not() const{
-        return _vel_negm_mm(mask);
+    inline InaVecMaskRISCV Not() const{
+        return vmnot_mm_b64(mask);
     }
 
     inline bool isAllTrue() const{
