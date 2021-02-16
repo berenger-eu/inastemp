@@ -70,11 +70,11 @@ public:
 
     // Bool data type compatibility
     inline explicit InaVecMaskRISCV(const bool inBool) : InaVecMaskRISCV() {
-        mask = (inBool? vmnot_m_b64(vmxor_mm_b64(mask, mask)) : vmxor_mm_b64(mask, mask));
+        mask = (inBool? vmxnor_mm_b64(mask, mask) : vmxor_mm_b64(mask, mask));
     }
 
     inline InaVecMaskRISCV& operator=(const bool inBool){
-        mask = (inBool? vmnot_m_b64(vmxor_mm_b64(mask, mask)) : vmxor_mm_b64(mask, mask));
+        mask = (inBool? vmxnor_mm_b64(mask, mask) : vmxor_mm_b64(mask, mask));
         return (*this);
     }
 
@@ -83,62 +83,61 @@ public:
         return vmnot_mm_b64(mask);
     }
 
+// TODO isAllTrue and isAllFalse
     inline bool isAllTrue() const{
-        return _vel_pcvm_sml(mask, 256) == 256;
+        return _vel_pcvm_sml(mask, 64) == 64;
     }
 
     inline bool isAllFalse() const{
         // true if all zero
-        return _vel_pcvm_sml(mask, 256) == 0;
+        return _vel_pcvm_sml(mask, 64) == 0;
     }
 
     // Double args methods
-    inline static InaVecMaskSXA And(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_andm_mmm(inMask1.mask,inMask2.mask);
+    inline static InaVecMaskRISCV And(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
+        return vmand_mm_b64(inMask1.mask,inMask2.mask);
     }
 
-    inline static InaVecMaskSXA NotAnd(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        __vm256 one = _vel_vfmklat_ml(0); // dumbe init
-        one = _vel_negm_mm(_vel_xorm_mmm(one, one)); // set to zero than negate
-        return _vel_andm_mmm(_vel_xorm_mmm(inMask1.mask, one),inMask2.mask);
+    inline static InaVecMaskRISCV NotAnd(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
+        return vmnand_mm_b64(inMask1.mask,inMask2.mask);
     }
 
-    inline static InaVecMaskSXA Or(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_orm_mmm(inMask1.mask,inMask2.mask);
+    inline static InaVecMaskRISCV Or(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
+        return vmor_mm_b64(inMask1.mask,inMask2.mask);
     }
 
-    inline static InaVecMaskSXA Xor(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_xorm_mmm(inMask1.mask,inMask2.mask);
+    inline static InaVecMaskRISCV Xor(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
+        return vmxor_mm_b64(inMask1.mask,inMask2.mask);
     }
-
-    inline static bool IsEqual(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
+// TODO change is equal and is not equal
+    inline static bool IsEqual(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
         return _vel_pcvm_sml(_vel_xorm_mmm(inMask1.mask,inMask2.mask), 256) == 0;
     }
 
-    inline static bool IsNotEqual(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
+    inline static bool IsNotEqual(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
         return _vel_pcvm_sml(_vel_xorm_mmm(inMask1.mask,inMask2.mask), 256) != 0;
     }
 };
 
 // Mask must have operators
-inline InaVecMaskSXA<double> operator&(const InaVecMaskSXA<double>& inMask1, const InaVecMaskSXA<double>& inMask2){
-    return InaVecMaskSXA<double>::And(inMask1, inMask2);
+inline InaVecMaskRISCV<double> operator&(const InaVecMaskRISCV<double>& inMask1, const InaVecMaskRISCV<double>& inMask2){
+    return InaVecMaskRISCV<double>::And(inMask1, inMask2);
 }
 
-inline InaVecMaskSXA<double> operator|(const InaVecMaskSXA<double>& inMask1, const InaVecMaskSXA<double>& inMask2){
-    return InaVecMaskSXA<double>::Or(inMask1, inMask2);
+inline InaVecMaskRISCV<double> operator|(const InaVecMaskRISCV<double>& inMask1, const InaVecMaskRISCV<double>& inMask2){
+    return InaVecMaskRISCV<double>::Or(inMask1, inMask2);
 }
 
-inline InaVecMaskSXA<double> operator^(const InaVecMaskSXA<double>& inMask1, const InaVecMaskSXA<double>& inMask2){
-    return InaVecMaskSXA<double>::Xor(inMask1, inMask2);
+inline InaVecMaskRISCV<double> operator^(const InaVecMaskRISCV<double>& inMask1, const InaVecMaskRISCV<double>& inMask2){
+    return InaVecMaskRISCV<double>::Xor(inMask1, inMask2);
 }
 
-inline bool operator==(const InaVecMaskSXA<double>& inMask1, const InaVecMaskSXA<double>& inMask2){
-    return InaVecMaskSXA<double>::IsEqual(inMask1, inMask2);
+inline bool operator==(const InaVecMaskRISCV<double>& inMask1, const InaVecMaskRISCV<double>& inMask2){
+    return InaVecMaskRISCV<double>::IsEqual(inMask1, inMask2);
 }
 
-inline bool operator!=(const InaVecMaskSXA<double>& inMask1, const InaVecMaskSXA<double>& inMask2){
-    return InaVecMaskSXA<double>::IsNotEqual(inMask1, inMask2);
+inline bool operator!=(const InaVecMaskRISCV<double>& inMask1, const InaVecMaskRISCV<double>& inMask2){
+    return InaVecMaskRISCV<double>::IsNotEqual(inMask1, inMask2);
 }
 
 // Vec type
