@@ -4,11 +4,11 @@
 ###########################################################################
 # Doc for intel :
 # https://software.intel.com/en-us/articles/performance-tools-for-software-developers-intel-compiler-options-for-sse-generation-and-processor-specific-optimizations
-# 
+#
 # Doc for gcc :
 # https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
 ###########################################################################
-macro (GetCompilerInfosCore TYPE)    
+macro (GetCompilerInfosCore TYPE)
 string(TOUPPER ${TYPE} UTYPE)
 
 # The original CPP file
@@ -82,7 +82,7 @@ elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "AURORA")
 
     set(ALL_TYPES "SXA")
 elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "RISCV")
-    SET( ARCH_NATIVE_FLAG "TODO-RISCV[put the right flag] -std=c++17" CACHE STRING "Additional flag for the compiler capacities detection such as -target ve-linux -v for example"  )
+    SET( ARCH_NATIVE_FLAG "-march=rv64im -std=c++17" CACHE STRING "Additional flag for the compiler capacities detection such as -target ve-linux -v for example"  )
     set(RISCV_FLAGS "${ARCH_NATIVE_FLAG}")
 
     set(ALL_TYPES "RISCV")
@@ -150,7 +150,7 @@ foreach(TYPE ${ALL_TYPES})
     GetCompilerInfosCore(${TYPE})
 endforeach()
 
-if($ENV{VERBOSE})    
+if($ENV{VERBOSE})
     foreach(TYPE ${ALL_TYPES})
         message(STATUS "GetCompilerInfos -- COMPILER_INFO_${TYPE} = ${COMPILER_INFO_${TYPE}}")
     endforeach()

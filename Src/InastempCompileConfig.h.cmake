@@ -37,6 +37,8 @@
 
 #cmakedefine INASTEMP_USE_SXA
 
+#cmakedefine INASTEMP_USE_RVV
+
 // Inform about best one
 #define INASTEMP_@INASTEMP_BESTTYPE@_IS_BEST
 #define INASTEMP_BEST_TYPE @INASTEMP_BESTTYPE@

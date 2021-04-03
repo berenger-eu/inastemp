@@ -110,6 +110,15 @@
 #include "SXA/InaVecSXADouble.hpp"
 #endif
 
+#ifdef __RISCV_FEATURE_RVV
+#define INASTEMP_USE_RVV
+#undef INASTEMP_STATIC_BEST_TYPE
+#define INASTEMP_STATIC_BEST_TYPE InaVecRVV
+#include "SVE/InaVecRVVFloat.hpp"
+#include "SVE/InaVecRVVDouble.hpp"
+#endif
+
+
 template < class RealType >
 using InaVecBestType = INASTEMP_STATIC_BEST_TYPE< RealType >;
 

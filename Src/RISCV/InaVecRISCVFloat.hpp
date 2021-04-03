@@ -2,30 +2,30 @@
 // Inastemp - Berenger Bramas MPCDF - 2016
 // Under MIT Licence, please you must read the LICENCE file.
 ///////////////////////////////////////////////////////////////////////////
-#ifndef INAVECSXAFLOAT_HPP
-#define INAVECSXAFLOAT_HPP
+#ifndef INAVECRISCVFLOAT_HPP
+#define INAVECRISCVFLOAT_HPP
 
 #include "InastempGlobal.h"
 #include "Common/InaIfElse.hpp"
 #include "Common/InaUtils.hpp"
 
-#ifndef INASTEMP_USE_SXA
-#error InaVecSXA<float> is included but SXA is not enable in the configuration
+#ifndef INASTEMP_USE_RISCV
+#error InaVecRISCV<float> is included but RISCV is not enable in the configuration
 #endif
 
 #include "Common/InaFastExp.hpp"
 
-#include <velintrin.h>
-#include <cmath>
-#include <initializer_list>
-#include <limits>
+// #include <velintrin.h>
+// #include <cmath>
+// #include <initializer_list>
+// #include <limits>
 
 // Forward declarations
 template <class RealType>
 class InaVecMaskSXA;
 
 template <class RealType>
-class InaVecSXA;
+class InaVecRISCV;
 
 
 // Mask type

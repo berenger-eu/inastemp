@@ -29,11 +29,11 @@ if(INASTEMP_BUILD_UTESTS)
     elseif(INASTEMP_ARMIE_UTESTS)
         SET( INASTEMP_ARMIE_UTESTS_ARGS "-msve-vector-bits=256" CACHE STRING "Arguments for armie"  )
     elseif(INASTEMP_SPIKE_UTESTS)
-        SET( INASTEMP_SPIKE_UTESTS_ARGS "TODO-RISCV[put the right spike args]" CACHE STRING "Arguments for SPIKE"  )
+        SET( INASTEMP_SPIKE_UTESTS_ARGS "--isa=RV32IMAC" CACHE STRING "Arguments for SPIKE"  )
     endif()
 
     # Find all code files
-    file(	
+    file(
 	    GLOB_RECURSE
 	    source_tests_files
 	    ./*.cpp
@@ -42,14 +42,14 @@ if(INASTEMP_BUILD_UTESTS)
 
     # Adding the project sources dir as an include dir
     INCLUDE_DIRECTORIES(
-         ${INASTEMP_BINARY_DIR}/Src    
-         ${INASTEMP_SOURCE_DIR}/Src    
+         ${INASTEMP_BINARY_DIR}/Src
+         ${INASTEMP_SOURCE_DIR}/Src
          ${UTESTS_INASTEMP_SOURCE_DIR}
     )
 
 
     # Add execs - 1 cpp = 1 exec
-    foreach(exec ${source_tests_files}) 
+    foreach(exec ${source_tests_files})
 	    get_filename_component(
 		    execname ${exec}
 		    NAME_WE
@@ -81,7 +81,7 @@ if(INASTEMP_BUILD_UTESTS)
                 elseif(INASTEMP_ARMIE_UTESTS)
                     add_test(${typexec} armie ${INASTEMP_ARMIE_UTESTS_ARGS} -- ${CMAKE_CURRENT_BINARY_DIR}/${typexec})
                 elseif(INASTEMP_SPIKE_UTESTS)
-                    add_test(${typexec} TODO-RISCV[put the right binary spike] ${INASTEMP_SPIKE_UTESTS_ARGS} -- ${CMAKE_CURRENT_BINARY_DIR}/${typexec})
+                    add_test(${typexec} spike ${INASTEMP_SPIKE_UTESTS_ARGS} -- ${CMAKE_CURRENT_BINARY_DIR}/${typexec})
                 else()
                     add_test(${typexec} ${CMAKE_CURRENT_BINARY_DIR}/${typexec})
                 endif()
@@ -105,7 +105,7 @@ if(INASTEMP_BUILD_UTESTS)
             elseif(INASTEMP_ARMIE_UTESTS)
                 add_test(${typexec} armie ${INASTEMP_ARMIE_UTESTS_ARGS} -- ${CMAKE_CURRENT_BINARY_DIR}/${execname})
             elseif(INASTEMP_SPIKE_UTESTS)
-                add_test(${typexec} TODO-RISCV[put the right binary spike] ${INASTEMP_SPIKE_UTESTS_ARGS} -- ${CMAKE_CURRENT_BINARY_DIR}/${execname})
+                add_test(${typexec} spike ${INASTEMP_SPIKE_UTESTS_ARGS} -- ${CMAKE_CURRENT_BINARY_DIR}/${execname})
             else()
                 add_test(${execname} ${CMAKE_CURRENT_BINARY_DIR}/${execname})
             endif()
