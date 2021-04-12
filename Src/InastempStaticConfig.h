@@ -110,12 +110,12 @@
 #include "SXA/InaVecSXADouble.hpp"
 #endif
 
-#ifdef __RISCV_FEATURE_RVV
-#define INASTEMP_USE_RVV
+#ifdef __RISCV_FEATURE_RISCV
+#define INASTEMP_USE_RISCV
 #undef INASTEMP_STATIC_BEST_TYPE
-#define INASTEMP_STATIC_BEST_TYPE InaVecRVV
-#include "SVE/InaVecRVVFloat.hpp"
-#include "SVE/InaVecRVVDouble.hpp"
+#define INASTEMP_STATIC_BEST_TYPE InaVecRISCV
+#include "SVE/InaVecRISCVFloat.hpp"
+#include "SVE/InaVecRISCVDouble.hpp"
 #endif
 
 
