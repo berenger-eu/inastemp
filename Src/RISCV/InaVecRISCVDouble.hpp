@@ -264,7 +264,7 @@ public:
     //     return *this;
     // }
 
-    inline InaVecSXA& setFromIndirect2DArray(const double inArray[], const int inIndirection1[],
+    inline InaVecRISCV& setFromIndirect2DArray(const double inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
         vec = vlxei64_v_f64m8(inArray,vfadd_vv_f64m8(
           vfmul_vf_f64m8(vle64ff_v_f64m8(inIndirection1,32),inLeadingDimension),vle64ff_v_f64m8(inIndirection2,32)
@@ -743,7 +743,7 @@ public:
         return *this;
     }
 
-    inline InaVecSXA<double> operator-() const {
+    inline InaVecRISCV<double> operator-() const {
         return vfneg_v_f64m8(vec);
     }
 
@@ -778,7 +778,7 @@ public:
     inline static void MultiHorizontalSum(double /*sumRes*/[]){
     }
 
-    inline static InaVecSXA<double> Fma(const InaVecSXA<double>& inValAdd, const InaVecSXA<double>& inValMul1, const InaVecSXA<double>& inValMul2){
+    inline static InaVecRISCV<double> Fma(const InaVecRISCV<double>& inValAdd, const InaVecRISCV<double>& inValMul1, const InaVecRISCV<double>& inValMul2){
         return vfnmadd_vv_f64m8(inValAdd.vec, inValMul1.vec, inValMul2.vec);
     }
 };
