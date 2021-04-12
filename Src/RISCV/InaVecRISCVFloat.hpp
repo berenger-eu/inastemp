@@ -15,6 +15,8 @@
 
 #include "Common/InaFastExp.hpp"
 
+#include <riscv_vector.h>
+#include <algorithm>
 // #include <velintrin.h>
 // #include <cmath>
 // #include <initializer_list>
@@ -22,7 +24,7 @@
 
 // Forward declarations
 template <class RealType>
-class InaVecMaskSXA;
+class InaVecMaskRISCV;
 
 template <class RealType>
 class InaVecRISCV;
@@ -30,411 +32,442 @@ class InaVecRISCV;
 
 // Mask type
 template <>
-class alignas(2048) InaVecMaskSXA<float> {
-    __vm256 mask;
+class alignas(2048) InaVecMaskRISCV<float> {
+    vbool4_t mask;
 
 public:
     // Classic constructors
-    inline InaVecMaskSXA() {
-        mask = _vel_xorm_mmm(mask,mask);
+    inline InaVecMaskRISCV() {
+        mask = vmxor_mm_b4(mask,mask);
     }
 
-    inline InaVecMaskSXA(const InaVecMaskSXA& inMask){
+    inline InaVecMaskRISCV(const InaVecMaskRISCV& inMask){
         mask = inMask.mask;
     }
 
-    inline InaVecMaskSXA& operator=(const InaVecMaskSXA& inMask){
+    inline InaVecMaskRISCV& operator=(const InaVecMaskRISCV& inMask){
         mask = inMask.mask;
         return *this;
     }
 
     // Native data type compatibility
-    inline /*not explicit*/ InaVecMaskSXA(const __vm256 inMask)
-        : InaVecMaskSXA() {
+    inline /*not explicit*/ InaVecMaskRISCV(const vbool4_t inMask)
+        : InaVecMaskRISCV() {
         mask = (inMask);
     }
 
-    inline InaVecMaskSXA& operator=(const __vm256 inMask){
+    inline InaVecMaskRISCV& operator=(const vbool4_t inMask){
         mask = inMask;
         return (*this);
     }
 
-    inline explicit operator __vm256() const{
+    inline explicit operator vbool4_t() const{
         return mask;
     }
 
-    inline __vm256 getMask() const{
+    inline vbool4_t getMask() const{
         return mask;
     }
 
     // Bool data type compatibility
-    inline explicit InaVecMaskSXA(const bool inBool) : InaVecMaskSXA() {
-        mask = (inBool? _vel_negm_mm(_vel_xorm_mmm(mask, mask)) : _vel_xorm_mmm(mask, mask));
+    inline explicit InaVecMaskRISCV(const bool inBool) : InaVecMaskRISCV() {
+        mask = (inBool? vmxnor_mm_b4(mask, mask) : vmxor_mm_b4(mask, mask));
     }
 
-    inline InaVecMaskSXA& operator=(const bool inBool){
-        mask = (inBool? _vel_negm_mm(_vel_xorm_mmm(mask, mask)) : _vel_xorm_mmm(mask, mask));
+    inline InaVecMaskRISCV& operator=(const bool inBool){
+        mask = (inBool? vmxnor_mm_b4(mask, mask) : vmxor_mm_b4(mask, mask));
         return (*this);
     }
 
     // Binary methods
-    inline InaVecMaskSXA Not() const{
-        return _vel_negm_mm(mask);
+    inline InaVecMaskRISCV Not() const{
+        return vmnot_mm_b4(mask);
     }
 
     inline bool isAllTrue() const{
-        return _vel_pcvm_sml(mask, 256) == 256;
+        return vpopc_m_b4(mask) == 256;
     }
 
     inline bool isAllFalse() const{
-        // true if all zero
-        return _vel_pcvm_sml(mask, 256) == 0;
+        return vpopc_m_b4(mask) == 0;
     }
-
+    
     // Float args methods
-    inline static InaVecMaskSXA And(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_andm_mmm(inMask1.mask,inMask2.mask);
+    inline static InaVecMaskRISCV And(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
+        return vmand_mm_b4(inMask1.mask,inMask2.mask);
     }
 
-    inline static InaVecMaskSXA NotAnd(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        __vm256 one = _vel_vfmklat_ml(0); // dumbe init
-        one = _vel_negm_mm(_vel_xorm_mmm(one, one)); // set to zero than negate
-        return _vel_andm_mmm(_vel_xorm_mmm(inMask1.mask, one),inMask2.mask);
+    inline static InaVecMaskRISCV NotAnd(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
+        return vmnand_mm_b4(inMask1.mask,inMask2.mask);
     }
 
-    inline static InaVecMaskSXA Or(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_orm_mmm(inMask1.mask,inMask2.mask);
+    inline static InaVecMaskRISCV Or(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
+        return vmor_mm_b4(inMask1.mask,inMask2.mask);
     }
 
-    inline static InaVecMaskSXA Xor(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_xorm_mmm(inMask1.mask,inMask2.mask);
+    inline static InaVecMaskRISCV Xor(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
+        return vmxor_mm_b4(inMask1.mask,inMask2.mask);
     }
 
-    inline static bool IsEqual(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_pcvm_sml(_vel_xorm_mmm(inMask1.mask,inMask2.mask), 256) == 0;
+    inline static bool IsEqual(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
+        return vpopc_m_b4(vmxor_mm_b4(inMask1.mask,inMask2.mask)) == 0;
     }
 
-    inline static bool IsNotEqual(const InaVecMaskSXA& inMask1, const InaVecMaskSXA& inMask2){
-        return _vel_pcvm_sml(_vel_xorm_mmm(inMask1.mask,inMask2.mask), 256) != 0;
+    inline static bool IsNotEqual(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
+        return vpopc_m_b4(vmxor_mm_b4(inMask1.mask,inMask2.mask)) != 0;
     }
 };
 
 // Mask must have operators
-inline InaVecMaskSXA<float> operator&(const InaVecMaskSXA<float>& inMask1, const InaVecMaskSXA<float>& inMask2){
-    return InaVecMaskSXA<float>::And(inMask1, inMask2);
+inline InaVecMaskRISCV<float> operator&(const InaVecMaskRISCV<float>& inMask1, const InaVecMaskRISCV<float>& inMask2){
+    return InaVecMaskRISCV<float>::And(inMask1, inMask2);
 }
 
-inline InaVecMaskSXA<float> operator|(const InaVecMaskSXA<float>& inMask1, const InaVecMaskSXA<float>& inMask2){
-    return InaVecMaskSXA<float>::Or(inMask1, inMask2);
+inline InaVecMaskRISCV<float> operator|(const InaVecMaskRISCV<float>& inMask1, const InaVecMaskRISCV<float>& inMask2){
+    return InaVecMaskRISCV<float>::Or(inMask1, inMask2);
 }
 
-inline InaVecMaskSXA<float> operator^(const InaVecMaskSXA<float>& inMask1, const InaVecMaskSXA<float>& inMask2){
-    return InaVecMaskSXA<float>::Xor(inMask1, inMask2);
+inline InaVecMaskRISCV<float> operator^(const InaVecMaskRISCV<float>& inMask1, const InaVecMaskRISCV<float>& inMask2){
+    return InaVecMaskRISCV<float>::Xor(inMask1, inMask2);
 }
 
-inline bool operator==(const InaVecMaskSXA<float>& inMask1, const InaVecMaskSXA<float>& inMask2){
-    return InaVecMaskSXA<float>::IsEqual(inMask1, inMask2);
+inline bool operator==(const InaVecMaskRISCV<float>& inMask1, const InaVecMaskRISCV<float>& inMask2){
+    return InaVecMaskRISCV<float>::IsEqual(inMask1, inMask2);
 }
 
-inline bool operator!=(const InaVecMaskSXA<float>& inMask1, const InaVecMaskSXA<float>& inMask2){
-    return InaVecMaskSXA<float>::IsNotEqual(inMask1, inMask2);
+inline bool operator!=(const InaVecMaskRISCV<float>& inMask1, const InaVecMaskRISCV<float>& inMask2){
+    return InaVecMaskRISCV<float>::IsNotEqual(inMask1, inMask2);
 }
 
 // Vec type
 template <>
-class alignas(2048) InaVecSXA<float> {
+class alignas(2048) InaVecRISCV<float> {
 protected:
-    __vr vec;
+    vfloat32m8_t vec;
 
-    static __vm256 _vel_vfmklgt_mvl_256(__vr vz, int vl){
-        return _vel_vfmklgt_mvl(vz, vl); // __vm256();
-    }
+    // static __vm256 _vel_vfmklgt_mvl_256(__vr vz, int vl){
+    //     return _vel_vfmklgt_mvl(vz, vl); // __vm256();
+    // }
 
 public:
-    using VecRawType           = __vr;
-    using MaskType             = InaVecMaskSXA<float>;
+    using VecRawType           = vfloat32m8_t;
+    using MaskType             = InaVecMaskRISCV<float>;
     using RealType             = float;
     static const int Alignement= 1;
     static const bool IsOfFixedSize = true;
 
     static constexpr int GetVecLength(){
-        return 256;
+        return  vsetvlmax_e32m8();
     }
 
     static constexpr bool IsRealFma(){
         return true;
     }
 
-    inline InaVecSXA() {
-        vec = _vel_vbrds_vsl(0,256);
+    inline InaVecRISCV() {
+        vec = vundefined_f32m8();
     }
-    inline InaVecSXA(const InaVecSXA& inVec){
+    inline InaVecRISCV(const InaVecRISCV& inVec){
         vec = inVec.vec;
     }
 
-    inline InaVecSXA& operator=(const InaVecSXA& inVec){
+    inline InaVecRISCV& operator=(const InaVecRISCV& inVec){
         vec = inVec.vec;
         return *this;
     }
 
     // Constructor from raw type
-    inline /*not explicit*/ InaVecSXA(const __vr inVec)
-        : InaVecSXA() {
+    inline /*not explicit*/ InaVecRISCV(const vfloat32m8_t inVec)
+        : InaVecRISCV() {
         vec = (inVec);
     }
 
-    inline InaVecSXA& operator=(const __vr inVec){
+    inline InaVecRISCV& operator=(const vfloat32m8_t inVec){
         vec = inVec;
         return *this;
     }
 
-    inline void setFromRawType(const __vr inVec){
+    inline void setFromRawType(const vfloat32m8_t inVec){
         vec = inVec;
     }
 
-    inline explicit operator __vr() const{
+    inline explicit operator vfloat32m8_t() const{
         return vec;
     }
 
-    inline __vr getVec() const{
+    inline vfloat32m8_t getVec() const{
         return vec;
     }
 
     // Constructor from scalar
-    inline /*not explicit*/ InaVecSXA(const float val)
-        : InaVecSXA() {
-        vec = _vel_vbrds_vsl(val,256);
+    inline /*not explicit*/ InaVecRISCV(const float val)
+        : InaVecRISCV() {
+        uint32_t tabIndex [GetVecLength()];
+        for (int i=0;i<GetVecLength();i++)
+            tabIndex[i] = 0;
+        vuint32m8_t index = vle32_v_u32m8(tabIndex);
+        vec = vlxei32_v_f32m8(&val,index);
     }
 
-    inline InaVecSXA& operator=(const float val){
-        vec = _vel_vbrds_vsl(val,256);
+    inline InaVecRISCV& operator=(const float val){
+        uint32_t tabIndex [GetVecLength()];
+        for (int i=0;i<GetVecLength();i++)
+            tabIndex[i] = 0;
+        vuint32m8_t index = vle32_v_u32m8(tabIndex);
+        vec = vlxei32_v_f32m8(&val,index);
         return *this;
     }
 
     inline void setFromScalar(const float val){
-        vec = _vel_vbrds_vsl(val,256);
+        uint32_t tabIndex [GetVecLength()];
+        for (int i=0;i<GetVecLength();i++)
+            tabIndex[i] = 0;
+        vuint32m8_t index = vle32_v_u32m8(tabIndex);
+        vec = vlxei32_v_f32m8(&val,index);
     }
 
     // Constructor from vec
-    inline InaVecSXA(const std::initializer_list<float> lst)
-        : InaVecSXA(lst.begin()){
+    inline InaVecRISCV(const std::initializer_list<float> lst)
+        : InaVecRISCV(lst.begin()){
     }
 
-    inline explicit InaVecSXA(const float ptr[])
-        : InaVecSXA() {
-        vec = _vel_vldu_vssl(4, ptr, 256);
+    inline explicit InaVecRISCV(const float ptr[])
+        : InaVecRISCV() {
+        vec = vle32_v_f32m8(ptr);
     }
 
-    inline InaVecSXA& setFromArray(const float ptr[]){
-        vec = _vel_vldu_vssl(4, ptr, 256);
-        return *this;
+    inline InaVecRISCV& setFromArray(const float ptr[]){
+      vec = vle32_v_f32m8(ptr);
+      return *this;
     }
 
-    inline InaVecSXA& setFromAlignedArray(const float ptr[]){
-        vec = _vel_vldu_vssl(4, ptr, 256);
-        return *this;
+    inline InaVecRISCV& setFromAlignedArray(const float ptr[]){
+      vec = vle32_v_f32m8(ptr);
+      return *this;
     }
 
-    inline InaVecSXA& setFromIndirectArray(const float values[], const unsigned long int inIndirection[]) {
-        __vr offset = _vel_vld_vssl(8, inIndirection, 256);
-        __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(values), 256);
-        vec = _vel_vgtu_vvssl(address, 0, 0, 256);
+    // inline InaVecSXA& setFromIndirectArray(const float values[], const unsigned long int inIndirection[]) {
+    //     __vr offset = _vel_vld_vssl(8, inIndirection, 256);
+    //     __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(values), 256);
+    //     vec = _vel_vgtu_vvssl(address, 0, 0, 256);
+    // 
+    //     return *this;
+    // }
 
-        return *this;
+    inline InaVecRISCV& setFromIndirectArray(const float values[], const int inIndirection[]) {
+      vec = vlxei32_v_f32m8(values,Indirection);
+      return *this;
     }
 
-    inline InaVecSXA& setFromIndirectArray(const float values[], const int inIndirection[]) {
-        __vr offset = _vel_vldu_vssl(4, inIndirection, 256);
-        offset = _vel_vsrl_vvsl(offset, 32, 256);
-        __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(values), 256);
-        vec = _vel_vgtu_vvssl(address, 0, 0, 256);
+    // inline InaVecSXA& setFromIndirect2DArray(const float inArray[], const long int inIndirection1[],
+    //                              const int inLeadingDimension, const long int inIndirection2[]){
+    //     __vr offset = _vel_vaddsl_vvvl(_vel_vld_vssl(8, inIndirection2, 256),
+    //                  _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
+    //                                   _vel_vld_vssl(8, inIndirection1, 256),
+    //                                   256),256);
+    //     __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(inArray), 256);
+    //     vec = _vel_vgtu_vvssl(address, 0, 0, 256);
+    //     return *this;
+    // 
+    // }
 
-        return *this;
-    }
-
-    inline InaVecSXA& setFromIndirect2DArray(const float inArray[], const long int inIndirection1[],
-                                 const int inLeadingDimension, const long int inIndirection2[]){
-        __vr offset = _vel_vaddsl_vvvl(_vel_vld_vssl(8, inIndirection2, 256),
-                     _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
-                                      _vel_vld_vssl(8, inIndirection1, 256),
-                                      256),256);
-        __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(inArray), 256);
-        vec = _vel_vgtu_vvssl(address, 0, 0, 256);
-        return *this;
-    }
-
-    inline InaVecSXA& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
+    inline InaVecRISCV& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
-        __vr offset1 = _vel_vldu_vssl(4, inIndirection1, 256);
-        offset1 = _vel_vsrl_vvsl(offset1, 32, 256);
-
-        __vr offset2 = _vel_vldu_vssl(4, inIndirection2, 256);
-        offset2 = _vel_vsrl_vvsl(offset2, 32, 256);
-
-        __vr offset = _vel_vaddsl_vvvl(offset2,
-                     _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
-                                      offset1,
-                                      256),256);
-        __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(inArray), 256);
-        vec = _vel_vgtu_vvssl(address, 0, 0, 256);
+        vec = vlxei32_v_f32m8(inArray,vfadd_vv_f32m8(
+          vfmul_vf_f32m8(vle32ff_v_f32m8(inIndirection1,32),inLeadingDimension),vle32ff_v_f32m8(inIndirection2,32)
+        ));
 
         return *this;
     }
 
     // Move back to array
     inline void storeInArray(float ptr[]) const {
-        _vel_vstu_vssl(vec, 4, ptr, 256);
+         vse32_v_f32m8(vec,ptr);
     }
 
     inline void storeInAlignedArray(float ptr[]) const {
-        _vel_vstu_vssl(vec, 4, ptr, 256);
+        vse32_v_f32m8(vec,ptr);
     }
 
     // Acce to individual values
     inline float at(const int index) const {
-        return _vel_lvss_svs(vec, index);
+        return vec[index];
     }
 
     // Horizontal operation
     inline float horizontalSum() const {
-      return _vel_lvss_svs(_vel_vfsums_vvl(vec, 256),0);
+      float sum = at(0);
+      for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
+          sum+= at(idx);
+      }
+      return sum;
     }
 
     inline float horizontalMul() const {
-        // TODO use vfim when available
-        float sum = at(0);
-        for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
-            sum *= at(idx);
-        }
-        return sum;
+      double sum = at(0);
+      for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
+          sum*= at(idx);
+      }
+      return sum;
     }
 
     inline float minInVec() const {
-        return _vel_lvss_svs(_vel_vfrminsfst_vvl(vec, 256),0);
+      float min = at(0);
+      for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
+          min = std::min(min,at(idx));
+      }
+      return min;
     }
 
     inline float maxInVec() const {
-        return _vel_lvss_svs(_vel_vfrmaxsfst_vvl(vec, 256),0);
+      float max = at(0);
+      for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
+          max = std::max(max,at(idx));
+      }
+      return max;
     }
 
-    inline InaVecSXA sqrt() const {
-        return _vel_vfsqrts_vvl(vec, 256);
+    inline InaVecRISCV sqrt() const {
+        return vfsqrt_v_f32m8(vec);
     }
 
-    inline InaVecSXA exp() const {
-        const __vr COEFF_LOG2E = _vel_vbrds_vsl(float(InaFastExp::CoeffLog2E()), 256);
-        const __vr COEFF_A     = _vel_vbrds_vsl(float(InaFastExp::CoeffA32()), 256);
-        const __vr COEFF_B     = _vel_vbrds_vsl(float(InaFastExp::CoeffB32()), 256);
-        const __vr COEFF_P5_A  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_5()), 256);
-        const __vr COEFF_P5_B  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_4()), 256);
-        const __vr COEFF_P5_C  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_3()), 256);
-        const __vr COEFF_P5_D  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_2()), 256);
-        const __vr COEFF_P5_E  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_1()), 256);
-        const __vr COEFF_P5_F  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient6_0()), 256);
+    inline InaVecRISCV exp() const {
 
-        __vr x = _vel_vfmuls_vvvl(vec, COEFF_LOG2E, 256);
+        const float32m8_t COEFF_LOG2E = InaFastExp::CoeffLog2E();
+        const float32m8_t COEFF_A     = InaFastExp::CoeffA64();
+        const float32m8_t COEFF_B     = InaFastExp::CoeffB64();
+        const float32m8_t COEFF_P5_X  = InaFastExp::GetCoefficient9_8();
+        const float32m8_t COEFF_P5_Y  = InaFastExp::GetCoefficient9_7();
+        const float32m8_t COEFF_P5_Z  = InaFastExp::GetCoefficient9_6();
+        const float32m8_t COEFF_P5_A  = InaFastExp::GetCoefficient9_5();
+        const float32m8_t COEFF_P5_B  = InaFastExp::GetCoefficient9_4();
+        const float32m8_t COEFF_P5_C  = InaFastExp::GetCoefficient9_3();
+        const float32m8_t COEFF_P5_D  = InaFastExp::GetCoefficient9_2();
+        const float32m8_t COEFF_P5_E  = InaFastExp::GetCoefficient9_1();
+        const float32m8_t COEFF_P5_F  = InaFastExp::GetCoefficient9_0();
 
-        const __vr fractional_part = _vel_vfsubs_vvvl(x, InaVecSXA(x).floor().vec, 256);
+        vfloat32m8_t x = vfmul_vf_f32m8(vec, COEFF_LOG2E);
 
-        __vr factor = _vel_vfadds_vvvl(
-                         _vel_vfmuls_vvvl(_vel_vfadds_vvvl( _vel_vfmuls_vvvl(_vel_vfadds_vvvl(
-                         _vel_vfmuls_vvvl(_vel_vfadds_vvvl( _vel_vfmuls_vvvl(_vel_vfadds_vvvl(
-                         _vel_vfmuls_vvvl(COEFF_P5_A, fractional_part, 256),
-                         COEFF_P5_B, 256), fractional_part, 256), COEFF_P5_C, 256),fractional_part, 256),
-                         COEFF_P5_D, 256), fractional_part, 256), COEFF_P5_E, 256),fractional_part, 256),
-                         COEFF_P5_F, 256);
+        const vfloat32m8_t fractional_part = vfsub_vv_f32m8(x, InaVecRISCV(x).floor().vec);
 
-        x = _vel_vfsubs_vvvl(x,factor, 256);
+        vfloat32m8_t factor = vfadd_vf_f32m8( vfmul_vv_f32m8( vfadd_vf_f32m8(
+                         vfmul_vv_f32m8( vfadd_vf_f32m8( vfmul_vv_f32m8( vfadd_vf_f32m8(
+                         vfmul_vv_f32m8( vfadd_vf_f32m8( vfmul_vv_f32m8( vfadd_vf_f32m8(
+                         vfmul_vv_f32m8( vfadd_vf_f32m8( vfmul_vv_f32m8( vfadd_vf_f32m8(
+                         vfmul_vf_f32m8(fractional_part,COEFF_P5_X), COEFF_P5_Y),fractional_part),
+                         COEFF_P5_Z),fractional_part), COEFF_P5_A), fractional_part),
+                         COEFF_P5_B), fractional_part), COEFF_P5_C),fractional_part),
+                         COEFF_P5_D), fractional_part), COEFF_P5_E),fractional_part),
+                         COEFF_P5_F);
 
-        x = _vel_vfadds_vvvl(_vel_vfmuls_vvvl(COEFF_A, x, 256), COEFF_B, 256);
+        x = vfsub_vv_f32m8(x,factor);
 
-        __vr castedInteger = _vel_vcvtwssxrz_vvl(x, 256);
-        castedInteger = _vel_vsll_vvsl(castedInteger, 32, 256);
+        x = vfadd_vf_f32m8(vfmul_vf_f32m8(x, COEFF_A), COEFF_B);
 
-        return (castedInteger); // Automatically reinterpret not cast
+        vint32m8_t castedInteger = vfcvt_rtz_x_f_v_i32m8(x);
+
+        return vfcvt_f_x_v_f32m8(castedInteger);
     }
 
-    inline InaVecSXA expLowAcc() const {
-        const __vr COEFF_LOG2E = _vel_vbrds_vsl(float(InaFastExp::CoeffLog2E()), 256);
-        const __vr COEFF_A     = _vel_vbrds_vsl(float(InaFastExp::CoeffA32()), 256);
-        const __vr COEFF_B     = _vel_vbrds_vsl(float(InaFastExp::CoeffB32()), 256);
-        const __vr COEFF_P5_D  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient3_2()), 256);
-        const __vr COEFF_P5_E  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient3_1()), 256);
-        const __vr COEFF_P5_F  = _vel_vbrds_vsl(float(InaFastExp::GetCoefficient3_0()), 256);
+    inline InaVecRISCV expLowAcc() const {
 
-        __vr x = _vel_vfmuls_vvvl(vec, COEFF_LOG2E, 256);
+        const float32m8_t COEFF_LOG2E = InaFastExp::CoeffLog2E();
+        const float32m8_t COEFF_A     = InaFastExp::CoeffA64();
+        const float32m8_t COEFF_B     = InaFastExp::CoeffB64();
+        const float32m8_t COEFF_P5_C  = InaFastExp::GetCoefficient4_3();
+        const float32m8_t COEFF_P5_D  = InaFastExp::GetCoefficient4_2();
+        const float32m8_t COEFF_P5_E  = InaFastExp::GetCoefficient4_1();
+        const float32m8_t COEFF_P5_F  = InaFastExp::GetCoefficient4_0();
 
-        const __vr fractional_part = _vel_vfsubs_vvvl(x, InaVecSXA(x).floor().vec, 256);
+        vfloat32m8_t x = vfmul_vf_f32m8(vec, COEFF_LOG2E);
 
-        __vr factor = _vel_vfadds_vvvl(_vel_vfmuls_vvvl(_vel_vfadds_vvvl(
-                         _vel_vfmuls_vvvl(fractional_part, COEFF_P5_D, 256),
-                                         COEFF_P5_E, 256), fractional_part, 256),
-                                         COEFF_P5_F, 256);
+        const vfloat32m8_t fractional_part = vfsub_vv_f32m8(x, InaVecRISCV(x).floor().vec);
 
-        x = _vel_vfsubs_vvvl(x,factor, 256);
+        vfloat32m8_t factor = vfadd_vf_f32m8(vfmul_vv_f32m8(vfadd_vf_f32m8(
+                         vfmul_vv_f32m8(vfadd_vf_f32m8(vfmul_vf_f32m8(
+                                         fractional_part, COEFF_P5_C),
+                                         COEFF_P5_D), fractional_part),
+                                         COEFF_P5_E), fractional_part),
+                                         COEFF_P5_F);
 
-        x = _vel_vfadds_vvvl(_vel_vfmuls_vvvl(COEFF_A, x, 256), COEFF_B, 256);
+        x = vfsub_vv_f32m8(x,factor);
 
-        __vr castedInteger = _vel_vcvtwssxrz_vvl(x, 256);
-        castedInteger = _vel_vsll_vvsl(castedInteger, 32, 256);
+        x = vfadd_vf_f32m8(vfmul_vf_f32m8(x, COEFF_A), COEFF_B);
 
-        return (castedInteger); // Automatically reinterpret not cast
+        vint32m8_t castedInteger = vfcvt_rtz_x_f_v_i32m8(x);
+
+        return  vfcvt_f_x_v_f32m8(castedInteger);
     }
 
-    inline InaVecSXA rsqrt() const {
-        // svrsqrte_f64(vec); seems low accurate
-        return  _vel_vrsqrts_vvl(vec, 256);
-        //const __vr one = _vel_vbrds_vsl(1.0, 256);
-        //return  _vel_vfsqrts_vvl(_vel_vfdivs_vvvl(one, vec, 256), 256);
+    inline InaVecRISCV rsqrt() const {
+      // We can use vfrsqrt7_v_f32m8_t
+        uint32_t tabIndex [GetVecLength()];
+        for (int i=0;i<int(GetVecLength());i++)
+            tabIndex[i] = 0;
+        const vuint32m8_t index = vle32_v_u32m8(tabIndex);
+
+        const vfloat32m8_t one = vlxei32_v_f32m8(1.0,index);
+        return  vfsqrt_v_f32m8(vfdiv_vv_f32m8(one, vec));
     }
 
-    inline InaVecSXA abs() const {
-        return _vel_vand_vvvl( vec, _vel_pvbrd_vsl(0x7FFFFFFF7FFFFFFFUL, 256), 256);
+    inline InaVecRISCV abs() const {
+        return vfabs_v_f32m8(vec);
     }
 
-    inline InaVecSXA floor() const {
-        __vr valuesInIntervals = _vel_vfmins_vvvl(
-                                    _vel_vfmaxs_vvvl( vec, _vel_vbrds_vsl(double(std::numeric_limits<int>::min()), 256), 256),
-                                    _vel_vbrds_vsl(double(std::numeric_limits<int>::max()), 256), 256);
-        __vr vecConvLongInt = _vel_vcvtwssxrz_vvl(valuesInIntervals, 256);
-        __vr vecConvLongIntDouble = _vel_vcvtsw_vvl(vecConvLongInt, 256);
-        __vm256 maskPositive = _vel_vfmklgt_mvl(_vel_vfcmps_vsvl( 0, vec, 256), 256);
-        return _vel_vmrg_vvvml(vecConvLongIntDouble,
-                               _vel_vfsubs_vvvl( vecConvLongIntDouble, _vel_vbrds_vsl(1, 256), 256),
-                               maskPositive,
-                               256);
+    inline InaVecRISCV floor() const {
+        vfloat32m8_t valuesInIntervals = vfmin_vf_f32m8(
+                                    vfmax_vf_f32m8( vec,double(std::numeric_limits<long int>::min())),
+                                    double(std::numeric_limits<long int>::max()));
+        vint32m8_t vecConvLongInt = vfcvt_rtz_x_f_v_i32m8(valuesInIntervals);
+        vfloat32m8_t vecConvLongIntDouble = vfcvt_f_x_v_f32m8(vecConvLongInt);
+        vbool4_t maskPositive = vmflt_vf_f32m8_b4(vec,0);
+        return vmerge_vvm_f32m8(maskPositive, vecConvLongIntDouble, vfsub_vv_f32m8(vecConvLongIntDouble,1.0));
     }
 
-    inline InaVecSXA signOf() const {
-        __vr zero = _vel_vbrds_vsl(0, 256);
-        __vm256 maskPositive = _vel_vfmkllt_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
-        __vm256 maskNegative = _vel_vfmkllt_mvl(_vel_vfcmps_vvvl( vec, zero, 256), 256);
+    inline InaVecRISCV signOf() const {
+        vbool4_t maskPositive = vmfgt_vf_f32m8_b4(vec,0);
+        vbool4_t maskNegative = vmflt_vf_f32m8_b4(vec,0);
+        const float positif = 1.0;
+        const float negatif = -1.0;
 
-        return _vel_vmrg_vvvml(_vel_vmrg_vvvml(zero,
-                                               _vel_vbrds_vsl(1, 256),
-                                                maskPositive, 256),
-                               _vel_vbrds_vsl(-1, 256),
-                               maskNegative, 256);
+        uint32_t tabIndex [GetVecLength()];
+        for (int i=0;i<GetVecLength();i++)
+            tabIndex[i] = 0;
+        vuint32m8_t index = vle32_v_u32m8(tabIndex);
+
+        vfloat32m8_t signPositive = vlxei32_v_f32m8(&positif,index);
+        vfloat32m8_t signNegative = vlxei32_v_f32m8(&negatif,index);
+
+        return vmerge_vvm_f32m8(maskNegative,signNegative,
+            vfmerge_vfm_f32m8(maskPositive,signPositive,0));
     }
 
-    inline InaVecSXA isPositive() const {
-        __vr zero = _vel_vbrds_vsl(0, 256);
-        __vm256 maskPositive = _vel_vfmklle_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);
+    inline InaVecRISCV isPositive() const {
+        vbool4_t maskPositive = vmfge_vf_f32m8_b4(vec,0);
+        const float positif = 1.0;
 
-        return _vel_vmrg_vvvml(zero,
-                               _vel_vbrds_vsl(1, 256),
-                               maskPositive, 256);
+        uint32_t tabIndex [GetVecLength()];
+        for (int i=0;i<GetVecLength();i++)
+            tabIndex[i] = 0;
+        vuint32m8_t index = vle32_v_u32m8(tabIndex);
+        vfloat32m8_t signPositive = vlxei32_v_f32m8(1,index);
+
+        return vfmerge_vfm_f32m8(maskPositive,signPositive,0);
     }
 
-    inline InaVecSXA isNegative() const {
-        __vr zero = _vel_vbrds_vsl(0, 256);
-        __vm256 maskNegative = _vel_vfmklle_mvl(_vel_vfcmps_vvvl( vec, zero, 256), 256);
+    inline InaVecRISCV isNegative() const {
+        vbool4_t maskNegative = vmfle_vf_f32m8_b4(vec,0);
+        const float negatif = -1.0;
 
-        return _vel_vmrg_vvvml(zero,
-                               _vel_vbrds_vsl(1, 256),
-                               maskNegative, 256);
+        uint32_t tabIndex [GetVecLength()];
+        for (int i=0;i<GetVecLength();i++)
+            tabIndex[i] = 0;
+        vuint32m8_t index = vle32_v_u32m8(tabIndex);
+        vfloat32m8_t signNegative = vlxei32_v_f32m8(&negatif,index);
+
+        return vmerge_vfm_f32m8(maskNegative,signNegative,0);
     }
-
+// TODO continue 
     inline InaVecSXA isPositiveStrict() const {
         __vr zero = _vel_vbrds_vsl(0, 256);
         __vm256 maskPositive = _vel_vfmkllt_mvl(_vel_vfcmps_vvvl( zero, vec, 256), 256);

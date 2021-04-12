@@ -33,12 +33,12 @@ class InaVecRISCV;
 // Mask type
 template <>
 class alignas(2048) InaVecMaskRISCV<double> {
-    vbool64_t mask;
+    vbool8_t mask;
 
 public:
     // Classic constructors
     inline InaVecMaskRISCV() {
-        mask = vmxor_mm_b64(mask,mask);
+        mask = vmxor_mm_b8(mask,mask);
     }
 
     inline InaVecMaskRISCV(const InaVecMaskRISCV& inMask){
@@ -51,70 +51,70 @@ public:
     }
 
     // Native data type compatibility
-    inline /*not explicit*/ InaVecMaskRISCV(const vbool64_t inMask)
+    inline /*not explicit*/ InaVecMaskRISCV(const vbool8_t inMask)
         : InaVecMaskRISCV() {
         mask = (inMask);
     }
 
-    inline InaVecMaskRISCV& operator=(const vbool64_t inMask){
+    inline InaVecMaskRISCV& operator=(const vbool8_t inMask){
         mask = inMask;
         return (*this);
     }
 
-    inline explicit operator vbool64_t() const{
+    inline explicit operator vbool8_t() const{
         return mask;
     }
 
-    inline vbool64_t getMask() const{
+    inline vbool8_t getMask() const{
         return mask;
     }
 
     // Bool data type compatibility
     inline explicit InaVecMaskRISCV(const bool inBool) : InaVecMaskRISCV() {
-        mask = (inBool? vmxnor_mm_b64(mask, mask) : vmxor_mm_b64(mask, mask));
+        mask = (inBool? vmxnor_mm_b8(mask, mask) : vmxor_mm_b8(mask, mask));
     }
 
     inline InaVecMaskRISCV& operator=(const bool inBool){
-        mask = (inBool? vmxnor_mm_b64(mask, mask) : vmxor_mm_b64(mask, mask));
+        mask = (inBool? vmxnor_mm_b8(mask, mask) : vmxor_mm_b8(mask, mask));
         return (*this);
     }
 
     // Binary methods
     inline InaVecMaskRISCV Not() const{
-        return vmnot_mm_b64(mask);
+        return vmnot_mm_b8(mask);
     }
 
     inline bool isAllTrue() const{
-        return vpopc_m_b64(mask) == 256;
+        return vpopc_m_b8(mask) == 256;
     }
 
     inline bool isAllFalse() const{
-        return vpopc_m_b64(mask) == 0;
+        return vpopc_m_b8(mask) == 0;
     }
 
     // Double args methods
     inline static InaVecMaskRISCV And(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
-        return vmand_mm_b64(inMask1.mask,inMask2.mask);
+        return vmand_mm_b8(inMask1.mask,inMask2.mask);
     }
 
     inline static InaVecMaskRISCV NotAnd(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
-        return vmnand_mm_b64(inMask1.mask,inMask2.mask);
+        return vmnand_mm_b8(inMask1.mask,inMask2.mask);
     }
 
     inline static InaVecMaskRISCV Or(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
-        return vmor_mm_b64(inMask1.mask,inMask2.mask);
+        return vmor_mm_b8(inMask1.mask,inMask2.mask);
     }
 
     inline static InaVecMaskRISCV Xor(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
-        return vmxor_mm_b64(inMask1.mask,inMask2.mask);
+        return vmxor_mm_b8(inMask1.mask,inMask2.mask);
     }
 
     inline static bool IsEqual(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
-        return vpopc_m_b64(vmxor_mm_b64(inMask1.mask,inMask2.mask)) == 0;
+        return vpopc_m_b8(vmxor_mm_b8(inMask1.mask,inMask2.mask)) == 0;
     }
 
     inline static bool IsNotEqual(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
-        return vpopc_m_b64(vmxor_mm_b64(inMask1.mask,inMask2.mask)) != 0;
+        return vpopc_m_b8(vmxor_mm_b8(inMask1.mask,inMask2.mask)) != 0;
     }
 };
 
@@ -242,10 +242,10 @@ public:
         return *this;
     }
 
-    inline InaVecRISCV& setFromIndirectArray(const double values[], const unsigned long int inIndirection[]) {
-        vec = vlxei64_v_f64m8(values,Indirection);
-        return *this;
-    }
+    // inline InaVecRISCV& setFromIndirectArray(const double values[], const unsigned long int inIndirection[]) {
+    //     vec = vlxei64_v_f64m8(values,Indirection);
+    //     return *this;
+    // }
 
     inline InaVecRISCV& setFromIndirectArray(const double values[], const int inIndirection[]) {
         vec = vlxei64_v_f64m8(values,Indirection);
@@ -253,32 +253,23 @@ public:
     }
 // TODO a faire pour la suite
 
-    inline InaVecSXA& setFromIndirect2DArray(const double inArray[], const long int inIndirection1[],
-                                 const int inLeadingDimension, const long int inIndirection2[]){
-        __vr offset = _vel_vaddsl_vvvl(_vel_vld_vssl(8, inIndirection2, 256),
-                     _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
-                                      _vel_vld_vssl(8, inIndirection1, 256),
-                                      256),256);
-        __vr address = _vel_vsfa_vvssl(offset, 3, reinterpret_cast<unsigned long>(inArray), 256);
-        vec = _vel_vgt_vvssl(address, 0, 0, 256);
-        return *this;
-    }
+    // inline InaVecSXA& setFromIndirect2DArray(const double inArray[], const long int inIndirection1[],
+    //                              const int inLeadingDimension, const long int inIndirection2[]){
+    //     __vr offset = _vel_vaddsl_vvvl(_vel_vld_vssl(8, inIndirection2, 256),
+    //                  _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
+    //                                   _vel_vld_vssl(8, inIndirection1, 256),
+    //                                   256),256);
+    //     __vr address = _vel_vsfa_vvssl(offset, 3, reinterpret_cast<unsigned long>(inArray), 256);
+    //     vec = _vel_vgt_vvssl(address, 0, 0, 256);
+    //     return *this;
+    // }
 
     inline InaVecSXA& setFromIndirect2DArray(const double inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
-        __vr offset1 = _vel_vldu_vssl(4, inIndirection1, 256);
-        offset1 = _vel_vsrl_vvsl(offset1, 32, 256);
+        vec = vlxei64_v_f64m8(inArray,vfadd_vv_f64m8(
+          vfmul_vf_f64m8(vle64ff_v_f64m8(inIndirection1,32),inLeadingDimension),vle64ff_v_f64m8(inIndirection2,32)
+        ));
 
-        __vr offset2 = _vel_vldu_vssl(4, inIndirection2, 256);
-        offset2 = _vel_vsrl_vvsl(offset2, 32, 256);
-
-        __vr offset = _vel_vaddsl_vvvl(offset2,
-                     _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
-                                      offset1,
-                                      256),256);
-
-        __vr address = _vel_vsfa_vvssl(offset, 3, reinterpret_cast<unsigned long>(inArray), 256);
-        vec = _vel_vgt_vvssl(address, 0, 0, 256);
         return *this;
     }
 
@@ -293,7 +284,7 @@ public:
 
     // Acce to individual values
     inline double at(const int index) const {
-        return vec[i];
+        return vec[index];
     }
 
     // Horizontal operation
@@ -413,7 +404,7 @@ public:
     }
 
     inline InaVecRISCV abs() const {
-      return vfabs_v_f64m8(vec);
+        return vfabs_v_f64m8(vec);
     }
 
     inline InaVecRISCV floor() const {
