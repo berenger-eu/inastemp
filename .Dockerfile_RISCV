@@ -1,0 +1,38 @@
+# Use an official Python runtime as a parent image
+FROM ubuntu:18.04
+
+RUN apt-get update \
+    && apt-get install -y apt-transport-https \
+    && apt-get install -y wget \
+    && apt-get install -y g++-8 \
+    && apt-get install -y git \
+    && apt-get install -y make \
+    && apt-get install -y pkg-config
+
+RUN apt-get install -y autoconf automake autotools-dev curl python3 libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev
+
+RUN apt-get install -y build-essential zlib1g-dev pkg-config libglib2.0-dev binutils-dev libboost-all-dev autoconf libtool libssl-dev libpixman-1-dev libpython-dev python-pip python-capstone virtualenv
+
+RUN git clone --depth=1 --recursive https://github.com/riscv/riscv-gnu-toolchain -b rvv-intrinsic \
+    && cd /riscv-gnu-toolchain/  \
+    && ./configure --with-arch=rv64gcv_zfh --prefix=/riscv-install \
+    && make newlib build-qemu
+    
+
+
+# To rebuild and update the repo:
+# - Make sure there are not images: sudo docker images
+# - Remove all images: sudo docker rmi --force c7885369373a
+# - Build the new image: sudo docker build -t riscv .
+# - Tag it: sudo docker tag 257399324d18 berenger/riscv:latest
+# - Push it: sudo docker push berenger/riscv
+# - Test it: sudo docker exec -it berenger/riscv:latest /bin/bash
+#            or sudo docker run -it berenger/riscv:latest /bin/bash
+# https://www.reddit.com/r/RISCV/comments/ieedmd/gnu_toolchain_with_riscv_vector_intrinsic_support/?sort=old
+
+RUN apt-get install nano
+
+RUN apt-get update \
+ && apt-get -y --no-install-recommends install \
+    cmake \
+    ccmake
