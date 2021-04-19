@@ -297,6 +297,7 @@ When using armie, Inastemp looks for `armie`, therefore you must update your pat
 export PATH=/PATH-TO-ARMIE-BIN/:$PATH
 // On ubuntu if sde is not installed in the system folder, I used
 sudo update-alternatives --install /usr/bin/armie armie /PATH-TO-ARMIE-BIN/armie 1
+```
 
 ## Simple Examples
 
