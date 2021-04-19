@@ -1,4 +1,5 @@
 #include <riscv_vector.h>
+#include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
 
