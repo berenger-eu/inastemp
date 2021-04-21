@@ -4,6 +4,8 @@
 ###########################################################################
 cmake_minimum_required (VERSION 2.8.3 FATAL_ERROR)
 
+SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+SET(CMAKE_SHARED_LIBRARy_LINK_CXX_FLAGS "")
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 #===========================================================================
@@ -159,7 +161,6 @@ elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "RISCV")
     # All types from worse to best (ADD-NEW-HERE)
     set(ALL_TYPES "RISCV")
     set(RISCV_CPU_RULES "")
-
     set(INASTEMP_USE_SCALAR ON)
 else()
     if($ENV{VERBOSE})

@@ -82,7 +82,7 @@ elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "AURORA")
 
     set(ALL_TYPES "SXA")
 elseif(${CUSTOM_SYSTEM_PROCESSOR} STREQUAL "RISCV")
-    SET( ARCH_NATIVE_FLAG "-O2" CACHE STRING "Additional flag for the compiler capacities detection such as -target ve-linux -v for example"  )
+    SET( ARCH_NATIVE_FLAG "" CACHE STRING "Additional flag for the compiler capacities detection such as -target ve-linux -v for example"  )
     set(RISCV_FLAGS "${ARCH_NATIVE_FLAG}")
 
     set(ALL_TYPES "RISCV")
