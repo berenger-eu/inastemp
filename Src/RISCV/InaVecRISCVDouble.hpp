@@ -399,7 +399,7 @@ public:
             tabIndex[i] = 0;
         const vuint64m8_t index = vle64_v_u64m8(tabIndex);
         const double positif = 1.0;
-        const vfloat64m8_t one = vlxei64_v_f64m8(&one,index);
+        const vfloat64m8_t one = vlxei64_v_f64m8(&positif,index);
         return  vfsqrt_v_f64m8(vfdiv_vv_f64m8(one, vec));
     }
 
@@ -414,7 +414,8 @@ public:
         vint64m8_t vecConvLongInt = vfcvt_rtz_x_f_v_i64m8(valuesInIntervals);
         vfloat64m8_t vecConvLongIntDouble = vfcvt_f_x_v_f64m8(vecConvLongInt);
         vbool8_t maskPositive = vmflt_vf_f64m8_b8(vec,0);
-        return vmerge_vvm_f64m8(maskPositive, vecConvLongIntDouble, vfsub_vv_f64m8(vecConvLongIntDouble,1.0));
+        const double one = 1.0;
+        return vmerge_vvm_f64m8(maskPositive, vecConvLongIntDouble, vfsub_vv_f64m8(vecConvLongIntDouble,&one));
     }
 
     inline InaVecRISCV signOf() const {
@@ -443,7 +444,7 @@ public:
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
-        vfloat64m8_t signPositive = vlxei64_v_f64m8(positif,index);
+        vfloat64m8_t signPositive = vlxei64_v_f64m8(&positif,index);
 
         return vfmerge_vfm_f64m8(maskPositive,signPositive,0);
     }
@@ -469,7 +470,7 @@ public:
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
-        vfloat64m8_t signPositive = vlxei64_v_f64m8(positif,index);
+        vfloat64m8_t signPositive = vlxei64_v_f64m8(&positif,index);
 
         return vfmerge_vfm_f64m8(maskPositive,signPositive,0);
     }
@@ -495,7 +496,7 @@ public:
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
-        vfloat64m8_t signEqual = vlxei64_v_f64m8(Equal,index);
+        vfloat64m8_t signEqual = vlxei64_v_f64m8(&Equal,index);
 
         return vfmerge_vfm_f64m8(maskEqual,signEqual,0);
     }
@@ -508,7 +509,7 @@ public:
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
-        vfloat64m8_t signNotEqual = vlxei64_v_f64m8(NotEqual,index);
+        vfloat64m8_t signNotEqual = vlxei64_v_f64m8(&NotEqual,index);
 
         return vfmerge_vfm_f64m8(maskNotEqual,signNotEqual,0);
     }
