@@ -248,7 +248,7 @@ public:
     // }
 
     inline InaVecRISCV& setFromIndirectArray(const double values[], const int inIndirection[]) {
-        vec = vlxei64_v_f64m8(values,Indirection);
+        vec = vlxei64_v_f64m8(values,inIndirection);
         return *this;
     }
 // TODO a faire pour la suite
@@ -414,7 +414,7 @@ public:
         vint64m8_t vecConvLongInt = vfcvt_rtz_x_f_v_i64m8(valuesInIntervals);
         vfloat64m8_t vecConvLongIntDouble = vfcvt_f_x_v_f64m8(vecConvLongInt);
         vbool8_t maskPositive = vmflt_vf_f64m8_b8(vec,0);
-        return vmerge_vvm_f64m8(maskPositive, vecConvLongIntDouble, vfsub_vv_f64m8(vecConvLongIntDouble,1.0));
+        return vfmerge_vvm_f64m8(maskPositive, vecConvLongIntDouble, vfsub_vv_f64m8(vecConvLongIntDouble,1.0));
     }
 
     inline InaVecRISCV signOf() const {
@@ -431,7 +431,7 @@ public:
         vfloat64m8_t signPositive = vlxei64_v_f64m8(&positif,index);
         vfloat64m8_t signNegative = vlxei64_v_f64m8(&negatif,index);
 
-        return vmerge_vvm_f64m8(maskNegative,signNegative,
+        return vfmerge_vvm_f64m8(maskNegative,signNegative,
             vfmerge_vfm_f64m8(maskPositive,signPositive,0));
     }
 
@@ -458,7 +458,7 @@ public:
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
         vfloat64m8_t signNegative = vlxei64_v_f64m8(&negatif,index);
 
-        return vmerge_vfm_f64m8(maskNegative,signNegative,0);
+        return vfmerge_vfm_f64m8(maskNegative,signNegative,0);
     }
 
     inline InaVecRISCV isPositiveStrict() const {
@@ -484,7 +484,7 @@ public:
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
         vfloat64m8_t signNegative = vlxei64_v_f64m8(&negatif,index);
 
-        return vmerge_vfm_f64m8(maskNegative,signNegative,0);
+        return vfmerge_vfm_f64m8(maskNegative,signNegative,0);
     }
 
     inline InaVecRISCV isZero() const {
@@ -578,7 +578,7 @@ public:
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
         vfloat64m8_t vecOne = vlxei64_v_f64m8(&one,index);
 
-        return vmerge_vvm_f64m8(mask,vecOne,vecZero);
+        return vfmerge_vvm_f64m8(mask,vecOne,vecZero);
     }
 
     inline static InaVecRISCV IsLower(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -593,7 +593,7 @@ public:
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
         vfloat64m8_t vecOne = vlxei64_v_f64m8(&one,index);
 
-        return vmerge_vvm_f64m8(mask,vecOne,vecZero);
+        return vfmerge_vvm_f64m8(mask,vecOne,vecZero);
     }
 
     inline static InaVecRISCV IsGreaterOrEqual(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -608,7 +608,7 @@ public:
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
         vfloat64m8_t vecOne = vlxei64_v_f64m8(&one,index);
 
-        return vmerge_vvm_f64m8(mask,vecOne,vecZero);
+        return vfmerge_vvm_f64m8(mask,vecOne,vecZero);
     }
 
     inline static InaVecRISCV IsGreater(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -623,7 +623,7 @@ public:
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
         vfloat64m8_t vecOne = vlxei64_v_f64m8(&one,index);
 
-        return vmerge_vvm_f64m8(mask,vecOne,vecZero);
+        return vfmerge_vvm_f64m8(mask,vecOne,vecZero);
     }
 
     inline static InaVecRISCV IsEqual(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -638,7 +638,7 @@ public:
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
         vfloat64m8_t vecOne = vlxei64_v_f64m8(&one,index);
 
-        return vmerge_vvm_f64m8(mask,vecOne,vecZero);
+        return vfmerge_vvm_f64m8(mask,vecOne,vecZero);
     }
 
     inline static InaVecRISCV IsNotEqual(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -653,7 +653,7 @@ public:
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
         vfloat64m8_t vecOne = vlxei64_v_f64m8(&one,index);
 
-        return vmerge_vvm_f64m8(mask,vecOne,vecZero);
+        return vfmerge_vvm_f64m8(mask,vecOne,vecZero);
     }
 
     inline static InaVecMaskRISCV<double> IsLowerOrEqualMask(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -700,7 +700,7 @@ public:
         return "InaVecRISCV<double>";
     }
 
-    inline static InaIfElse< InaVecRISCV<double> >::ThenClass If(const InaVecMaskRIS<double>& inTest) {
+    inline static InaIfElse< InaVecRISCV<double> >::ThenClass If(const InaVecMaskRISCV<double>& inTest) {
        return InaIfElse< InaVecRISCV<double> >::IfClass().If(inTest);
     }
 
