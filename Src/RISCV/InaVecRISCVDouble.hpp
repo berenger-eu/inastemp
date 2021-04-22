@@ -326,18 +326,18 @@ public:
 
     inline InaVecRISCV exp() const {
 
-        const float64m8_t COEFF_LOG2E = InaFastExp::CoeffLog2E();
-        const float64m8_t COEFF_A     = InaFastExp::CoeffA64();
-        const float64m8_t COEFF_B     = InaFastExp::CoeffB64();
-        const float64m8_t COEFF_P5_X  = InaFastExp::GetCoefficient9_8();
-        const float64m8_t COEFF_P5_Y  = InaFastExp::GetCoefficient9_7();
-        const float64m8_t COEFF_P5_Z  = InaFastExp::GetCoefficient9_6();
-        const float64m8_t COEFF_P5_A  = InaFastExp::GetCoefficient9_5();
-        const float64m8_t COEFF_P5_B  = InaFastExp::GetCoefficient9_4();
-        const float64m8_t COEFF_P5_C  = InaFastExp::GetCoefficient9_3();
-        const float64m8_t COEFF_P5_D  = InaFastExp::GetCoefficient9_2();
-        const float64m8_t COEFF_P5_E  = InaFastExp::GetCoefficient9_1();
-        const float64m8_t COEFF_P5_F  = InaFastExp::GetCoefficient9_0();
+        const float64_t COEFF_LOG2E = InaFastExp::CoeffLog2E();
+        const float64_t COEFF_A     = InaFastExp::CoeffA64();
+        const float64_t COEFF_B     = InaFastExp::CoeffB64();
+        const float64_t COEFF_P5_X  = InaFastExp::GetCoefficient9_8();
+        const float64_t COEFF_P5_Y  = InaFastExp::GetCoefficient9_7();
+        const float64_t COEFF_P5_Z  = InaFastExp::GetCoefficient9_6();
+        const float64_t COEFF_P5_A  = InaFastExp::GetCoefficient9_5();
+        const float64_t COEFF_P5_B  = InaFastExp::GetCoefficient9_4();
+        const float64_t COEFF_P5_C  = InaFastExp::GetCoefficient9_3();
+        const float64_t COEFF_P5_D  = InaFastExp::GetCoefficient9_2();
+        const float64_t COEFF_P5_E  = InaFastExp::GetCoefficient9_1();
+        const float64_t COEFF_P5_F  = InaFastExp::GetCoefficient9_0();
 
         vfloat64m8_t x = vfmul_vf_f64m8(vec, COEFF_LOG2E);
 
@@ -364,13 +364,13 @@ public:
 
     inline InaVecRISCV expLowAcc() const {
 
-        const float64m8_t COEFF_LOG2E = InaFastExp::CoeffLog2E();
-        const float64m8_t COEFF_A     = InaFastExp::CoeffA64();
-        const float64m8_t COEFF_B     = InaFastExp::CoeffB64();
-        const float64m8_t COEFF_P5_C  = InaFastExp::GetCoefficient4_3();
-        const float64m8_t COEFF_P5_D  = InaFastExp::GetCoefficient4_2();
-        const float64m8_t COEFF_P5_E  = InaFastExp::GetCoefficient4_1();
-        const float64m8_t COEFF_P5_F  = InaFastExp::GetCoefficient4_0();
+        const float64_t COEFF_LOG2E = InaFastExp::CoeffLog2E();
+        const float64_t COEFF_A     = InaFastExp::CoeffA64();
+        const float64_t COEFF_B     = InaFastExp::CoeffB64();
+        const float64_t COEFF_P5_C  = InaFastExp::GetCoefficient4_3();
+        const float64_t COEFF_P5_D  = InaFastExp::GetCoefficient4_2();
+        const float64_t COEFF_P5_E  = InaFastExp::GetCoefficient4_1();
+        const float64_t COEFF_P5_F  = InaFastExp::GetCoefficient4_0();
 
         vfloat64m8_t x = vfmul_vf_f64m8(vec, COEFF_LOG2E);
 
