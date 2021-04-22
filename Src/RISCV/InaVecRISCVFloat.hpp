@@ -202,7 +202,7 @@ public:
     // Constructor from scalar
     inline /*not explicit*/ InaVecRISCV(const float val)
         : InaVecRISCV() {
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
@@ -210,7 +210,7 @@ public:
     }
 
     inline InaVecRISCV& operator=(const float val){
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
@@ -219,7 +219,7 @@ public:
     }
 
     inline void setFromScalar(const float val){
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
