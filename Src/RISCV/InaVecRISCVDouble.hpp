@@ -715,7 +715,7 @@ public:
 
     inline static InaVecRISCV IfFalse(const InaVecMaskRISCV<double>& inMask, const InaVecRISCV& inIfFalse) {
         const double zero = 0.0;
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
