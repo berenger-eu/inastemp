@@ -578,7 +578,7 @@ public:
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
         vfloat64m8_t vecOne = vlxei64_v_f64m8(&one,index);
 
-        return vfmerge_vvm_f64m8(mask,vecOne,vecZero);
+        return vmerge_vvm_f64m8(mask,vecOne,vecZero);
     }
 
     inline static InaVecRISCV IsLower(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -593,7 +593,7 @@ public:
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
         vfloat64m8_t vecOne = vlxei64_v_f64m8(&one,index);
 
-        return vfmerge_vvm_f64m8(mask,vecOne,vecZero);
+        return vmerge_vvm_f64m8(mask,vecOne,vecZero);
     }
 
     inline static InaVecRISCV IsGreaterOrEqual(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -608,7 +608,7 @@ public:
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
         vfloat64m8_t vecOne = vlxei64_v_f64m8(&one,index);
 
-        return vfmerge_vvm_f64m8(mask,vecOne,vecZero);
+        return vmerge_vvm_f64m8(mask,vecOne,vecZero);
     }
 
     inline static InaVecRISCV IsGreater(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -638,7 +638,7 @@ public:
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
         vfloat64m8_t vecOne = vlxei64_v_f64m8(&one,index);
 
-        return vfmerge_vvm_f64m8(mask,vecOne,vecZero);
+        return vmerge_vvm_f64m8(mask,vecOne,vecZero);
     }
 
     inline static InaVecRISCV IsNotEqual(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -653,7 +653,7 @@ public:
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
         vfloat64m8_t vecOne = vlxei64_v_f64m8(&one,index);
 
-        return vfmerge_vvm_f64m8(mask,vecOne,vecZero);
+        return vmerge_vvm_f64m8(mask,vecOne,vecZero);
     }
 
     inline static InaVecMaskRISCV<double> IsLowerOrEqualMask(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
