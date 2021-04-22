@@ -91,7 +91,7 @@ public:
     inline bool isAllFalse() const{
         return vpopc_m_b4(mask) == 0;
     }
-    
+
     // Float args methods
     inline static InaVecMaskRISCV And(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
         return vmand_mm_b4(inMask1.mask,inMask2.mask);
@@ -250,7 +250,7 @@ public:
     //     __vr offset = _vel_vld_vssl(8, inIndirection, 256);
     //     __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(values), 256);
     //     vec = _vel_vgtu_vvssl(address, 0, 0, 256);
-    // 
+    //
     //     return *this;
     // }
 
@@ -268,7 +268,7 @@ public:
     //     __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(inArray), 256);
     //     vec = _vel_vgtu_vvssl(address, 0, 0, 256);
     //     return *this;
-    // 
+    //
     // }
 
     inline InaVecRISCV& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
@@ -333,18 +333,18 @@ public:
 
     inline InaVecRISCV exp() const {
 
-        const float32m8_t COEFF_LOG2E = InaFastExp::CoeffLog2E();
-        const float32m8_t COEFF_A     = InaFastExp::CoeffA64();
-        const float32m8_t COEFF_B     = InaFastExp::CoeffB64();
-        const float32m8_t COEFF_P5_X  = InaFastExp::GetCoefficient9_8();
-        const float32m8_t COEFF_P5_Y  = InaFastExp::GetCoefficient9_7();
-        const float32m8_t COEFF_P5_Z  = InaFastExp::GetCoefficient9_6();
-        const float32m8_t COEFF_P5_A  = InaFastExp::GetCoefficient9_5();
-        const float32m8_t COEFF_P5_B  = InaFastExp::GetCoefficient9_4();
-        const float32m8_t COEFF_P5_C  = InaFastExp::GetCoefficient9_3();
-        const float32m8_t COEFF_P5_D  = InaFastExp::GetCoefficient9_2();
-        const float32m8_t COEFF_P5_E  = InaFastExp::GetCoefficient9_1();
-        const float32m8_t COEFF_P5_F  = InaFastExp::GetCoefficient9_0();
+        const float32_t COEFF_LOG2E = InaFastExp::CoeffLog2E();
+        const float32_t COEFF_A     = InaFastExp::CoeffA64();
+        const float32_t COEFF_B     = InaFastExp::CoeffB64();
+        const float32_t COEFF_P5_X  = InaFastExp::GetCoefficient9_8();
+        const float32_t COEFF_P5_Y  = InaFastExp::GetCoefficient9_7();
+        const float32_t COEFF_P5_Z  = InaFastExp::GetCoefficient9_6();
+        const float32_t COEFF_P5_A  = InaFastExp::GetCoefficient9_5();
+        const float32_t COEFF_P5_B  = InaFastExp::GetCoefficient9_4();
+        const float32_t COEFF_P5_C  = InaFastExp::GetCoefficient9_3();
+        const float32_t COEFF_P5_D  = InaFastExp::GetCoefficient9_2();
+        const float32_t COEFF_P5_E  = InaFastExp::GetCoefficient9_1();
+        const float32_t COEFF_P5_F  = InaFastExp::GetCoefficient9_0();
 
         vfloat32m8_t x = vfmul_vf_f32m8(vec, COEFF_LOG2E);
 
@@ -371,13 +371,13 @@ public:
 
     inline InaVecRISCV expLowAcc() const {
 
-        const float32m8_t COEFF_LOG2E = InaFastExp::CoeffLog2E();
-        const float32m8_t COEFF_A     = InaFastExp::CoeffA64();
-        const float32m8_t COEFF_B     = InaFastExp::CoeffB64();
-        const float32m8_t COEFF_P5_C  = InaFastExp::GetCoefficient4_3();
-        const float32m8_t COEFF_P5_D  = InaFastExp::GetCoefficient4_2();
-        const float32m8_t COEFF_P5_E  = InaFastExp::GetCoefficient4_1();
-        const float32m8_t COEFF_P5_F  = InaFastExp::GetCoefficient4_0();
+        const float32_t COEFF_LOG2E = InaFastExp::CoeffLog2E();
+        const float32_t COEFF_A     = InaFastExp::CoeffA64();
+        const float32_t COEFF_B     = InaFastExp::CoeffB64();
+        const float32_t COEFF_P5_C  = InaFastExp::GetCoefficient4_3();
+        const float32_t COEFF_P5_D  = InaFastExp::GetCoefficient4_2();
+        const float32_t COEFF_P5_E  = InaFastExp::GetCoefficient4_1();
+        const float32_t COEFF_P5_F  = InaFastExp::GetCoefficient4_0();
 
         vfloat32m8_t x = vfmul_vf_f32m8(vec, COEFF_LOG2E);
 
@@ -401,12 +401,12 @@ public:
 
     inline InaVecRISCV rsqrt() const {
       // We can use vfrsqrt7_v_f32m8_t
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<int(GetVecLength());i++)
             tabIndex[i] = 0;
         const vuint32m8_t index = vle32_v_u32m8(tabIndex);
-
-        const vfloat32m8_t one = vlxei32_v_f32m8(1.0,index);
+        const float positif = 1.0;
+        const vfloat32m8_t one = vlxei32_v_f32m8(&positif,index);
         return  vfsqrt_v_f32m8(vfdiv_vv_f32m8(one, vec));
     }
 
@@ -415,13 +415,14 @@ public:
     }
 
     inline InaVecRISCV floor() const {
+        const float positif = 1.0;
         vfloat32m8_t valuesInIntervals = vfmin_vf_f32m8(
                                     vfmax_vf_f32m8( vec,double(std::numeric_limits<long int>::min())),
                                     double(std::numeric_limits<long int>::max()));
         vint32m8_t vecConvLongInt = vfcvt_rtz_x_f_v_i32m8(valuesInIntervals);
         vfloat32m8_t vecConvLongIntDouble = vfcvt_f_x_v_f32m8(vecConvLongInt);
         vbool4_t maskPositive = vmflt_vf_f32m8_b4(vec,0);
-        return vmerge_vvm_f32m8(maskPositive, vecConvLongIntDouble, vfsub_vv_f32m8(vecConvLongIntDouble,1.0));
+        return vmerge_vvm_f32m8(maskPositive, vecConvLongIntDouble, vfsub_vf_f32m8(vecConvLongIntDouble,&positif));
     }
 
     inline InaVecRISCV signOf() const {
@@ -430,7 +431,7 @@ public:
         const float positif = 1.0;
         const float negatif = -1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
@@ -446,11 +447,11 @@ public:
         vbool4_t maskPositive = vmfge_vf_f32m8_b4(vec,0);
         const float positif = 1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
-        vfloat32m8_t signPositive = vlxei32_v_f32m8(1,index);
+        vfloat32m8_t signPositive = vlxei32_v_f32m8(&positif,index);
 
         return vfmerge_vfm_f32m8(maskPositive,signPositive,0);
     }
@@ -459,24 +460,24 @@ public:
         vbool4_t maskNegative = vmfle_vf_f32m8_b4(vec,0);
         const float negatif = -1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
         vfloat32m8_t signNegative = vlxei32_v_f32m8(&negatif,index);
 
-        return vmerge_vfm_f32m8(maskNegative,signNegative,0);
+        return vfmerge_vfm_f32m8(maskNegative,signNegative,0);
     }
 
     inline InaVecRISCV isPositiveStrict() const {
         vbool4_t maskPositive = vmfgt_vf_f32m8_b4(vec,0);
         const float positif = 1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
-        vfloat32m8_t signPositive = vlxei32_v_f32m8(1,index);
+        vfloat32m8_t signPositive = vlxei32_v_f32m8(&positif,index);
 
         return vfmerge_vfm_f32m8(maskPositive,signPositive,0);
     }
@@ -485,24 +486,24 @@ public:
         vbool4_t maskNegative = vmflt_vf_f32m8_b4(vec,0);
         const float negatif = -1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
         vfloat32m8_t signNegative = vlxei32_v_f32m8(&negatif,index);
 
-        return vmerge_vfm_f32m8(maskNegative,signNegative,0);
+        return vfmerge_vfm_f32m8(maskNegative,signNegative,0);
     }
 
     inline InaVecRISCV isZero() const {
         vbool4_t maskEqual = vmfeq_vf_f32m8_b4(vec,0);
         const float Equal = 1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
-        vfloat32m8_t signEqual = vlxei32_v_f32m8(1,index);
+        vfloat32m8_t signEqual = vlxei32_v_f32m8(&Equal,index);
 
         return vfmerge_vfm_f32m8(maskEqual,signEqual,0);
     }
@@ -511,11 +512,11 @@ public:
         vbool4_t maskNotEqual = vmfne_vf_f32m8_b4(vec,0);
         const float NotEqual = 1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
-        vfloat32m8_t signNotEqual = vlxei32_v_f32m8(1,index);
+        vfloat32m8_t signNotEqual = vlxei32_v_f32m8(&NotEqual,index);
 
         return vfmerge_vfm_f32m8(maskNotEqual,signNotEqual,0);
     }
@@ -547,7 +548,7 @@ public:
     // Static basic methods
     inline static InaVecRISCV GetZero() {
         const float zero = 0.0;
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
@@ -557,7 +558,7 @@ public:
 
     inline static InaVecRISCV GetOne() {
         const float one = 1.0;
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
@@ -578,7 +579,7 @@ public:
         const float zero = 0.0;
         const float one = 1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
@@ -593,7 +594,7 @@ public:
         const float zero = 0.0;
         const float one = 1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
@@ -608,7 +609,7 @@ public:
         const float zero = 0.0;
         const float one = 1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
@@ -623,7 +624,7 @@ public:
         const float zero = 0.0;
         const float one = 1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
@@ -638,7 +639,7 @@ public:
         const float zero = 0.0;
         const float one = 1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
@@ -653,7 +654,7 @@ public:
         const float zero = 0.0;
         const float one = 1.0;
 
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
@@ -712,7 +713,7 @@ public:
     }
 
     inline static InaVecRISCV IfElse(const InaVecMaskRISCV<float>& inMask, const InaVecRISCV& inIfTrue, const InaVecRISCV& inIfFalse) {
-        return vfmerge_vvm_f32m8(inMask,inIfTrue.vec,inIfFalse.vec);
+        return vmerge_vvm_f32m8(inMask,inIfTrue.vec,inIfFalse.vec);
     }
 
     inline static InaVecRISCV IfTrue(const InaVecMaskRISCV<float>& inMask, const InaVecRISCV& inIfTrue) {
@@ -721,14 +722,14 @@ public:
 
     inline static InaVecRISCV IfFalse(const InaVecMaskRISCV<float>& inMask, const InaVecRISCV& inIfFalse) {
         const float zero = 0.0;
-        uint32_t tabIndex [GetVecLength()];
+        uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint32m8_t index = vle32_v_u32m8(tabIndex);
         vfloat32m8_t vecZero = vlxei32_v_f32m8(&zero,index);
-        return vfmerge_vvm_f32m8(inMask,vecZero,inIfFalse.vec);
+        return vmerge_vvm_f32m8(inMask,vecZero,inIfFalse.vec);
     }
-    
+
     // Inner operators
     inline InaVecRISCV<float>& operator+=(const InaVecRISCV<float>& inVec){
         vec = vfadd_vv_f32m8(vec,inVec.vec);
