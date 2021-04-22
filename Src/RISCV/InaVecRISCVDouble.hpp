@@ -415,7 +415,7 @@ public:
         vfloat64m8_t vecConvLongIntDouble = vfcvt_f_x_v_f64m8(vecConvLongInt);
         vbool8_t maskPositive = vmflt_vf_f64m8_b8(vec,0);
         const double one = 1.0;
-        return vmerge_vvm_f64m8(maskPositive, vecConvLongIntDouble, vfsub_vv_f64m8(vecConvLongIntDouble,&one));
+        return vmerge_vvm_f64m8(maskPositive, vecConvLongIntDouble, vfsub_vf_f64m8(vecConvLongIntDouble,&one));
     }
 
     inline InaVecRISCV signOf() const {
