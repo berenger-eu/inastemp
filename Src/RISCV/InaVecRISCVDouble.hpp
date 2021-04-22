@@ -623,7 +623,7 @@ public:
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
         vfloat64m8_t vecOne = vlxei64_v_f64m8(&one,index);
 
-        return vfmerge_vvm_f64m8(mask,vecOne,vecZero);
+        return vmerge_vvm_f64m8(mask,vecOne,vecZero);
     }
 
     inline static InaVecRISCV IsEqual(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -719,7 +719,7 @@ public:
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
-        return vfmerge_vvm_f64m8(inMask,vecZero,inIfFalse.vec);
+        return vmerge_vvm_f64m8(inMask,vecZero,inIfFalse.vec);
     }
 
     // Inner operators
