@@ -705,7 +705,7 @@ public:
     }
 
     inline static InaVecRISCV IfElse(const InaVecMaskRISCV<double>& inMask, const InaVecRISCV& inIfTrue, const InaVecRISCV& inIfFalse) {
-        return vfmerge_vvm_f64m8(inMask,inIfTrue.vec,inIfFalse.vec);
+        return vmerge_vvm_f64m8(inMask,inIfTrue.vec,inIfFalse.vec);
     }
 
     inline static InaVecRISCV IfTrue(const InaVecMaskRISCV<double>& inMask, const InaVecRISCV& inIfTrue) {
