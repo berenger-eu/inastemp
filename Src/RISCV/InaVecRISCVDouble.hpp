@@ -198,7 +198,7 @@ public:
     // Constructor from scalar
     inline /*not explicit*/ InaVecRISCV(const double val)
         : InaVecRISCV() {
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -206,7 +206,7 @@ public:
     }
 
     inline InaVecRISCV& operator=(const double val){
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -215,7 +215,7 @@ public:
     }
 
     inline void setFromScalar(const double val){
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -394,7 +394,7 @@ public:
 
     inline InaVecRISCV rsqrt() const {
       // We can use vfrsqrt7_v_f64m8_t
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<int(GetVecLength());i++)
             tabIndex[i] = 0;
         const vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -424,7 +424,7 @@ public:
         const double positif = 1.0;
         const double negatif = -1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -440,7 +440,7 @@ public:
         vbool8_t maskPositive = vmfge_vf_f64m8_b8(vec,0);
         const double positif = 1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -453,7 +453,7 @@ public:
         vbool8_t maskNegative = vmfle_vf_f64m8_b8(vec,0);
         const double negatif = -1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -466,7 +466,7 @@ public:
         vbool8_t maskPositive = vmfgt_vf_f64m8_b8(vec,0);
         const double positif = 1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -479,7 +479,7 @@ public:
         vbool8_t maskNegative = vmflt_vf_f64m8_b8(vec,0);
         const double negatif = -1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -492,7 +492,7 @@ public:
         vbool8_t maskEqual = vmfeq_vf_f64m8_b8(vec,0);
         const double Equal = 1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -505,7 +505,7 @@ public:
         vbool8_t maskNotEqual = vmfne_vf_f64m8_b8(vec,0);
         const double NotEqual = 1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -541,7 +541,7 @@ public:
     // Static basic methods
     inline static InaVecRISCV GetZero() {
         const double zero = 0.0;
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -551,7 +551,7 @@ public:
 
     inline static InaVecRISCV GetOne() {
         const double one = 1.0;
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -572,7 +572,7 @@ public:
         const double zero = 0.0;
         const double one = 1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -587,7 +587,7 @@ public:
         const double zero = 0.0;
         const double one = 1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -602,7 +602,7 @@ public:
         const double zero = 0.0;
         const double one = 1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -617,7 +617,7 @@ public:
         const double zero = 0.0;
         const double one = 1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -632,7 +632,7 @@ public:
         const double zero = 0.0;
         const double one = 1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
@@ -647,7 +647,7 @@ public:
         const double zero = 0.0;
         const double one = 1.0;
 
-        uint64_t tabIndex [GetVecLength()];
+        uint64_t tabIndex [32];
         for (int i=0;i<GetVecLength();i++)
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
