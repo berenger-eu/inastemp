@@ -18,9 +18,9 @@
 #include <riscv_vector.h>
 #include <algorithm>
 // #include <velintrin.h>
-// #include <cmath>
-// #include <initializer_list>
-// #include <limits>
+#include <cmath>
+#include <initializer_list>
+#include <limits>
 
 // Forward declarations
 template <class RealType>
@@ -153,7 +153,7 @@ public:
     static const bool IsOfFixedSize = true;
 
     static constexpr int GetVecLength(){
-        return vsetvlmax_e64m8();
+        return int(vsetvlmax_e64m8());
     }
 
     static constexpr bool IsRealFma(){

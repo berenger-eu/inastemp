@@ -18,9 +18,9 @@
 #include <riscv_vector.h>
 #include <algorithm>
 // #include <velintrin.h>
-// #include <cmath>
-// #include <initializer_list>
-// #include <limits>
+#include <cmath>
+#include <initializer_list>
+#include <limits>
 
 // Forward declarations
 template <class RealType>
@@ -34,7 +34,6 @@ class InaVecRISCV;
 template <>
 class alignas(2048) InaVecMaskRISCV<float> {
     vbool4_t mask;
-
 public:
     // Classic constructors
     inline InaVecMaskRISCV() {
@@ -333,18 +332,18 @@ public:
 
     inline InaVecRISCV exp() const {
 
-        const float32_t COEFF_LOG2E = InaFastExp::CoeffLog2E();
-        const float32_t COEFF_A     = InaFastExp::CoeffA64();
-        const float32_t COEFF_B     = InaFastExp::CoeffB64();
-        const float32_t COEFF_P5_X  = InaFastExp::GetCoefficient9_8();
-        const float32_t COEFF_P5_Y  = InaFastExp::GetCoefficient9_7();
-        const float32_t COEFF_P5_Z  = InaFastExp::GetCoefficient9_6();
-        const float32_t COEFF_P5_A  = InaFastExp::GetCoefficient9_5();
-        const float32_t COEFF_P5_B  = InaFastExp::GetCoefficient9_4();
-        const float32_t COEFF_P5_C  = InaFastExp::GetCoefficient9_3();
-        const float32_t COEFF_P5_D  = InaFastExp::GetCoefficient9_2();
-        const float32_t COEFF_P5_E  = InaFastExp::GetCoefficient9_1();
-        const float32_t COEFF_P5_F  = InaFastExp::GetCoefficient9_0();
+        const float32_t COEFF_LOG2E = float(InaFastExp::CoeffLog2E());
+        const float32_t COEFF_A     = float(InaFastExp::CoeffA64());
+        const float32_t COEFF_B     = float(InaFastExp::CoeffB64());
+        const float32_t COEFF_P5_X  = float(InaFastExp::GetCoefficient9_8());
+        const float32_t COEFF_P5_Y  = float(InaFastExp::GetCoefficient9_7());
+        const float32_t COEFF_P5_Z  = float(InaFastExp::GetCoefficient9_6());
+        const float32_t COEFF_P5_A  = float(InaFastExp::GetCoefficient9_5());
+        const float32_t COEFF_P5_B  = float(InaFastExp::GetCoefficient9_4());
+        const float32_t COEFF_P5_C  = float(InaFastExp::GetCoefficient9_3());
+        const float32_t COEFF_P5_D  = float(InaFastExp::GetCoefficient9_2());
+        const float32_t COEFF_P5_E  = float(InaFastExp::GetCoefficient9_1());
+        const float32_t COEFF_P5_F  = float(InaFastExp::GetCoefficient9_0());
 
         vfloat32m8_t x = vfmul_vf_f32m8(vec, COEFF_LOG2E);
 
@@ -371,13 +370,13 @@ public:
 
     inline InaVecRISCV expLowAcc() const {
 
-        const float32_t COEFF_LOG2E = InaFastExp::CoeffLog2E();
-        const float32_t COEFF_A     = InaFastExp::CoeffA64();
-        const float32_t COEFF_B     = InaFastExp::CoeffB64();
-        const float32_t COEFF_P5_C  = InaFastExp::GetCoefficient4_3();
-        const float32_t COEFF_P5_D  = InaFastExp::GetCoefficient4_2();
-        const float32_t COEFF_P5_E  = InaFastExp::GetCoefficient4_1();
-        const float32_t COEFF_P5_F  = InaFastExp::GetCoefficient4_0();
+        const float32_t COEFF_LOG2E = float(InaFastExp::CoeffLog2E());
+        const float32_t COEFF_A     = float(InaFastExp::CoeffA64());
+        const float32_t COEFF_B     = float(InaFastExp::CoeffB64());
+        const float32_t COEFF_P5_C  = float(InaFastExp::GetCoefficient4_3());
+        const float32_t COEFF_P5_D  = float(InaFastExp::GetCoefficient4_2());
+        const float32_t COEFF_P5_E  = float(InaFastExp::GetCoefficient4_1());
+        const float32_t COEFF_P5_F  = float(InaFastExp::GetCoefficient4_0());
 
         vfloat32m8_t x = vfmul_vf_f32m8(vec, COEFF_LOG2E);
 
