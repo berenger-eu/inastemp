@@ -80,7 +80,8 @@ public:
 
     // Binary methods
     inline InaVecMaskRISCV Not() const{
-        return vmnot_mm_b4(mask);
+        // return vmnot_mm_b4(mask);
+        return mask;
     }
 
     inline bool isAllTrue() const{
@@ -253,7 +254,7 @@ public:
     //     return *this;
     // }
 
-    inline InaVecRISCV& setFromIndirectArray(const float values[], const int inIndirection[]) {
+    inline InaVecRISCV& setFromIndirectArray(const float values[], const unsigned int inIndirection[]) {
       vec = vlxei32_v_f32m8(values,inIndirection);
       return *this;
     }
@@ -410,7 +411,8 @@ public:
     }
 
     inline InaVecRISCV abs() const {
-        return vfabs(vec);
+        // return vfabs(vec);
+        return vec;
     }
 
     inline InaVecRISCV floor() const {

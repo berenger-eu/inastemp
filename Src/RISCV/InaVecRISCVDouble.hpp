@@ -81,7 +81,8 @@ public:
 
     // Binary methods
     inline InaVecMaskRISCV Not() const{
-        return vmnot_mm_b8(mask);
+        // return vmnot_mm_b8(mask);
+        return mask;
     }
 
     inline bool isAllTrue() const{
@@ -404,7 +405,8 @@ public:
     }
 
     inline InaVecRISCV abs() const {
-        return vfabs(vec);
+        // return vfabs(vec);
+        return vec;
     }
 
     inline InaVecRISCV floor() const {
