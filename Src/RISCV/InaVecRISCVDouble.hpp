@@ -39,7 +39,8 @@ class InaVecMaskRISCV<double> {
 public:
     // Classic constructors
     inline InaVecMaskRISCV() {
-        mask = vmxor_mm_b8(mask,mask);
+        // mask = vmxor_mm_b8(mask,mask);
+        mask = vmset_m_b8();
     }
 
     inline InaVecMaskRISCV(const InaVecMaskRISCV& inMask){
@@ -146,7 +147,7 @@ template <>
 class InaVecRISCV<double> {
 protected:
     unsigned char vecData[2048/sizeof(unsigned char)];
-    vfloat64m8_t vec;
+    vfloat64m8_t& vec;
 
 public:
     using VecRawType           = vfloat64m8_t;

@@ -34,12 +34,12 @@ class InaVecRISCV;
 template <>
 class InaVecMaskRISCV<float> {
     unsigned char maskData[2048/sizeof(unsigned char)];
-    vbool4_t mask;
+    vbool4_t& mask;
 public:
     // Classic constructors
     inline InaVecMaskRISCV() {
-        mask = vmxor_mm_b4(mask,mask);
-        //vmset_m_b4
+        // mask = vmxor_mm_b4(mask,mask);
+        mask = vmset_m_b4();
     }
 
     inline InaVecMaskRISCV(const InaVecMaskRISCV& inMask){
@@ -146,7 +146,7 @@ template <>
 class InaVecRISCV<float> {
 protected:
     unsigned char vecData[2048/sizeof(unsigned char)];
-    vfloat32m8_t vec;
+    vfloat32m8_t& vec;
 
     // static __vm256 _vel_vfmklgt_mvl_256(__vr vz, int vl){
     //     return _vel_vfmklgt_mvl(vz, vl); // __vm256();
