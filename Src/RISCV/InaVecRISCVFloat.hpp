@@ -38,6 +38,7 @@ public:
     // Classic constructors
     inline InaVecMaskRISCV() {
         mask = vmxor_mm_b4(mask,mask);
+        //vmset_m_b4
     }
 
     inline InaVecMaskRISCV(const InaVecMaskRISCV& inMask){
@@ -254,12 +255,12 @@ public:
     //     return *this;
     // }
 
-    inline InaVecRISCV& setFromIndirectArray(const float values[], const unsigned int inIndirection[]) {
-      vuint32m8_t tmp;
-      tmp = vmv_s_x_u32m8(tmp,inIndirection);
-      vec = vlxei32_v_f32m8(values,tmp);
-      return *this;
-    }
+    // inline InaVecRISCV& setFromIndirectArray(const float values[], const unsigned int inIndirection[]) {
+    //   vuint32m8_t tmp;
+    //   tmp = vmv_s_x_u32m8(tmp,inIndirection);
+    //   vec = vlxei32_v_f32m8(values,tmp);
+    //   return *this;
+    // }
 
     // inline InaVecSXA& setFromIndirect2DArray(const float inArray[], const long int inIndirection1[],
     //                              const int inLeadingDimension, const long int inIndirection2[]){
@@ -273,14 +274,14 @@ public:
     //
     // }
 
-    inline InaVecRISCV& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
-                                 const int inLeadingDimension, const int inIndirection2[]){
-        vec = vlxei32_v_f32m8(inArray,vfadd_vv_f32m8(
-          vfmul_vf_f32m8(vle32ff_v_f32m8(inIndirection1,32),inLeadingDimension),vle32ff_v_f32m8(inIndirection2,32)
-        ));
-
-        return *this;
-    }
+    // inline InaVecRISCV& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
+    //                              const int inLeadingDimension, const int inIndirection2[]){
+    //     vec = vlxei32_v_f32m8(inArray,vfadd_vv_f32m8(
+    //       vfmul_vf_f32m8(vle32ff_v_f32m8(inIndirection1,32),inLeadingDimension),vle32ff_v_f32m8(inIndirection2,32)
+    //     ));
+    //
+    //     return *this;
+    // }
 
     // Move back to array
     inline void storeInArray(float ptr[]) const {
@@ -418,14 +419,14 @@ public:
     }
 
     inline InaVecRISCV floor() const {
-        const float positif = 1.0;
+        float32_t positif = 1.0;
         vfloat32m8_t valuesInIntervals = vfmin_vf_f32m8(
                                     vfmax_vf_f32m8( vec,double(std::numeric_limits<long int>::min())),
                                     double(std::numeric_limits<long int>::max()));
         vint32m8_t vecConvLongInt = vfcvt_rtz_x_f_v_i32m8(valuesInIntervals);
         vfloat32m8_t vecConvLongIntDouble = vfcvt_f_x_v_f32m8(vecConvLongInt);
         vbool4_t maskPositive = vmflt_vf_f32m8_b4(vec,0);
-        return vmerge_vvm_f32m8(maskPositive, vecConvLongIntDouble, vfsub_vf_f32m8(vecConvLongIntDouble,&positif));
+        return vmerge_vvm_f32m8(maskPositive, vecConvLongIntDouble, vfsub_vf_f32m8(vecConvLongIntDouble,positif));
     }
 
     inline InaVecRISCV signOf() const {
@@ -755,7 +756,8 @@ public:
     }
 
     inline InaVecRISCV<float> operator-() const {
-        return vfneg_v_f32m8(vec);
+        // return vfneg_v_f32m8(vec);
+        return vec;
     }
 
     inline InaVecRISCV<float> pow(std::size_t power) const{
