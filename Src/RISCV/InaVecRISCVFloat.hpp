@@ -37,14 +37,18 @@ class InaVecMaskRISCV<float> {
     vbool4_t& mask;
 public:
     // Classic constructors
-    inline InaVecMaskRISCV() {
-        // mask = vmxor_mm_b4(mask,mask);
-        mask = vmset_m_b4();
-    }
+    // inline InaVecMaskRISCV() {
+    //     // mask = vmxor_mm_b4(mask,mask);
+    //     mask = vmset_m_b4();
+    // }
 
-    inline InaVecMaskRISCV(const InaVecMaskRISCV& inMask){
-        mask = inMask.mask;
-    }
+    // inline InaVecMaskRISCV(const InaVecMaskRISCV& inMask){
+    //     mask = inMask.mask;
+    // }
+
+    inline InaVecMaskRISCV() : mask(*reinterpret_cast<vbool4_t*>(maskData)){}
+
+    inline InaVecMaskRISCV(const InaVecMaskRISCV&) = default;
 
     inline InaVecMaskRISCV& operator=(const InaVecMaskRISCV& inMask){
         mask = inMask.mask;
@@ -167,12 +171,16 @@ public:
         return true;
     }
 
-    inline InaVecRISCV() {
-        vec = vundefined_f32m8();
-    }
-    inline InaVecRISCV(const InaVecRISCV& inVec){
-        vec = inVec.vec;
-    }
+    // inline InaVecRISCV() {
+    //     vec = vundefined_f32m8();
+    // }
+    // inline InaVecRISCV(const InaVecRISCV& inVec){
+    //     vec = inVec.vec;
+    // }
+
+    inline InaVecRISCV() : vec(*reinterpret_cast<vfloat32m8_t*>(vecData)) {}
+
+    inline InaVecRISCV(const InaVecRISCV&) = default;
 
     inline InaVecRISCV& operator=(const InaVecRISCV& inVec){
         vec = inVec.vec;
