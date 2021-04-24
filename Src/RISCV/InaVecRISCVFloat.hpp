@@ -156,7 +156,7 @@ public:
     static const bool IsOfFixedSize = true;
 
     static constexpr int GetVecLength(){
-        return  int(vsetvlmax_e32m8());
+        return 64;
     }
 
     static constexpr bool IsRealFma(){
@@ -254,7 +254,7 @@ public:
     // }
 
     inline InaVecRISCV& setFromIndirectArray(const float values[], const int inIndirection[]) {
-      vec = vlxei32_v_f32m8(values,indirection);
+      vec = vlxei32_v_f32m8(values,inIndirection);
       return *this;
     }
 

@@ -153,7 +153,7 @@ public:
     static const bool IsOfFixedSize = true;
 
     static constexpr int GetVecLength(){
-        return int(vsetvlmax_e64m8());
+        return 32;
     }
 
     static constexpr bool IsRealFma(){
