@@ -32,8 +32,9 @@ class InaVecRISCV;
 
 // Mask type
 template <>
-class alignas(256) InaVecMaskRISCV<double> {
-    vbool8_t mask;
+class InaVecMaskRISCV<double> {
+    unsigned char maskData[2048/sizeof(unsigned char)];
+    vbool8_t &mask;
 
 public:
     // Classic constructors
@@ -142,8 +143,9 @@ inline bool operator!=(const InaVecMaskRISCV<double>& inMask1, const InaVecMaskR
 
 // Vec type
 template <>
-class alignas(2048) InaVecRISCV<double> {
+class InaVecRISCV<double> {
 protected:
+    unsigned char vecData[2048/sizeof(unsigned char)];
     vfloat64m8_t vec;
 
 public:
