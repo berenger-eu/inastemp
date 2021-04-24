@@ -295,11 +295,11 @@ public:
 
     // Move back to array
     inline void storeInArray(float ptr[]) const {
-         vse32_v_f32m8(vec,ptr);
+         vse32_v_f32m8(&vec,ptr);
     }
 
     inline void storeInAlignedArray(float ptr[]) const {
-        vse32_v_f32m8(vec,ptr);
+        vse32_v_f32m8(&vec,ptr);
     }
 
     // Acce to individual values
