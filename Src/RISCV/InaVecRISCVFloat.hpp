@@ -156,7 +156,7 @@ public:
     static const bool IsOfFixedSize = true;
 
     static constexpr int GetVecLength(){
-        return  vsetvlmax_e32m8();
+        return  int(vsetvlmax_e32m8());
     }
 
     static constexpr bool IsRealFma(){
@@ -332,7 +332,7 @@ public:
 
     inline InaVecRISCV exp() const {
 
-        const float32_t COEFF_LOG2E = (float)InaFastExp::CoeffLog2E();
+        const float32_t COEFF_LOG2E = float(InaFastExp::CoeffLog2E());
         const float32_t COEFF_A     = float(InaFastExp::CoeffA64());
         const float32_t COEFF_B     = float(InaFastExp::CoeffB64());
         const float32_t COEFF_P5_X  = float(InaFastExp::GetCoefficient9_8());
