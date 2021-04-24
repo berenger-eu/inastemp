@@ -254,7 +254,7 @@ public:
     // }
 
     inline InaVecRISCV& setFromIndirectArray(const float values[], const int inIndirection[]) {
-      vec = vlxei32_v_f32m8(values,Indirection);
+      vec = vlxei32_v_f32m8(values,indirection);
       return *this;
     }
 
