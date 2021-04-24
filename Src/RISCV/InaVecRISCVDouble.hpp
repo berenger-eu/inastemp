@@ -718,11 +718,11 @@ public:
     }
 
     inline static InaVecRISCV IfElse(const InaVecMaskRISCV<double>& inMask, const InaVecRISCV& inIfTrue, const InaVecRISCV& inIfFalse) {
-        return vmerge_vvm_f64m8(inMask,inIfTrue.vec,inIfFalse.vec);
+        return vmerge_vvm_f64m8(vbool8_t(inMask),inIfTrue.vec,inIfFalse.vec);
     }
 
     inline static InaVecRISCV IfTrue(const InaVecMaskRISCV<double>& inMask, const InaVecRISCV& inIfTrue) {
-        return vfmerge_vfm_f64m8(inMask,inIfTrue.vec,0);
+        return vfmerge_vfm_f64m8(vbool8_t(inMask),inIfTrue.vec,0);
     }
 
     inline static InaVecRISCV IfFalse(const InaVecMaskRISCV<double>& inMask, const InaVecRISCV& inIfFalse) {
@@ -732,7 +732,7 @@ public:
             tabIndex[i] = 0;
         vuint64m8_t index = vle64_v_u64m8(tabIndex);
         vfloat64m8_t vecZero = vlxei64_v_f64m8(&zero,index);
-        return vmerge_vvm_f64m8(inMask,vecZero,inIfFalse.vec);
+        return vmerge_vvm_f64m8(vbool8_t(inMask),vecZero,inIfFalse.vec);
     }
 
     // Inner operators
