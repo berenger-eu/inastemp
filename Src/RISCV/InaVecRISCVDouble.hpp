@@ -32,7 +32,7 @@ class InaVecRISCV;
 
 // Mask type
 template <>
-class alignas(2048) InaVecMaskRISCV<double> {
+class alignas(256) InaVecMaskRISCV<double> {
     vbool8_t mask;
 
 public:

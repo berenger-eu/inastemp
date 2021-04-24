@@ -142,7 +142,7 @@ inline bool operator!=(const InaVecMaskRISCV<float>& inMask1, const InaVecMaskRI
 
 // Vec type
 template <>
-class alignas(2048) InaVecRISCV<float> {
+class alignas(256) InaVecRISCV<float> {
 protected:
     vfloat32m8_t vec;
 
