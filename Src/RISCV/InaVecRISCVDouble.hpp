@@ -248,10 +248,10 @@ public:
     //     return *this;
     // }
 
-    inline InaVecRISCV& setFromIndirectArray(const double values[], const int inIndirection[]) {
-        vec = vlxei64_v_f64m8(values,inIndirection);
-        return *this;
-    }
+    // inline InaVecRISCV& setFromIndirectArray(const double values[], const int inIndirection[]) {
+    //     vec = vlxei64_v_f64m8(values,inIndirection);
+    //     return *this;
+    // }
 // TODO a faire pour la suite
 
     // inline InaVecSXA& setFromIndirect2DArray(const double inArray[], const long int inIndirection1[],
@@ -265,14 +265,14 @@ public:
     //     return *this;
     // }
 
-    inline InaVecRISCV& setFromIndirect2DArray(const double inArray[], const int inIndirection1[],
-                                 const int inLeadingDimension, const int inIndirection2[]){
-        vec = vlxei64_v_f64m8(inArray,vfadd_vv_f64m8(
-          vfmul_vf_f64m8(vle64ff_v_f64m8(inIndirection1,32),inLeadingDimension),vle64ff_v_f64m8(inIndirection2,32)
-        ));
-
-        return *this;
-    }
+    // inline InaVecRISCV& setFromIndirect2DArray(const double inArray[], const int inIndirection1[],
+    //                              const int inLeadingDimension, const int inIndirection2[]){
+    //     vec = vlxei64_v_f64m8(inArray,vfadd_vv_f64m8(
+    //       vfmul_vf_f64m8(vle64ff_v_f64m8(inIndirection1,32),inLeadingDimension),vle64ff_v_f64m8(inIndirection2,32)
+    //     ));
+    //
+    //     return *this;
+    // }
 
     // Move back to array
     inline void storeInArray(double ptr[]) const {
@@ -416,8 +416,8 @@ public:
         vint64m8_t vecConvLongInt = vfcvt_rtz_x_f_v_i64m8(valuesInIntervals);
         vfloat64m8_t vecConvLongIntDouble = vfcvt_f_x_v_f64m8(vecConvLongInt);
         vbool8_t maskPositive = vmflt_vf_f64m8_b8(vec,0);
-        const double one = 1.0;
-        return vmerge_vvm_f64m8(maskPositive, vecConvLongIntDouble, vfsub_vf_f64m8(vecConvLongIntDouble,&one));
+        float64_t one = 1.0;
+        return vmerge_vvm_f64m8(maskPositive, vecConvLongIntDouble, vfsub_vf_f64m8(vecConvLongIntDouble,one));
     }
 
     inline InaVecRISCV signOf() const {
@@ -747,7 +747,8 @@ public:
     }
 
     inline InaVecRISCV<double> operator-() const {
-        return vfneg_v_f64m8(vec);
+        //return vfneg_v_f64m8(vec);
+        return vec;
     }
 
     inline InaVecRISCV<double> pow(std::size_t power) const{
