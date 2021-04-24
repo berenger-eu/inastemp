@@ -286,11 +286,11 @@ public:
 
     // Move back to array
     inline void storeInArray(double ptr[]) const {
-       vse64_v_f64m8(vec,ptr);
+       vse64_v_f64m8(ptr,vec);
     }
 
     inline void storeInAlignedArray(double ptr[]) const {
-        vse64_v_f64m8(vec,ptr);
+        vse64_v_f64m8(ptr,vec);
     }
 
     // Acce to individual values
@@ -576,7 +576,7 @@ public:
     }
 
     inline static InaVecRISCV Max(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
-        return vfmax_vf_f64m8( inVec1.vec, inVec2.vec);
+        return vfmax_vv_f64m8( inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecRISCV IsLowerOrEqual(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {

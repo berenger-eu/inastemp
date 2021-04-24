@@ -585,7 +585,7 @@ public:
     }
 
     inline static InaVecRISCV Max(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
-        return vfmax_vf_f32m8( inVec1.vec, inVec2.vec);
+        return vfmax_vv_f32m8( inVec1.vec, inVec2.vec);
     }
 
     inline static InaVecRISCV IsLowerOrEqual(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
