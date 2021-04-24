@@ -301,7 +301,7 @@ public:
     // Horizontal operation
     inline double horizontalSum() const {
         double sum = at(0);
-        for(int idx = 1 ; idx < int(GetVecLength()) ; ++idx){
+        for(int idx = 1 ; idx < GetVecLength() ; ++idx){
             sum+= at(idx);
         }
         return sum;
