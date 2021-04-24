@@ -404,7 +404,7 @@ public:
     }
 
     inline InaVecRISCV abs() const {
-        return vfabs_v_f64m8(vec);
+        return vfabs(vec);
     }
 
     inline InaVecRISCV floor() const {
