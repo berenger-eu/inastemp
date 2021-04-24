@@ -55,7 +55,7 @@ int main() {
     std::unique_ptr< double[] > arraySrc2(new double[Size]);
 
     // Fill source arrays with dumb values
-    for (size_t idx = 0; idx < Size; idx++) {
+    for (size_t idx = 0; idx < Size; ++idx) {
         arraySrc1[idx] = static_cast<double>(idx);
         arraySrc2[idx] = static_cast<double>(idx);
     }
