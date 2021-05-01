@@ -106,6 +106,7 @@ For example, compiling using Gcc and `-mAVX` will turn on AVX.
 The CMake file will look at the variable `${CMAKE_SYSTEM_PROCESSOR}` to detect the type of CPU.
 If for any reason, this variable is not correct, one can override it with `${CUSTOM_SYSTEM_PROCESSOR}`.
 For example, it is expected that the variable is set to `ARM` or `aarch64` for ARM based processor, but if that is not the case, then simply override the CMake value (`cmake .. -DCUSTOM_SYSTEM_PROCESSOR=ARM`).
+For example, on Isambard `VERBOSE=1 CXX=armclang++ cmake -DARCH_NATIVE_FLAG=-march=armv8.2-a+sve ..`
 
 ### CMake variables - Hardware detection (X86)
 
