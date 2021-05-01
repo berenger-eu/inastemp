@@ -585,7 +585,7 @@ public:
     }
 
     inline static InaVecSVE<double> Fma(const InaVecSVE<double>& inValAdd, const InaVecSVE<double>& inValMul1, const InaVecSVE<double>& inValMul2){
-        return svmad_f64_z(inValMul1.vec, inValMul2.vec, inValAdd.vec, svptrue_b64());
+        return svmad_f64_z(svptrue_b64(), inValMul1.vec, inValMul2.vec, inValAdd.vec);
     }
 };
 

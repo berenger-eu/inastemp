@@ -584,7 +584,7 @@ public:
     }
 
     inline static InaVecSVE<float> Fma(const InaVecSVE<float>& inValAdd, const InaVecSVE<float>& inValMul1, const InaVecSVE<float>& inValMul2){
-        return svmad_f32_z(inValMul1.vec, inValMul2.vec, inValAdd.vec, svptrue_b32());
+        return svmad_f32_z(svptrue_b32(), inValMul1.vec, inValMul2.vec, inValAdd.vec);
     }
 };
 
