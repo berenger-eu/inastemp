@@ -261,11 +261,11 @@ public:
     }
 
     inline float minInVec() const {
-        return svminv_f32(svptrue_b64(), vec);
+        return svminv_f32(svptrue_b32(), vec);
     }
 
     inline float maxInVec() const {
-        return svmaxv_f32(svptrue_b64(), vec);
+        return svmaxv_f32(svptrue_b32(), vec);
     }
 
     inline float horizontalMul() const {
