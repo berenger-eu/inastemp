@@ -295,7 +295,10 @@ public:
 
     // Acce to individual values
     inline double at(const int index) const {
-        return vec[index];
+        size_t vl = vsetvl_f64m8(32);
+        float64_t tab[32];
+        vse64_v_f64m8(tab,vector);
+        return tab[index];
     }
 
     // Horizontal operation
