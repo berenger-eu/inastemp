@@ -257,13 +257,13 @@ public:
       return *this;
     }
 
-    inline InaVecRISCV& setFromIndirectArray(const float values[], const unsigned long int inIndirection[]) {
-        // __vr offset = _vel_vld_vssl(8, inIndirection, 256);
-        // __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(values), 256);
-        // vec = _vel_vgtu_vvssl(address, 0, 0, 256);
-
-        return *this;
-    }
+    // inline InaVecRISCV& setFromIndirectArray(const float values[], const unsigned long int inIndirection[]) {
+    //     // __vr offset = _vel_vld_vssl(8, inIndirection, 256);
+    //     // __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(values), 256);
+    //     // vec = _vel_vgtu_vvssl(address, 0, 0, 256);
+    //
+    //     return *this;
+    // }
 
     inline InaVecRISCV& setFromIndirectArray(const float values[], const unsigned int inIndirection[]) {
       // vuint32m8_t tmp;
@@ -272,17 +272,17 @@ public:
       return *this;
     }
 
-    inline InaVecRISCV& setFromIndirect2DArray(const float inArray[], const long int inIndirection1[],
-                                 const int inLeadingDimension, const long int inIndirection2[]){
-        // __vr offset = _vel_vaddsl_vvvl(_vel_vld_vssl(8, inIndirection2, 256),
-        //              _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
-        //                               _vel_vld_vssl(8, inIndirection1, 256),
-        //                               256),256);
-        // __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(inArray), 256);
-        // vec = _vel_vgtu_vvssl(address, 0, 0, 256);
-        return *this;
-
-    }
+    // inline InaVecRISCV& setFromIndirect2DArray(const float inArray[], const long int inIndirection1[],
+    //                              const int inLeadingDimension, const long int inIndirection2[]){
+    //     // __vr offset = _vel_vaddsl_vvvl(_vel_vld_vssl(8, inIndirection2, 256),
+    //     //              _vel_vmulul_vvvl(_vel_vbrdl_vsl(inLeadingDimension, 256),
+    //     //                               _vel_vld_vssl(8, inIndirection1, 256),
+    //     //                               256),256);
+    //     // __vr address = _vel_vsfa_vvssl(offset, 2, reinterpret_cast<unsigned long>(inArray), 256);
+    //     // vec = _vel_vgtu_vvssl(address, 0, 0, 256);
+    //     return *this;
+    //
+    // }
 
     inline InaVecRISCV& setFromIndirect2DArray(const float inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
