@@ -304,9 +304,9 @@ public:
 
     // Acce to individual values
     inline float at(const int index) const {
-        size_t vl = vsetvl_f32m8(64);
+        vsetvl_f32m8(64);
         float32_t tab[64];
-        vse32_v_f32m8(tab,vector);
+        vse32_v_f32m8(tab,vec);
         return tab[index];
     }
 
