@@ -114,8 +114,8 @@
 #define INASTEMP_USE_RISCV
 #undef INASTEMP_STATIC_BEST_TYPE
 #define INASTEMP_STATIC_BEST_TYPE InaVecRISCV
-#include "SVE/InaVecRISCVFloat.hpp"
-#include "SVE/InaVecRISCVDouble.hpp"
+#include "RISCV/InaVecRISCVFloat.hpp"
+#include "RISCV/InaVecRISCVDouble.hpp"
 #endif
 
 
