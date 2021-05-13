@@ -280,7 +280,7 @@ public:
                                  const int inLeadingDimension, const int inIndirection2[]){
          float64_t result[32];
          for(int i=0; i<32; i++){
-             result[i] = values[inIndirection1[i] * inLeadingDimension + inIndirection2[i]];
+             result[i] = inArray[inIndirection1[i] * inLeadingDimension + inIndirection2[i]];
          }
          vec = vle64_v_f64m8(result);
          return *this;

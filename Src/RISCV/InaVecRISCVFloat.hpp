@@ -271,7 +271,7 @@ public:
                                  const int inLeadingDimension, const int inIndirection2[]){
         float32_t result[64];
         for(int i=0; i<64; i++){
-            result[i] = values[inIndirection1[i] * inLeadingDimension + inIndirection2[i]];
+            result[i] = inArray[inIndirection1[i] * inLeadingDimension + inIndirection2[i]];
         }
         vec = vle32_v_f32m8(result);
         return *this;
