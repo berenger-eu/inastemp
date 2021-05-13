@@ -464,7 +464,7 @@ public:
           values[i] = 0;
         }
         vfloat32m8_t vzero = vle32_v_f32m8(values);
-        vbool4_t maskPositive = vmfge_vv_f32m8_b4(vzero,vec);
+        vbool4_t maskPositive = vmfge_vv_f32m8_b4(vec,vzero);
 
         float32_t tabPositif [64];
         for (int i=0;i<GetVecLength();i++)
@@ -480,7 +480,7 @@ public:
           values[i] = 0;
         }
         vfloat32m8_t vzero = vle32_v_f32m8(values);
-        vbool4_t maskNegative = vmfle_vv_f32m8_b4(vzero,vec);
+        vbool4_t maskNegative = vmfle_vv_f32m8_b4(vec,vzero);
 
         float32_t tabNegatif[64];
         for (int i=0;i<GetVecLength();i++)
@@ -497,7 +497,7 @@ public:
           values[i] = 0;
         }
         vfloat32m8_t vzero = vle32_v_f32m8(values);
-        vbool4_t maskPositive = vmfgt_vv_f32m8_b4(vzero,vec);
+        vbool4_t maskPositive = vmfgt_vv_f32m8_b4(vec,vzero);
 
         float32_t tabPositif [64];
         for (int i=0;i<GetVecLength();i++)
@@ -513,7 +513,7 @@ public:
           values[i] = 0;
         }
         vfloat32m8_t vzero = vle32_v_f32m8(values);
-        vbool4_t maskNegative = vmflt_vv_f32m8_b4(vzero,vec);
+        vbool4_t maskNegative = vmflt_vv_f32m8_b4(vec,vzero);
 
         float32_t tabNegatif[64];
         for (int i=0;i<GetVecLength();i++)
