@@ -213,11 +213,11 @@ public:
     // Constructor from scalar
     inline /*not explicit*/ InaVecRISCV(const float val)
         : InaVecRISCV() {
-        uint32_t tabIndex [64];
-        for (int i=0;i<GetVecLength();i++)
-            tabIndex[i] = 0;
-        vuint32m8_t index = vle32_v_u32m8(tabIndex);
-        vec = vlxei32_v_f32m8(&val,index);
+        float32_t values [64];
+        for (int i=0;i<GetVecLength();i++){
+          values[i] = val;
+        }
+        vec = vle32_v_f32m8(values);
     }
 
     inline InaVecRISCV& operator=(const float val){
