@@ -473,7 +473,7 @@ public:
           values[i] = 0;
         }
         vfloat64m8_t vzero = vle64_v_f64m8(values);
-        vbool8_t maskPositive = vmfge_vv_f64m8_b8(vec,vzero);
+        vbool8_t maskPositive = vmfge_vv_f64m8_b8(vzero,vec);
 
         float64_t tabPositif [32];
         for (int i=0;i<GetVecLength();i++)
@@ -484,16 +484,20 @@ public:
     }
 
     inline InaVecRISCV isNegative() const {
-        vbool8_t maskNegative = vmfle_vf_f64m8_b8(vec,0);
-        const double negatif = -1.0;
+        float64_t values [32];
+        vsetvl_e64m8(32);
+        for (int i=0;i<GetVecLength();i++){
+          values[i] = 0;
+        }
+        vfloat64m8_t vzero = vle64_v_f64m8(values);
+        vbool8_t maskNegative = vmfle_vv_f64m8_b8(vzero,vec);
 
-        uint64_t tabIndex [32];
+        float64_t tabNegatif [32];
         for (int i=0;i<GetVecLength();i++)
-            tabIndex[i] = 0;
-        vuint64m8_t index = vle64_v_u64m8(tabIndex);
-        vfloat64m8_t signNegative = vlxei64_v_f64m8(&negatif,index);
+            tabNegatif[i] = 1;
+        vfloat64m8_t vnegatif = vle64_v_f64m8(tabNegatif);
 
-        return vfmerge_vfm_f64m8(maskNegative,signNegative,0);
+        return vmerge_vvm_f64m8(maskNegative,vzero,vnegatif);
     }
 
     inline InaVecRISCV isPositiveStrict() const {
