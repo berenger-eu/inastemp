@@ -210,6 +210,7 @@ public:
     inline /*not explicit*/ InaVecRISCV(const double val)
         : InaVecRISCV() {
         float64_t values [32];
+        vsetvl_e64m8(32);
         for (int i=0;i<GetVecLength();i++){
           values[i] = val;
         }

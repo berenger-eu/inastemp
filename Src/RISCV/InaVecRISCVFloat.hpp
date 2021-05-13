@@ -214,6 +214,7 @@ public:
     inline /*not explicit*/ InaVecRISCV(const float val)
         : InaVecRISCV() {
         float32_t values [64];
+        vsetvl_e32m8(64);
         for (int i=0;i<GetVecLength();i++){
           values[i] = val;
         }
