@@ -267,9 +267,11 @@ public:
     // }
 
     inline InaVecRISCV& setFromIndirectArray(const float values[], const int inIndirection[]) {
-      // vuint32m8_t tmp;
-      // tmp = vmv_s_x_u32m8(tmp,inIndirection);
-      // vec = vlxei32_v_f32m8(values,tmp);
+      float32m8_t result[64];
+      for(int i=0; i<64; i++){
+          result[i] = values[inIndirection[i]];
+      }
+      vec = vle32_v_f32m8(result);
       return *this;
     }
 
