@@ -426,8 +426,8 @@ public:
         for (int i=0;i<GetVecLength();i++){
           values[i] = 0;
         }
-        vzero = vle64_v_f64m8(values);
-        vfloat64m8_t min = vfsub_vv_f64m8(GetZero(),vec);
+        vfloat64m8_t vzero = vle64_v_f64m8(values);
+        vfloat64m8_t min = vfsub_vv_f64m8(vzero,vec);
         vec = vfmax_vv_f64m8(vec,min);
         return vec;
     }
