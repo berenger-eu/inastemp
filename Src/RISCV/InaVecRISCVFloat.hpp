@@ -458,16 +458,19 @@ public:
     }
 
     inline InaVecRISCV isPositive() const {
-        vbool4_t maskPositive = vmfge_vf_f32m8_b4(vec,0);
-        const float positif = 1.0;
+        float32_t values [64];
+        vsetvl_e32m8(64);
+        for (int i=0;i<GetVecLength();i++){
+          values[i] = 0;
+        }
+        vfloat32m8_t vzero = vle32_v_f32m8(values);
+        vbool4_t maskPositive = vmfge_vv_f32m8_b4(vzero,vec);
 
-        uint32_t tabIndex [64];
+        float32_t tabPositif [64];
         for (int i=0;i<GetVecLength();i++)
-            tabIndex[i] = 0;
-        vuint32m8_t index = vle32_v_u32m8(tabIndex);
-        vfloat32m8_t signPositive = vlxei32_v_f32m8(&positif,index);
-
-        return vfmerge_vfm_f32m8(maskPositive,signPositive,0);
+            tabPositif[i] = 1;
+        vfloat32m8_t vpositif = vle32_v_f32m8(tabPositif);
+        return vmerge_vvm_f32m8(maskPositive,vzero,vpositif);
     }
 
     inline InaVecRISCV isNegative() const {
