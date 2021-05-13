@@ -473,7 +473,7 @@ public:
           values[i] = 0;
         }
         vfloat64m8_t vzero = vle64_v_f64m8(values);
-        vbool8_t maskPositive = vmfge_vv_f64m8_b8(vzero,vec);
+        vbool8_t maskPositive = vmfge_vv_f64m8_b8(vec,vzero);
 
         float64_t tabPositif [32];
         for (int i=0;i<GetVecLength();i++)
