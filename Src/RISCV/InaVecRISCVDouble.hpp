@@ -535,29 +535,38 @@ public:
     }
 
     inline InaVecRISCV isZero() const {
-        vbool8_t maskEqual = vmfeq_vf_f64m8_b8(vec,0);
-        const double Equal = 1.0;
+        float64_t values [32];
+        vsetvl_e64m8(32);
+        for (int i=0;i<GetVecLength();i++){
+          values[i] = 0;
+        }
+        vfloat64m8_t vzero = vle64_v_f64m8(values);
 
-        uint64_t tabIndex [32];
+        vbool8_t maskEqual = vmfeq_vv_f64m8_b8(vec,vzero);
+        float64_t tabEqual [32];
         for (int i=0;i<GetVecLength();i++)
-            tabIndex[i] = 0;
-        vuint64m8_t index = vle64_v_u64m8(tabIndex);
-        vfloat64m8_t signEqual = vlxei64_v_f64m8(&Equal,index);
+            tabEqual[i] = 1;
+        vfloat64m8_t vequal = vle64_v_f64m8(tabEqual);
 
-        return vfmerge_vfm_f64m8(maskEqual,signEqual,0);
+        return vmerge_vvm_f64m8(maskEqual,vzero,vequal);
     }
 
     inline InaVecRISCV isNotZero() const {
-        vbool8_t maskNotEqual = vmfne_vf_f64m8_b8(vec,0);
-        const double NotEqual = 1.0;
+      float64_t values [32];
+      vsetvl_e64m8(32);
+      for (int i=0;i<GetVecLength();i++){
+        values[i] = 0;
+      }
+      vfloat64m8_t vzero = vle64_v_f64m8(values);
 
-        uint64_t tabIndex [32];
-        for (int i=0;i<GetVecLength();i++)
-            tabIndex[i] = 0;
-        vuint64m8_t index = vle64_v_u64m8(tabIndex);
-        vfloat64m8_t signNotEqual = vlxei64_v_f64m8(&NotEqual,index);
+      vbool8_t maskNotEqual = vmfne_vv_f64m8_b8(vec,vzero);
 
-        return vfmerge_vfm_f64m8(maskNotEqual,signNotEqual,0);
+      float64_t tabNotEqual [32];
+      for (int i=0;i<GetVecLength();i++)
+          tabNotEqual[i] = 1;
+      vfloat64m8_t vNotEqual = vle64_v_f64m8(tabNotEqual);
+
+      return vfmerge_vvm_f64m8(maskNotEqual,vzero,vNotEqual);
     }
 
     inline InaVecMaskRISCV<double> isPositiveMask() const {

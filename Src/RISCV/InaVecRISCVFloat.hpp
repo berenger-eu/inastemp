@@ -524,29 +524,37 @@ public:
     }
 
     inline InaVecRISCV isZero() const {
-        vbool4_t maskEqual = vmfeq_vf_f32m8_b4(vec,0);
-        const float Equal = 1.0;
+        float32_t values [64];
+        vsetvl_e32m8(64);
+        for (int i=0;i<GetVecLength();i++){
+          values[i] = 0;
+        }
+        vfloat32m8_t vzero = vle32_v_f32m8(values);
+        vbool4_t maskEqual = vmfeq_vv_f32m8_b4(vec,vzero);
 
-        uint32_t tabIndex [64];
+        float32_t tabEqual[64];
         for (int i=0;i<GetVecLength();i++)
-            tabIndex[i] = 0;
-        vuint32m8_t index = vle32_v_u32m8(tabIndex);
-        vfloat32m8_t signEqual = vlxei32_v_f32m8(&Equal,index);
+            tabEqual[i] = 1;
+        vfloat32m8_t vequal = vle32_v_f32m8(tabEqual);
 
-        return vfmerge_vfm_f32m8(maskEqual,signEqual,0);
+        return vmerge_vvm_f32m8(maskEqual,vzero,vequal);
     }
 
     inline InaVecRISCV isNotZero() const {
-        vbool4_t maskNotEqual = vmfne_vf_f32m8_b4(vec,0);
-        const float NotEqual = 1.0;
+        float32_t values [64];
+        vsetvl_e32m8(64);
+        for (int i=0;i<GetVecLength();i++){
+          values[i] = 0;
+        }
+        vfloat32m8_t vzero = vle32_v_f32m8(values);
+        vbool4_t maskNotEqual = vmfne_vv_f32m8_b4(vec,vzero);
 
-        uint32_t tabIndex [64];
+        float32_t tabNotEqual[64];
         for (int i=0;i<GetVecLength();i++)
-            tabIndex[i] = 0;
-        vuint32m8_t index = vle32_v_u32m8(tabIndex);
-        vfloat32m8_t signNotEqual = vlxei32_v_f32m8(&NotEqual,index);
+            tabNotEqual[i] = 1;
+        vfloat32m8_t vNotEqual = vle32_v_f32m8(tabNotEqual);
 
-        return vfmerge_vfm_f32m8(maskNotEqual,signNotEqual,0);
+        return vmerge_vvm_f32m8(maskNotEqual,vzero,vNotEqual);
     }
 
     inline InaVecMaskRISCV<float> isPositiveMask() const {
