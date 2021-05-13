@@ -435,8 +435,10 @@ public:
     }
 
     inline InaVecRISCV signOf() const {
-        vbool4_t maskPositive = vmfgt_vf_f32m8_b4(vec,0);
-        vbool4_t maskNegative = vmflt_vf_f32m8_b4(vec,0);
+        vsetvl_e32m8(64);
+        vbool4_t maskNegative = vmfgt_vf_f32m8_b4(vec,0);
+        vbool4_t maskPositive = vmflt_vf_f32m8_b4(vec,0);
+
         const float positif = 1.0;
         const float negatif = -1.0;
 

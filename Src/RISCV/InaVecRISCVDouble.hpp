@@ -215,7 +215,6 @@ public:
           values[i] = val;
         }
         vec = vle64_v_f64m8(values);
-        //vec = vlxei64_v_f64m8(&val,index);
     }
 
     inline InaVecRISCV& operator=(const double val){
@@ -444,8 +443,8 @@ public:
     }
 
     inline InaVecRISCV signOf() const {
-        vbool8_t maskPositive = vmfgt_vf_f64m8_b8(vec,0);
-        vbool8_t maskNegative = vmflt_vf_f64m8_b8(vec,0);
+        vbool8_t maskNegative = vmfgt_vf_f64m8_b8(vec,0);
+        vbool8_t maskPositive = vmflt_vf_f64m8_b8(vec,0);
         const double positif = 1.0;
         const double negatif = -1.0;
 
