@@ -451,7 +451,7 @@ public:
         vfloat64m8_t vzero = vle64_v_f64m8(values);
         vbool8_t maskPositive = vmfgt_vv_f64m8_b8(vzero,vec);
         vbool8_t maskNegative = vmflt_vv_f64m8_b8(vzero,vec);
-        vbool8_t maskEqual = vmfeq_vv_f64m8_b8(vzero,vec);
+        //vbool8_t maskEqual = vmfeq_vv_f64m8_b8(vzero,vec);
 
         float64_t tabPositif[32];
         float64_t tabNegatif[32];
@@ -463,8 +463,8 @@ public:
         vfloat64m8_t vnegatif = vle64_v_f64m8(tabNegatif);
 
 
-        return vmerge_vvm_f64m8(maskEqual, vzero,vmerge_vvm_f64m8(maskNegative,vnegatif,
-            vmerge_vvm_f64m8(maskPositive,vpositif,vzero)));
+        return vmerge_vvm_f64m8(maskNegative,
+            vmerge_vvm_f64m8(maskPositive,vzero,vpositif),vnegatif);
     }
 
     inline InaVecRISCV isPositive() const {
