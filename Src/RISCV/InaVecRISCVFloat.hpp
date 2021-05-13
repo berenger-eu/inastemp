@@ -622,7 +622,7 @@ public:
         vfloat32m8_t vecZero = vlxei32_v_f32m8(&zero,index);
         vfloat32m8_t vecOne = vlxei32_v_f32m8(&one,index);
 
-        return vmerge_vvm_f32m8(mask,vecOne,vecZero);
+        return vmerge_vvm_f32m8(mask,vecZero,vecOne);
     }
 
     inline static InaVecRISCV IsLower(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -637,7 +637,7 @@ public:
         vfloat32m8_t vecZero = vlxei32_v_f32m8(&zero,index);
         vfloat32m8_t vecOne = vlxei32_v_f32m8(&one,index);
 
-        return vmerge_vvm_f32m8(mask,vecOne,vecZero);
+        return vmerge_vvm_f32m8(mask,vecZero,vecOne);
     }
 
     inline static InaVecRISCV IsGreaterOrEqual(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -652,7 +652,7 @@ public:
         vfloat32m8_t vecZero = vlxei32_v_f32m8(&zero,index);
         vfloat32m8_t vecOne = vlxei32_v_f32m8(&one,index);
 
-        return vmerge_vvm_f32m8(mask,vecOne,vecZero);
+        return vmerge_vvm_f32m8(mask,vecZero,vecOne);
     }
 
     inline static InaVecRISCV IsGreater(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -667,7 +667,7 @@ public:
         vfloat32m8_t vecZero = vlxei32_v_f32m8(&zero,index);
         vfloat32m8_t vecOne = vlxei32_v_f32m8(&one,index);
 
-        return vmerge_vvm_f32m8(mask,vecOne,vecZero);
+        return vmerge_vvm_f32m8(mask,vecZero,vecOne);
     }
 
     inline static InaVecRISCV IsEqual(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -682,7 +682,7 @@ public:
         vfloat32m8_t vecZero = vlxei32_v_f32m8(&zero,index);
         vfloat32m8_t vecOne = vlxei32_v_f32m8(&one,index);
 
-        return vmerge_vvm_f32m8(mask,vecOne,vecZero);
+        return vmerge_vvm_f32m8(mask,vecZero,vecOne);
     }
 
     inline static InaVecRISCV IsNotEqual(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
@@ -697,7 +697,7 @@ public:
         vfloat32m8_t vecZero = vlxei32_v_f32m8(&zero,index);
         vfloat32m8_t vecOne = vlxei32_v_f32m8(&one,index);
 
-        return vmerge_vvm_f32m8(mask,vecOne,vecZero);
+        return vmerge_vvm_f32m8(mask,vecZero,vecOne);
     }
 
     inline static InaVecMaskRISCV<float> IsLowerOrEqualMask(const InaVecRISCV& inVec1, const InaVecRISCV& inVec2) {
