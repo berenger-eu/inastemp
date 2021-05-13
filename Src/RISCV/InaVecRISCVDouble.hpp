@@ -421,6 +421,8 @@ public:
 
     inline InaVecRISCV abs() const {
         // return vfabs(vec);
+        vfloat64m8_t min = vfsub_vv_f64m8(GetZero(),vec);
+        vec = vfmax_vv_f64m8(vec,min);
         return vec;
     }
 
