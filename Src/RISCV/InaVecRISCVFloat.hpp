@@ -441,9 +441,8 @@ public:
           values[i] = 0;
         }
         vfloat32m8_t vzero = vle32_v_f32m8(values);
-        vbool4_t maskPositive = vmfgt_vv_f32m8_b4(vzero,vec);
-        vbool4_t maskNegative = vmflt_vv_f32m8_b4(vzero,vec);
-        //vbool4_t maskEqual = vmfeq_vv_f32m8_b4(vzero,vec);
+        vbool4_t maskPositive = vmflt_vv_f32m8_b4(vzero,vec);
+        vbool4_t maskNegative = vmfgt_vv_f32m8_b4(vzero,vec);
 
         float32_t tabPositif[64];
         float32_t tabNegatif[64];
