@@ -464,7 +464,7 @@ public:
         vfloat64m8_t signNegative = vlxei64_v_f64m8(&negatif,index);
 
         return vmerge_vvm_f64m8(maskNegative,signNegative,
-            vfmerge_vvm_f64m8(maskPositive,signPositive,vzero));
+            vmerge_vvm_f64m8(maskPositive,signPositive,vzero));
     }
 
     inline InaVecRISCV isPositive() const {
