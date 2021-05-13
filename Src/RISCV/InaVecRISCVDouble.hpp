@@ -255,11 +255,6 @@ public:
         return *this;
     }
 
-    // inline InaVecRISCV& setFromIndirectArray(const double values[], const unsigned long int inIndirection[]) {
-    //     //vec = vlxei64_v_f64m8(values,Indirection);
-    //     return *this;
-    // }
-
     inline InaVecRISCV& setFromIndirectArray(const double values[], const int inIndirection[]) {
         float64_t result[32];
         for(int i=0; i<32; i++){
@@ -283,11 +278,12 @@ public:
 
     inline InaVecRISCV& setFromIndirect2DArray(const double inArray[], const int inIndirection1[],
                                  const int inLeadingDimension, const int inIndirection2[]){
-        // vec = vlxei64_v_f64m8(inArray,vfadd_vv_f64m8(
-        //   vfmul_vf_f64m8(vle64ff_v_f64m8(inIndirection1,32),inLeadingDimension),vle64ff_v_f64m8(inIndirection2,32)
-        // ));
-
-        return *this;
+         float64_t result[32];
+         for(int i=0; i<32; i++){
+             result[i] = values[inIndirection1[i] * inLeadingDimension + inIndirection2[i]];
+         }
+         vec = vle64_v_f64m8(result);
+         return *this;
     }
 
     // Move back to array
