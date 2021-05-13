@@ -435,14 +435,14 @@ public:
     }
 
     inline InaVecRISCV signOf() const {
-        float64_t values [64];
+        float32_t values [64];
         vsetvl_e32m8(64);
         for (int i=0;i<GetVecLength();i++){
           values[i] = 0;
         }
         vfloat32m8_t vzero = vle32_v_f32m8(values);
-        vbool4_t maskPositive = vmfgt_vf_f32m8_b4(vzero,vec);
-        vbool4_t maskNegative = vmflt_vf_f32m8_b4(vzero,vec);
+        vbool4_t maskPositive = vmfgt_vv_f32m8_b4(vzero,vec);
+        vbool4_t maskNegative = vmflt_vv_f32m8_b4(vzero,vec);
 
         const double positif = 1.0;
         const double negatif = -1.0;

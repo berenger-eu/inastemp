@@ -449,8 +449,8 @@ public:
           values[i] = 0;
         }
         vfloat64m8_t vzero = vle64_v_f64m8(values);
-        vbool8_t maskPositive = vmfgt_vf_f64m8_b8(vzero,vec);
-        vbool8_t maskNegative = vmflt_vf_f64m8_b8(vzero,vec);
+        vbool8_t maskPositive = vmfgt_vv_f64m8_b8(vzero,vec);
+        vbool8_t maskNegative = vmflt_vv_f64m8_b8(vzero,vec);
 
         const double positif = 1.0;
         const double negatif = -1.0;
