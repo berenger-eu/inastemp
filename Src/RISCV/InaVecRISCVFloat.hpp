@@ -454,7 +454,7 @@ public:
         vfloat32m8_t vpositif = vle32_v_f32m8(tabPositif);
         vfloat32m8_t vnegatif = vle32_v_f32m8(tabNegatif);
 
-        return vmerge(maskEqual,vzero,(vmerge_vvm_f32m8(maskNegative,vnegatif,
+        return vmerge_vvm_f32m8(maskEqual,vzero,(vmerge_vvm_f32m8(maskNegative,vnegatif,
             vmerge_vvm_f32m8(maskPositive,vpositif,vzero))));
     }
 
