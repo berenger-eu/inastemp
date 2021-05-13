@@ -261,7 +261,7 @@ public:
     // }
 
     inline InaVecRISCV& setFromIndirectArray(const double values[], const int inIndirection[]) {
-        float64m8_t result[32];
+        float64_t result[32];
         for(int i=0; i<32; i++){
             result[i] = values[inIndirection[i]];
         }
