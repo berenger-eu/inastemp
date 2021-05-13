@@ -435,12 +435,17 @@ public:
     }
 
     inline InaVecRISCV signOf() const {
+        float64_t values [64];
         vsetvl_e32m8(64);
-        vbool4_t maskNegative = vmfgt_vf_f32m8_b4(vec,0);
-        vbool4_t maskPositive = vmflt_vf_f32m8_b4(vec,0);
+        for (int i=0;i<GetVecLength();i++){
+          values[i] = 0;
+        }
+        vfloat32m8_t vzero = vle32_v_f32m8(values);
+        vbool4_t maskPositive = vmfgt_vf_f32m8_b4(vzero,vec);
+        vbool4_t maskNegative = vmflt_vf_f32m8_b4(vzero,vec);
 
-        const float positif = 1.0;
-        const float negatif = -1.0;
+        const double positif = 1.0;
+        const double negatif = -1.0;
 
         uint32_t tabIndex [64];
         for (int i=0;i<GetVecLength();i++)
@@ -451,7 +456,7 @@ public:
         vfloat32m8_t signNegative = vlxei32_v_f32m8(&negatif,index);
 
         return vmerge_vvm_f32m8(maskNegative,signNegative,
-            vfmerge_vfm_f32m8(maskPositive,signPositive,0));
+            vfmerge_vvm_f32m8(maskPositive,signPositive,vzero));
     }
 
     inline InaVecRISCV isPositive() const {
