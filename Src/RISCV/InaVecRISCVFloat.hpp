@@ -444,19 +444,19 @@ public:
         vbool4_t maskPositive = vmfgt_vv_f32m8_b4(vzero,vec);
         vbool4_t maskNegative = vmflt_vv_f32m8_b4(vzero,vec);
 
-        const double positif = 1.0;
-        const double negatif = -1.0;
+        float32_t tabPositif[64];
+        float32_t tabNegatif[64];
+        for (int i=0;i<GetVecLength();i++){
+            tabPositif[i] = 1;
+            tabNegatif[i] = -1;
+        }
+        vfloat32m8_t vpositif = vle32_v_f32m8(tabPositif);
+        vfloat32m8_t vnegatif = vle32_v_f32m8(tabNegatif);
 
-        uint32_t tabIndex [64];
-        for (int i=0;i<GetVecLength();i++)
-            tabIndex[i] = 0;
-        vuint32m8_t index = vle32_v_u32m8(tabIndex);
 
-        vfloat32m8_t signPositive = vlxei32_v_f32m8(&positif,index);
-        vfloat32m8_t signNegative = vlxei32_v_f32m8(&negatif,index);
+        return vmerge_vvm_f32m8(maskNegative,vnegatif,
+            vmerge_vvm_f32m8(maskPositive,vpositif,vzero));
 
-        return vmerge_vvm_f32m8(maskNegative,signNegative,
-            vmerge_vvm_f32m8(maskPositive,signPositive,vzero));
     }
 
     inline InaVecRISCV isPositive() const {

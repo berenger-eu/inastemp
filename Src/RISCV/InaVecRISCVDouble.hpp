@@ -452,19 +452,18 @@ public:
         vbool8_t maskPositive = vmfgt_vv_f64m8_b8(vzero,vec);
         vbool8_t maskNegative = vmflt_vv_f64m8_b8(vzero,vec);
 
-        const double positif = 1.0;
-        const double negatif = -1.0;
+        float64_t tabPositif[32];
+        float64_t tabNegatif[32];
+        for (int i=0;i<GetVecLength();i++){
+            tabPositif[i] = 1;
+            tabNegatif[i] = -1;
+        }
+        vfloat64m8_t vpositif = vle64_v_f64m8(tabPositif);
+        vfloat64m8_t vnegatif = vle64_v_f64m8(tabNegatif);
 
-        uint64_t tabIndex [32];
-        for (int i=0;i<GetVecLength();i++)
-            tabIndex[i] = 0;
-        vuint64m8_t index = vle64_v_u64m8(tabIndex);
 
-        vfloat64m8_t signPositive = vlxei64_v_f64m8(&positif,index);
-        vfloat64m8_t signNegative = vlxei64_v_f64m8(&negatif,index);
-
-        return vmerge_vvm_f64m8(maskNegative,signNegative,
-            vmerge_vvm_f64m8(maskPositive,signPositive,vzero));
+        return vmerge_vvm_f64m8(maskNegative,vnegatif,
+            vmerge_vvm_f64m8(maskPositive,vpositif,vzero));
     }
 
     inline InaVecRISCV isPositive() const {
