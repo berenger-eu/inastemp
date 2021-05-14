@@ -815,6 +815,13 @@ public:
 
     inline InaVecRISCV<double> operator-() const {
         //return vfneg_v_f64m8(vec);
+        float64_t values [32];
+        vsetvl_e64m8(32);
+        for (int i=0;i<GetVecLength();i++){
+          values[i] = 0;
+        }
+        vfloat64m8_t vzero = vle64_v_f64m8(values);
+        vec = vfsub_vv_f64m8(vzero,vec);
         return vec;
     }
 

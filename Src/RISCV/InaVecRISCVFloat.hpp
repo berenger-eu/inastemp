@@ -802,7 +802,13 @@ public:
     }
 
     inline InaVecRISCV<float> operator-() const {
-        // return vfneg_v_f32m8(vec);
+        float32_t values [64];
+        vsetvl_e32m8(64);
+        for (int i=0;i<GetVecLength();i++){
+          values[i] = 0;
+        }
+        vfloat32m8_t vzero = vle32_v_f32m8(values);
+        vec = vfsub_vv_f32m8(vzero,vec);
         return vec;
     }
 
