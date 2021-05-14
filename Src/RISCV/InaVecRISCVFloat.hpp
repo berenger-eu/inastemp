@@ -117,7 +117,7 @@ public:
         }
         vfloat32m8_t vzero = vle32_v_f32m8(values);
         vbool4_t masktrue = vmfeq_vv_f32m8_b4(vzero,vzero);
-        return vmnand_mm_b4(vmxor_mm_b4(inMask1.mask,masktrue),inMask2.mask);
+        return vmand_mm_b4(vmxor_mm_b4(inMask1.mask,masktrue),inMask2.mask);
     }
 
     inline static InaVecMaskRISCV Or(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
