@@ -89,7 +89,7 @@ public:
     inline InaVecMaskRISCV Not() const{
         float64_t values [32];
         vsetvl_e64m8(32);
-        for (int i=0;i<GetVecLength();i++){
+        for (int i=0;i<32;i++){
           values[i] = 0;
         }
         vfloat64m8_t vzero = vle64_v_f64m8(values);
@@ -113,7 +113,7 @@ public:
     inline static InaVecMaskRISCV NotAnd(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
         float64_t values [32];
         vsetvl_e64m8(32);
-        for (int i=0;i<GetVecLength();i++){
+        for (int i=0;i<32;i++){
           values[i] = 0;
         }
         vfloat64m8_t vzero = vle64_v_f64m8(values);
