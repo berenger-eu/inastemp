@@ -86,8 +86,14 @@ public:
 
     // Binary methods
     inline InaVecMaskRISCV Not() const{
-        // return vmnot_mm_b4(mask);
-        return mask;
+        float32_t values [64];
+        vsetvl_e32m8(64);
+        for (int i=0;i<GetVecLength();i++){
+          values[i] = 0;
+        }
+        vfloat32m8_t vzero = vle32_v_f32m8(values);
+        vbool4_t masktrue = vmfeq_vv_f32m8_b4(vzero,vzero);
+        return vmxor_mm_b4(mask,masktrue);
     }
 
     inline bool isAllTrue() const{
@@ -104,7 +110,14 @@ public:
     }
 
     inline static InaVecMaskRISCV NotAnd(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
-        return vmnand_mm_b4(inMask1.mask,inMask2.mask);
+        float32_t values [64];
+        vsetvl_e32m8(64);
+        for (int i=0;i<GetVecLength();i++){
+          values[i] = 0;
+        }
+        vfloat32m8_t vzero = vle32_v_f32m8(values);
+        vbool4_t masktrue = vmfeq_vv_f32m8_b4(vzero,vzero);
+        return vmnand_mm_b4(vmxor_mm_b4(inMask1.mask,masktrue),inMask2.mask);
     }
 
     inline static InaVecMaskRISCV Or(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
