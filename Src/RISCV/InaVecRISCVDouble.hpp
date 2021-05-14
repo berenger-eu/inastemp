@@ -117,7 +117,7 @@ public:
           values[i] = 0;
         }
         vfloat64m8_t vzero = vle64_v_f64m8(values);
-        vbool8_t masktrue = vmfeq_vv_f64m8_b8(vzero,vzero);
+        vbool8_t masktrue = vmfne_vv_f64m8_b8(vzero,vzero);
         return masktrue;
         //return vmand_mm_b8(vmxor_mm_b8(inMask1.mask,masktrue),inMask2.mask);
     }
