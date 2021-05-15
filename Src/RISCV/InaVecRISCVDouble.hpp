@@ -423,13 +423,13 @@ public:
 
     inline InaVecRISCV rsqrt() const {
       // We can use vfrsqrt7_v_f64m8_t
-        uint64_t tabIndex [32];
-        for (int i=0;i<int(GetVecLength());i++)
-            tabIndex[i] = 0;
-        const vuint64m8_t index = vle64_v_u64m8(tabIndex);
-        const double positif = 1.0;
-        const vfloat64m8_t one = vlxei64_v_f64m8(&positif,index);
-        return  vfsqrt_v_f64m8(vfdiv_vv_f64m8(one, vec));
+        float64_t values [32];
+        vsetvl_e64m8(32);
+        for (int i=0;i<GetVecLength();i++){
+          values[i] = 1;
+        }
+        vfloat64m8_t vone = vle64_v_f64m8(values);
+        return  vfsqrt_v_f64m8(vfdiv_vv_f64m8(vone, vec));
     }
 
     inline InaVecRISCV abs() const {
@@ -857,7 +857,7 @@ public:
     }
 
     inline static InaVecRISCV<double> Fma(const InaVecRISCV<double>& inValAdd, const InaVecRISCV<double>& inValMul1, const InaVecRISCV<double>& inValMul2){
-        return vfnmadd_vv_f64m8(inValAdd.vec, inValMul1.vec, inValMul2.vec);
+        return vfmadd_vv_f64m8(inValAdd.vec, inValMul1.vec, inValMul2.vec);
     }
 };
 

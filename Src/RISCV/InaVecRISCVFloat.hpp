@@ -121,6 +121,7 @@ public:
         //return vmand_mm_b4(vmxor_mm_b4(inMask1.mask,masktrue),inMask2.mask);
     }
 
+
     inline static InaVecMaskRISCV Or(const InaVecMaskRISCV& inMask1, const InaVecMaskRISCV& inMask2){
         return vmor_mm_b4(inMask1.mask,inMask2.mask);
     }
@@ -857,7 +858,7 @@ public:
     }
 
     inline static InaVecRISCV<float> Fma(const InaVecRISCV<float>& inValAdd, const InaVecRISCV<float>& inValMul1, const InaVecRISCV<float>& inValMul2){
-        return vfnmadd_vv_f32m8(inValAdd.vec, inValMul1.vec, inValMul2.vec);
+        return vfmadd_vv_f32m8(inValAdd.vec, inValMul1.vec, inValMul2.vec);
     }
 };
 
