@@ -76,11 +76,25 @@ public:
 
     // Bool data type compatibility
     inline explicit InaVecMaskRISCV(const bool inBool) : InaVecMaskRISCV() {
-        mask = (inBool? vmxnor_mm_b4(mask, mask) : vmxor_mm_b4(mask, mask));
+        float32_t values [64];
+        vsetvl_e32m8(64);
+        for (int i=0;i< 64;i++){
+          values[i] = 0;
+        }
+        vfloat32m8_t vzero = vle32_v_f32m8(values);
+        mask = (inBool ? vmfeq_vv_f32m8_b4(vzero,vzero) : vmfne_vv_f32m8_b4(vzero,vzero));
+        //mask = (inBool? vmxnor_mm_b4(mask, mask) : vmxor_mm_b4(mask, mask));
     }
 
     inline InaVecMaskRISCV& operator=(const bool inBool){
-        mask = (inBool? vmxnor_mm_b4(mask, mask) : vmxor_mm_b4(mask, mask));
+        float32_t values [64];
+        vsetvl_e32m8(64);
+        for (int i=0;i< 64;i++){
+          values[i] = 0;
+        }
+        vfloat32m8_t vzero = vle32_v_f32m8(values);
+        mask = (inBool ? vmfeq_vv_f32m8_b4(vzero,vzero) : vmfne_vv_f32m8_b4(vzero,vzero));
+        //mask = (inBool? vmxnor_mm_b4(mask, mask) : vmxor_mm_b4(mask, mask));
         return (*this);
     }
 
@@ -116,9 +130,9 @@ public:
           values[i] = 0;
         }
         vfloat32m8_t vzero = vle32_v_f32m8(values);
-        vbool4_t masktrue = vmfne_vv_f32m8_b4(vzero,vzero);
-        return masktrue;
-        //return vmand_mm_b4(vmxor_mm_b4(inMask1.mask,masktrue),inMask2.mask);
+        vbool4_t masktrue = vmfeq_vv_f32m8_b4(vzero,vzero);
+        //return masktrue;
+        return vmand_mm_b4(vmxor_mm_b4(inMask1.mask,masktrue),inMask2.mask);
     }
 
 
