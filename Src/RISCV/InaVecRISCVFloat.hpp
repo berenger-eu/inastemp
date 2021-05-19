@@ -872,7 +872,7 @@ public:
     }
 
     inline static InaVecRISCV<float> Fma(const InaVecRISCV<float>& inValAdd, const InaVecRISCV<float>& inValMul1, const InaVecRISCV<float>& inValMul2){
-        return vfmadd_vv_f32m8(inValAdd.vec, inValMul1.vec, inValMul2.vec);
+        return vfmadd_vv_f32m8(inValMul1.vec, inValMul2.vec, inValAdd.vec,);
     }
 };
 
