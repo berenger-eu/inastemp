@@ -418,7 +418,7 @@ class TestAll : public UTester< TestAll< VecType > > {
             UASSERTEEQUAL(VecType(10).horizontalSum(), RealType(10 * VecType::GetVecLength()));
 
             UASSERTEEQUAL(VecType(1).horizontalMul(), RealType(1));
-            UASSERTEEQUAL(VecType(10).horizontalMul(), RealType(pow(10, VecType::GetVecLength())));
+            UASSERTETRUE(approxEqual(VecType(10).horizontalMul(), RealType(pow(10, VecType::GetVecLength()))));
         }
 
         {
