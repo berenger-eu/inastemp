@@ -624,6 +624,7 @@ SDE ERROR:  TID: 0 executed instruction with an unaligned memory reference to ad
 
 # Authors
 - Berenger Bramas (berenger.bramas@inria.fr)
+- Thomas Steinmetz (Unistra)
 - Logo Credit to D.M.
 
 
