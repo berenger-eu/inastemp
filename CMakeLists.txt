@@ -2,9 +2,10 @@
 # Inastemp - Berenger Bramas MPCDF - 2016
 # Under MIT Licence, please you must read the LICENCE file.
 ###########################################################################
-cmake_minimum_required (VERSION 2.8.3 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.0 FATAL_ERROR)
 
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+set(CMAKE_POLICY_DEFAULT_CMP0077 OLD)
 
 #===========================================================================
 # Project Declaration
@@ -192,7 +193,7 @@ foreach(TYPE ${ALL_TYPES_REVERSE})
                 MESSAGE(WARNING "Main -- The variable CPU_INFO_${RULE} cannot be read from the current CPU which might be too old. It turns off ${TYPE}.")
                 set(${TYPE}_SUPPORTED_BY_CPU FALSE)                
                 break()
-            elseif(NOT ${CPU_INFO_${RULE}})
+            elseif(NOT CPU_INFO_${RULE})
                 set(${TYPE}_SUPPORTED_BY_CPU FALSE)                
                 break()
             endif()
@@ -202,7 +203,7 @@ foreach(TYPE ${ALL_TYPES_REVERSE})
             OPTION( INASTEMP_USE_${TYPE} "Set to ON to compile with ${TYPE} support (default based on CPU capacities)" ${${TYPE}_SUPPORTED_BY_CPU} )
         endif()
 
-        if(${INASTEMP_USE_${TYPE}})
+        if(INASTEMP_USE_${TYPE})
             set(INASTEMP_CXX_FLAGS "${INASTEMP_CXX_FLAGS} ${${TYPE}_FLAGS}")
             list(APPEND ALL_USED_TYPES "${TYPE}")
 
