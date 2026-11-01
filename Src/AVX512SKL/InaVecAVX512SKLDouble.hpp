@@ -129,16 +129,7 @@ public:
     }
 
     inline InaVecAVX512SKL floor() const {
-        const __m512i vecConvLongInt = _mm512_cvt_roundpd_epi64(Parent::vec, (/*_MM_FROUND_TO_NEG_INF*/_MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC));
-        const __m512i valuesDec = _mm512_sub_epi64(vecConvLongInt, _mm512_set1_epi64(1));
-
-        const __mmask8 maskPositive = _mm512_cmp_pd_mask(_mm512_setzero_pd(), vec, _CMP_LE_OQ);
-        const __mmask8 maskNegative = __mmask8(~maskPositive);
-
-        const __m512i valuesToConv = _mm512_or_epi64(_mm512_maskz_mov_epi64(maskPositive, vecConvLongInt),
-                                                   _mm512_maskz_mov_epi64(maskNegative, valuesDec));
-
-        return _mm512_cvtepi64_pd(valuesToConv);
+        return _mm512_roundscale_pd(Parent::vec, _MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC);
     }
 };
 

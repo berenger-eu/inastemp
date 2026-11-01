@@ -6,19 +6,21 @@
 #define UTILS_HPP
 
 // for std::size_t
-#include <cstdio>
+#include <cstddef>
+#include <cstring>
+#include <type_traits>
 
 namespace InaUtils {
 
 template < class TypeSrc, class TypeDest >
 inline TypeDest ConvertBits(TypeSrc src) {
-    union InaBits {
-        TypeSrc src;
-        TypeDest dest;
-    };
-    InaBits bits;
-    bits.src = src;
-    return bits.dest;
+    static_assert(sizeof(TypeSrc) == sizeof(TypeDest), "Bit conversion requires equal sizes");
+    static_assert(std::is_trivially_copyable<TypeSrc>::value &&
+                  std::is_trivially_copyable<TypeDest>::value,
+                  "Bit conversion requires trivially copyable types");
+    TypeDest dest;
+    std::memcpy(&dest, &src, sizeof(dest));
+    return dest;
 }
 
 template <class VecType>

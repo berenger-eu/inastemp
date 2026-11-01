@@ -61,7 +61,7 @@
 #include "AVX2/InaVecAVX2Double.hpp"
 #endif
 
-#if defined(__AVX512F__) && defined(__AVX512CD__)
+#if defined(__AVX512F__)
 #define INASTEMP_USE_AVX512COMMON
 #undef INASTEMP_STATIC_BEST_TYPE
 #define INASTEMP_STATIC_BEST_TYPE InaVecAVX512COMMON

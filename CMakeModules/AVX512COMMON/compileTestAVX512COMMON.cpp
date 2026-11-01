@@ -1,33 +1,10 @@
+#include <immintrin.h>
 
-#include <x86intrin.h>
-#include <xmmintrin.h> // SSE
-#include <emmintrin.h> // SSE2
-#include <pmmintrin.h> // SSE3
-#include <tmmintrin.h> // SSSE3
-#include <smmintrin.h> // SSE4
-
-#include <immintrin.h> // AVX
-
-int main(){
-        __m512d res0d, res1d;
-        res0d = _mm512_add_pd(res0d, res1d);
-
-        __m512 res0, res1;
-        res0 = _mm512_add_ps(res0, res1);
-
-        // er
-        {
-            __m512d src;
-            __mmask8 k;
-            __m512d a;
-            _mm512_mask_rcp28_pd ( src, k, a);
-        }
-        // cd
-        {
-            __mmask8 k;
-            __m512i tmp = _mm512_broadcastmb_epi64 (k);
-        }
-
-	return 0;
+int main() {
+    const __m512d valuesDouble = _mm512_set1_pd(-1.5);
+    const __m512 valuesFloat = _mm512_set1_ps(-1.5f);
+    const __m512d roundedDouble = _mm512_roundscale_pd(valuesDouble, _MM_FROUND_TO_NEG_INF);
+    const __m512 roundedFloat = _mm512_roundscale_ps(valuesFloat, _MM_FROUND_TO_NEG_INF);
+    return _mm512_cmp_pd_mask(roundedDouble, _mm512_setzero_pd(), _CMP_EQ_OQ)
+         + _mm512_cmp_ps_mask(roundedFloat, _mm512_setzero_ps(), _CMP_EQ_OQ);
 }
-

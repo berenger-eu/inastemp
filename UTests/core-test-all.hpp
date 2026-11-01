@@ -11,6 +11,7 @@
 #include <cmath>
 #include <cstring>
 #include <cassert>
+#include <limits>
 
 #ifdef __NEC__
 #define default_alignas
@@ -744,6 +745,29 @@ class TestAll : public UTester< TestAll< VecType > > {
         }
 
         {
+            // Negative integers, large values and IEEE special values must survive floor.
+            const RealType floorInputs[] = {
+                RealType(-1), RealType(-2), RealType(-1.5), RealType(0), RealType(-0.0),
+                RealType(4294967296.0), RealType(-4294967296.0),
+                std::numeric_limits<RealType>::max(), std::numeric_limits<RealType>::lowest(),
+                std::numeric_limits<RealType>::infinity(), -std::numeric_limits<RealType>::infinity(),
+                std::numeric_limits<RealType>::quiet_NaN()
+            };
+            for (const RealType input : floorInputs) {
+                const VecType result = VecType(input).floor();
+                for (int idx = 0; idx < VecType::GetVecLength(); ++idx) {
+                    const RealType actual = result.at(idx);
+                    const RealType expected = std::floor(input);
+                    if (std::isnan(expected)) {
+                        UASSERTETRUE(std::isnan(actual));
+                    } else {
+                        UASSERTEEQUAL(actual, expected);
+                        if (expected == RealType(0)) {
+                            UASSERTEEQUAL(std::signbit(actual), std::signbit(expected));
+                        }
+                    }
+                }
+            }
             equalToScalar(VecType(RealType(1)).floor(), std::floor(RealType(1)));
             equalToScalar(VecType(RealType(1.5)).floor(), std::floor(RealType(1.5)));
             equalToScalar(VecType(RealType(1.9)).floor(), std::floor(RealType(1.9)));

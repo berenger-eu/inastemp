@@ -5,8 +5,12 @@
 #ifndef INAMEMORY_HPP
 #define INAMEMORY_HPP
 
+#include <cstddef>
 #include <cstdint>
 #include <cassert>
+#include <limits>
+#include <memory>
+#include <new>
 
 /**
  * Proposes methods to allocate aligned memory.
@@ -31,18 +35,23 @@ class InaMemory {
         // Ensure it is a power of 2 > 0
         static_assert(Alignement != 0 && ((Alignement - 1) & Alignement) == 0, "Alignement must be a power of 2");
 
-        // We will need to store the adress of the real blocks
-        const std::size_t Offset = (Alignement < HeaderSize ? (HeaderSize / Alignement) + 1 : 1) * Alignement;
+        // Keep the header aligned even when the requested alignment is small.
+        constexpr std::size_t EffectiveAlignment =
+            Alignement < alignof(Header) ? alignof(Header) : Alignement;
+        constexpr std::size_t Offset = HeaderSize + EffectiveAlignment - 1;
+        if (inSize > std::numeric_limits<std::size_t>::max() - Offset) {
+            throw std::bad_array_new_length();
+        }
 
         unsigned char* allocatedMemoryPtr = new unsigned char[inSize + Offset];
-        unsigned char* alignedMemoryPtr   = reinterpret_cast< unsigned char* >((reinterpret_cast< std::size_t >(allocatedMemoryPtr) + Offset) & ~(Alignement - 1));
-        assert((reinterpret_cast< std::size_t >(alignedMemoryPtr) & (Alignement-1)) == 0);
-        
-        Header* headerPtr          = reinterpret_cast<Header*>(alignedMemoryPtr - HeaderSize);
+        void* alignedMemoryPtr = allocatedMemoryPtr + HeaderSize;
+        std::size_t space = inSize + EffectiveAlignment - 1;
+        std::align(EffectiveAlignment, inSize, alignedMemoryPtr, space);
+        assert((reinterpret_cast<std::uintptr_t>(alignedMemoryPtr) & (Alignement - 1)) == 0);
 
-        // Save real address then header value then alignement
-        headerPtr->originPtr = allocatedMemoryPtr;
-        headerPtr->nbElements      = inNbelements;
+        // Start the header's lifetime in the reserved storage.
+        new (static_cast<unsigned char*>(alignedMemoryPtr) - HeaderSize)
+            Header{allocatedMemoryPtr, inNbelements};
 
         // Return aligned address
         return reinterpret_cast< void* >(alignedMemoryPtr);
@@ -55,12 +64,30 @@ public:
             return nullptr;
         }
 
-        const std::size_t sizeInBytes = (inNbElementsInArray * sizeof(ObjectType));
+        if (inNbElementsInArray > std::numeric_limits<std::size_t>::max() / sizeof(ObjectType)) {
+            throw std::bad_array_new_length();
+        }
+        const std::size_t sizeInBytes = inNbElementsInArray * sizeof(ObjectType);
+        constexpr std::size_t EffectiveAlignment =
+            Alignement < alignof(ObjectType) ? alignof(ObjectType) : Alignement;
 
-        ObjectType* alignedArray = reinterpret_cast< ObjectType* >(Allocate<Alignement>(sizeInBytes, inNbElementsInArray));
+        ObjectType* alignedArray = reinterpret_cast< ObjectType* >(Allocate<EffectiveAlignment>(sizeInBytes, inNbElementsInArray));
 
-        for (std::size_t idx = 0; idx < inNbElementsInArray; ++idx) {
-            new (&alignedArray[idx]) ObjectType();
+        static_assert(Alignement != 0 && ((Alignement - 1) & Alignement) == 0,
+                      "Alignement must be a power of 2");
+        std::size_t constructed = 0;
+        try {
+            for (; constructed < inNbElementsInArray; ++constructed) {
+                new (static_cast<void*>(&alignedArray[constructed])) ObjectType();
+            }
+        } catch (...) {
+            while (constructed != 0) {
+                alignedArray[--constructed].~ObjectType();
+            }
+            const Header* headerPtr = reinterpret_cast<const Header*>(
+                reinterpret_cast<const unsigned char*>(alignedArray) - HeaderSize);
+            delete[] headerPtr->originPtr;
+            throw;
         }
         return alignedArray;
     }
@@ -71,8 +98,8 @@ public:
             const Header* headerPtr = reinterpret_cast<const Header*>(reinterpret_cast< const unsigned char* >(ptrToFree) - HeaderSize);
             const std::size_t numberOfElements = headerPtr->nbElements;
 
-            for (std::size_t idx = 0; idx < numberOfElements; ++idx) {
-                ptrToFree[idx].~ObjectType();
+            for (std::size_t idx = numberOfElements; idx != 0; --idx) {
+                ptrToFree[idx - 1].~ObjectType();
             }
 
             delete[] headerPtr->originPtr;
